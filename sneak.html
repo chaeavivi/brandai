@@ -1,0 +1,49 @@
+
+<!-- ================================================================================== -->
+<!-- WIDGET 7. 프롬프트 미리보기 (Sneak Peek) -->
+<!-- ================================================================================== -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 상단 여백 50px 적용 */
+        body { margin: 0; padding: 50px 20px 20px; font-family: 'Noto Sans KR', sans-serif; background-color: #f3f4f6; }
+        .code-block { background-color: #1e293b; color: #e2e8f0; font-family: 'Courier New', Courier, monospace; }
+    </style>
+</head>
+<body>
+    <div class="max-w-4xl mx-auto px-2">
+        <div class="flex items-center justify-center space-x-2 mb-4">
+            <i class="fa-solid fa-gem text-blue-500"></i>
+            <h3 class="font-bold text-gray-600 tracking-widest text-sm">워크샵 미리보기</h3>
+        </div>
+        <h2 class="text-2xl font-bold text-center mb-6">실전 프롬프트 템플릿 <span class="text-blue-600">무료 공개</span></h2>
+        
+        <div class="code-block p-4 rounded-lg shadow-xl overflow-x-auto text-xs md:text-sm leading-relaxed">
+            <div class="text-gray-400 mb-2">// 브랜드 페르소나 주입 프롬프트 - Sample Ver.</div>
+            <div class="text-green-400">
+                너는 이제부터 [내 이름]의 블로그 글쓰기 전담 에디터야.<br><br>
+                <span class="text-purple-400">[내 브랜드 정체성]</span><br>
+                말투: [반말/존댓말 선택], [친근함/전문성 선택]<br>
+                핵심 가치: [예: 진정성, 실용성, 솔직함]<br>
+                타겟 독자: [예: 3040 직장인, 1인 사업가]<br>
+                절대 금기어: [예: ~하세요(명령투), 과장 표현]<br><br>
+                <span class="text-purple-400">[글쓰기 원칙]</span><br>
+                1. 첫 문장은 반드시 질문이나 공감으로 시작<br>
+                2. 한 문단은 3줄 이내로 제한<br>
+                3. 추상적 표현 금지, 구체적 숫자와 예시 필수<br><br>
+                위 조건을 100% 반영해서 [주제]에 대한 블로그 초안(1,500자 분량)을 작성해줘.
+            </div>
+        </div>
+        <p class="text-center mt-4 font-bold text-gray-700 text-sm">
+            워크샵에서는 이 프롬프트를 내 브랜드에 맞게<br>
+            <span class="bg-yellow-200 px-1">완벽하게 커스터마이징</span>하여 챗봇에 이식합니다.
+        </p>
+    </div>
+</body>
+</html>
