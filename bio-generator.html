@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<!-- ================================================================================== -->
+<!-- 활용 프로그램. 인스타 프로필 소개글 생성기 (슬로건·타겟·가치 + 이름칸 키워드) -->
+<!-- 노션에 임베드하거나, 이 파일 하나만 있으면 단독으로 실행됩니다. (API 키 불필요) -->
+<!-- ================================================================================== -->
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>인스타 소개글 생성기 · 검색에도 걸리고, 손님도 잡고</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { margin: 0; font-family: 'Noto Sans KR', sans-serif; background-color: #f8fafc; }
+        .bg-pattern {
+            background-color: #0f172a;
+            background-image: radial-gradient(#334155 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        textarea, input, select { font-family: 'Noto Sans KR', sans-serif; }
+        .tab-active { background-color: #4f46e5; color: #fff; }
+        .fade-in { animation: fadeIn .35s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(8px);} to {opacity:1; transform:none;} }
+        .result-card { white-space: pre-line; }
+        /* 스크롤바 살짝 정리 */
+        ::-webkit-scrollbar { width: 8px; height: 8px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+    </style>
+</head>
+<body class="text-slate-800">
+
+<!-- ===================== HERO ===================== -->
+<div class="bg-pattern text-white py-12 px-4 text-center">
+    <span class="inline-block bg-indigo-500 text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
+        활용 프로그램 · 프로필 소개글
+    </span>
+    <h1 class="text-2xl md:text-4xl font-black mb-3 leading-tight">
+        검색에도 걸리고, 손님이<br class="md:hidden">
+        <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-purple-400">'가보고 싶어지는'</span> 소개글
+    </h1>
+    <p class="text-gray-300 text-sm md:text-base font-light">
+        내 가게 정보만 입력하면 <b class="text-white">슬로건·타겟·가치 3줄</b>을 3가지 버전으로 만들어 드립니다.
+    </p>
+</div>
+
+<div class="max-w-5xl mx-auto px-4 py-8 md:py-10">
+
+    <!-- ===================== MODE TABS ===================== -->
+    <div class="flex flex-wrap gap-2 justify-center mb-8">
+        <button data-mode="full"    class="mode-tab tab-active text-sm font-bold px-4 py-2 rounded-full border border-indigo-200 transition">소개글 3줄 (풀버전)</button>
+        <button data-mode="simple"  class="mode-tab bg-white text-slate-600 text-sm font-bold px-4 py-2 rounded-full border border-slate-200 transition">간단형</button>
+        <button data-mode="rewrite" class="mode-tab bg-white text-slate-600 text-sm font-bold px-4 py-2 rounded-full border border-slate-200 transition">고쳐쓰기</button>
+        <button data-mode="name"    class="mode-tab bg-white text-slate-600 text-sm font-bold px-4 py-2 rounded-full border border-slate-200 transition">이름칸 키워드</button>
+        <button data-mode="link"    class="mode-tab bg-white text-slate-600 text-sm font-bold px-4 py-2 rounded-full border border-slate-200 transition">링크 추천</button>
+    </div>
+
+    <div class="grid md:grid-cols-2 gap-8">
+        <!-- ===================== 입력 폼 ===================== -->
+        <div class="bg-white rounded-2xl shadow-xl border border-slate-100 p-6">
+            <h2 class="font-black text-lg mb-1"><i class="fa-solid fa-pen-to-square text-indigo-600 mr-2"></i>내 가게 정보</h2>
+            <p class="text-xs text-slate-400 mb-5" id="formHint">빈칸이 있어도 됩니다. 아는 것만 채워도 결과가 나와요.</p>
+
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">지역 (동네)</label>
+                        <input id="f_region" type="text" placeholder="예: 원주 단계동" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-500 mb-1">업종</label>
+                        <input id="f_type" type="text" placeholder="예: 분식집" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-slate-500 mb-1">대표메뉴 (파는 것)</label>
+                    <input id="f_menu" type="text" placeholder="예: 라면, 김밥, 떡볶이" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                    <p class="text-[11px] text-slate-400 mt-1">쉼표(,)로 여러 개 적으면 키워드로 활용돼요.</p>
+                </div>
+
+                <div id="grp_feature">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">특징</label>
+                    <input id="f_feature" type="text" placeholder="예: 27년 된 노포, 매일 아침 직접 뽑는 면" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                </div>
+
+                <div id="grp_customer">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">주 손님</label>
+                    <input id="f_customer" type="text" placeholder="예: 퇴근길 직장인, 자취생, 아이 간식 찾는 부모" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                </div>
+
+                <div id="grp_diff">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">남들과 다른 점 (차별점)</label>
+                    <input id="f_diff" type="text" placeholder="예: 밤 12시까지 배달, 조미료 안 쓴 국물" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                </div>
+
+                <div id="grp_keyword">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">검색 키워드 <span class="text-slate-400 font-normal">(넣고 싶은 단어)</span></label>
+                    <input id="f_keyword" type="text" placeholder="예: 원주분식, 단계동맛집, 야식" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                    <p class="text-[11px] text-slate-400 mt-1">비워두면 지역+업종+대표메뉴로 자동 생성해요.</p>
+                </div>
+
+                <div id="grp_existing" class="hidden">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">기존 소개글 (고쳐쓰기용)</label>
+                    <textarea id="f_existing" rows="3" placeholder="지금 쓰고 있는 소개글을 붙여넣으세요." class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none"></textarea>
+                </div>
+
+                <div id="grp_shopname" class="hidden">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">가게명</label>
+                    <input id="f_shopname" type="text" placeholder="예: 행복분식" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                </div>
+
+                <div id="grp_goal" class="hidden">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">지금 내 가게에 가장 필요한 것은?</label>
+                    <select id="f_goal" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-white">
+                        <option value="grow">신규 손님·팔로워 늘리기 (아직 팔로워가 적어요)</option>
+                        <option value="sales">바로 매출·주문·예약 만들기 (단골·매출이 급해요)</option>
+                        <option value="consult">상담·문의 받기 (병원·미용·수리 등 상담형)</option>
+                    </select>
+                    <p class="text-[11px] text-slate-400 mt-1">가게 단계에 맞는 <b>1순위 링크 하나</b>를 추천해 드려요.</p>
+                </div>
+            </div>
+
+            <button id="btnGenerate" class="w-full mt-6 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 rounded-xl transition shadow-lg shadow-indigo-200">
+                <i class="fa-solid fa-wand-magic-sparkles mr-2"></i>3가지 버전 만들기
+            </button>
+            <button id="btnCopyPrompt" class="w-full mt-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold py-2.5 rounded-xl transition text-sm">
+                <i class="fa-regular fa-copy mr-2"></i>AI 프롬프트 복사하기 (ChatGPT·Claude용)
+            </button>
+        </div>
+
+        <!-- ===================== 결과 ===================== -->
+        <div>
+            <div class="flex items-center justify-between mb-3">
+                <h2 class="font-black text-lg"><i class="fa-solid fa-sparkles text-purple-600 mr-2"></i>결과</h2>
+                <span id="modeLabel" class="text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-full">소개글 3줄</span>
+            </div>
+            <div id="results" class="space-y-4">
+                <div class="bg-white rounded-2xl border border-dashed border-slate-200 p-8 text-center text-slate-400 text-sm">
+                    <i class="fa-regular fa-face-smile text-3xl mb-3 block"></i>
+                    왼쪽에 정보를 입력하고<br><b>[3가지 버전 만들기]</b>를 눌러보세요.
+                </div>
+            </div>
+
+            <!-- 방법 안내 -->
+            <div class="mt-6 bg-slate-900 text-slate-300 rounded-2xl p-5 text-xs leading-relaxed">
+                <p class="text-white font-bold mb-2"><i class="fa-solid fa-lightbulb text-amber-400 mr-2"></i>소개 3줄 = 슬로건 · 타겟 · 가치</p>
+                <p class="mb-1"><b class="text-white">슬로건</b> — 한 번에 기억되는 한 줄</p>
+                <p class="mb-1"><b class="text-white">타겟</b> — "내 얘기네" 싶게 구체적으로</p>
+                <p><b class="text-white">가치</b> — 팔로우하면 뭘 얻는지 + 검색 키워드</p>
+            </div>
+        </div>
+    </div>
+
+    <p class="text-center text-[11px] text-slate-400 mt-8">
+        결과는 예시 문구입니다. 마음에 드는 버전을 고른 뒤 내 말투로 살짝 다듬어 쓰면 완성돼요.
+    </p>
+</div>
+
+<!-- 복사 완료 토스트 -->
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 bg-slate-900 text-white text-sm px-5 py-3 rounded-full shadow-xl opacity-0 pointer-events-none transition-opacity duration-300 z-50">
+    <i class="fa-solid fa-check text-green-400 mr-1"></i><span id="toastMsg">복사되었습니다</span>
+</div>
+
+<script>
+/* =========================================================================
+   인스타 소개글 생성기 - 순수 클라이언트 로직 (외부 API 없음)
+   ========================================================================= */
+
+let mode = 'full';
+
+const el = id => document.getElementById(id);
+const val = id => (el(id) ? el(id).value.trim() : '');
+
+/* 입력값 모으기 + 빈칸 기본값 처리 */
+function collect() {
+    const region   = val('f_region');
+    const type     = val('f_type');
+    const menuRaw  = val('f_menu');
+    const menus    = menuRaw.split(/[,·、/]/).map(s => s.trim()).filter(Boolean);
+    const feature  = val('f_feature');
+    const customer = val('f_customer');
+    const diff     = val('f_diff');
+    const shopname = val('f_shopname');
+    const existing = val('f_existing');
+
+    // 검색 키워드: 입력 없으면 지역+업종+메뉴로 자동 생성
+    let kwRaw = val('f_keyword');
+    let keywords;
+    if (kwRaw) {
+        keywords = kwRaw.split(/[,·、/]/).map(s => s.trim()).filter(Boolean);
+    } else {
+        keywords = [];
+        if (region && type) keywords.push(region.replace(/\s/g,'') + type.replace(/\s/g,''));
+        if (region && menus[0]) keywords.push(region.replace(/\s/g,'') + menus[0]);
+        if (type) keywords.push(type + '맛집');
+        keywords = keywords.filter(Boolean);
+    }
+
+    return { region, type, menuRaw, menus, feature, customer, diff, shopname, existing, keywords };
+}
+
+/* 유틸: 배열에서 index 안전하게 순환 */
+const pick = (arr, i) => arr.length ? arr[i % arr.length] : '';
+const kwText = (keywords) => keywords.length ? '#' + keywords.map(k => k.replace(/^#/,'')).join(' #') : '';
+const menuText = (menus) => menus.length ? menus.join('·') : '메뉴';
+
+/* ---------- 슬로건 3종 ---------- */
+function makeSlogans(d) {
+    const loc = d.region || '우리 동네';
+    const menu = menuText(d.menus);
+    const audience = d.customer ? d.customer.split(/[,·]/)[0].trim() : loc + ' 사람';
+    return [
+        // v1: 지역+책임지는 집
+        `${loc} 사람들의 ${d.type || '한 끼'} 책임지는 집`,
+        // v2: 차별점/특징 강조
+        d.diff ? `${d.diff}, 그래서 다시 찾는 ${d.type || '집'}` :
+                 (d.feature ? `${d.feature}, ${loc} ${d.type || '맛집'}` : `${loc}에서 ${menu} 하면 여기`),
+        // v3: 감성/약속형
+        `${audience}의 하루를 채우는 ${menu}`
+    ];
+}
+
+/* ---------- 타겟 3종 ---------- */
+function makeTargets(d) {
+    const base = d.customer || `${d.region || '동네'} 주민`;
+    const parts = base.split(/[,·]/).map(s => s.trim()).filter(Boolean);
+    const joined = parts.length ? parts.join('·') : base;
+    const one = parts[0] || base;
+    return [
+        `${joined} 다 모여라`,
+        `${one} 위한 ${d.region || '동네'} ${d.type || '아지트'}`,
+        parts.length > 1 ? `오늘 뭐 먹지 고민되는 ${joined}께` : `${joined}이 찾는 바로 그곳`
+    ];
+}
+
+/* ---------- 가치 3종 (검색 키워드 포함) ---------- */
+function makeValues(d) {
+    const menu = menuText(d.menus);
+    const kw = kwText(d.keywords);
+    const benefit = d.diff || d.feature || '그날의 메뉴와 할인 소식';
+    return [
+        `매일 ${menu} 신메뉴·할인 소식 ${kw}`.trim(),
+        `${benefit} 여기서 먼저 확인 ${kw}`.trim(),
+        `팔로우하면 ${d.region || ''} ${menu} 꿀정보 놓치지 않아요 ${kw}`.replace(/\s+/g,' ').trim()
+    ];
+}
+
+/* ---------- 이름칸 키워드 5종 ---------- */
+function makeNameField(d) {
+    const region = d.region.replace(/\s/g,'');
+    const type = d.type;
+    const m = d.menus;
+    const out = [];
+    if (region && type && m[0]) out.push(`${region} ${type} · ${m.slice(0,3).join(' ')}`.trim());
+    if (region && m[0]) out.push(`${region} ${m.slice(0,2).join(' ')} · ${type || ''} 포장`.replace(/\s+/g,' ').trim());
+    if (d.shopname && region && type) out.push(`${d.shopname} · ${region} ${type}`);
+    if (region && type) out.push(`${region} ${type} 맛집 · ${m[0] || '오늘의메뉴'}`);
+    if (type && m.length) out.push(`${type} 전문 · ${m.slice(0,3).join('/')}`);
+    // 부족하면 채우기
+    if (d.shopname && m[0]) out.push(`${d.shopname} · ${m[0]} 전문점`);
+    if (region) out.push(`${region} 맛집 · ${type || '먹킷리스트'}`);
+    return [...new Set(out)].filter(Boolean).slice(0, 5);
+}
+
+/* ---------- 링크 추천 데이터 ---------- */
+const LINK_GUIDE = {
+    grow: {
+        title: '무료 PDF · 이벤트 링크',
+        icon: 'fa-gift', color: 'from-blue-500 to-indigo-500',
+        why: '아직 팔로워가 적을 땐 "판매"보다 "모으기"가 먼저예요. 무료 미끼로 팔로우·연락처(DB)를 쌓으세요.',
+        what: ['무료 전자책·PDF 받기', '무료 쿠폰·시식권', '이벤트 응모 폼(구글폼)'],
+        tool: '구글폼 · 스티비 · 카카오채널 이벤트'
+    },
+    sales: {
+        title: '실제 판매 · 예약 링크',
+        icon: 'fa-store', color: 'from-emerald-500 to-green-500',
+        why: '단골과 매출이 급하면 클릭 한 번에 바로 사거나 예약하게 만드세요. 중간 단계를 없애는 게 핵심이에요.',
+        what: ['주문·구매 페이지 직링', '네이버 예약·캐치테이블', '배달의민족·스마트스토어'],
+        tool: '스마트스토어 · 네이버예약 · 배민'
+    },
+    consult: {
+        title: '실시간 카톡 문의 링크',
+        icon: 'fa-comments', color: 'from-amber-500 to-orange-500',
+        why: '병원·미용·수리처럼 "물어보고 결정"하는 업종은 즉시 상담이 매출로 이어져요. 카카오채널로 바로 연결하세요.',
+        what: ['카카오톡 채널 상담', '전화 바로 걸기', '실시간 예약 문의'],
+        tool: '카카오톡 채널 · 채널톡'
+    }
+};
+
+function makeLinkCTA(d, guide) {
+    const menu = menuText(d.menus);
+    const loc = d.region || '';
+    return [
+        `👇 ${guide.what[0]} (프로필 링크)`,
+        `📌 ${loc} ${menu} · 아래 링크에서 바로!`.replace(/\s+/g,' ').trim(),
+        `🔗 ${guide.what[0]} → 링크 클릭`
+    ];
+}
+
+/* ---------- 3줄 블록 조립 ---------- */
+function buildThreeLine(d, i, slogans, targets, values) {
+    const s = pick(slogans, i), t = pick(targets, i), v = pick(values, i);
+    return `💬 ${s}\n🎯 ${t}\n🎁 ${v}`;
+}
+
+/* ========================= 렌더링 ========================= */
+function render() {
+    const d = collect();
+    const box = el('results');
+    box.innerHTML = '';
+
+    let cards = [];
+
+    if (mode === 'name') {
+        const names = makeNameField(d);
+        if (!names.length) {
+            box.innerHTML = warn('가게명·지역·업종·대표메뉴 중 하나 이상을 입력해 주세요.');
+            return;
+        }
+        const list = names.map((n, i) =>
+            `<div class="flex items-center justify-between gap-2 border-b border-slate-100 last:border-0 py-2">
+                <span class="text-sm font-medium">${i+1}. ${esc(n)}</span>
+                <button onclick="copyText(this,'${esc(n).replace(/'/g,"\\'")}')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold shrink-0"><i class="fa-regular fa-copy"></i></button>
+            </div>`).join('');
+        box.innerHTML =
+            `<div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-5 fade-in">
+                <p class="text-xs text-slate-400 mb-3">검색창에 손님이 칠 단어 기준 · <b>지역+업종+대표메뉴</b> 조합</p>
+                ${list}
+             </div>`;
+        return;
+    }
+
+    if (mode === 'link') {
+        const goal = val('f_goal') || 'grow';
+        const g = LINK_GUIDE[goal];
+        const ctas = makeLinkCTA(d, g);
+        const whatList = g.what.map(w => `<li class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span>${esc(w)}</span></li>`).join('');
+        const ctaList = ctas.map(c =>
+            `<div class="flex items-center justify-between gap-2 bg-slate-50 rounded-lg px-3 py-2">
+                <span class="text-sm">${esc(c)}</span>
+                <button onclick="copyText(this,'${esc(c).replace(/'/g,"\\'")}')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold shrink-0"><i class="fa-regular fa-copy"></i></button>
+            </div>`).join('');
+        box.innerHTML =
+            `<div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-5 fade-in">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-full bg-gradient-to-r ${g.color} flex items-center justify-center text-white text-lg shrink-0"><i class="fa-solid ${g.icon}"></i></div>
+                    <div>
+                        <p class="text-[11px] font-bold text-indigo-600">1순위 추천 링크</p>
+                        <p class="font-black text-lg leading-tight">${esc(g.title)}</p>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-600 leading-relaxed mb-4">${esc(g.why)}</p>
+                <p class="text-xs font-bold text-slate-500 mb-2">이런 걸 링크로 걸어요</p>
+                <ul class="text-sm space-y-1.5 mb-4">${whatList}</ul>
+                <p class="text-xs font-bold text-slate-500 mb-2">링크 바로 위에 넣을 안내 문구 (복사해서 사용)</p>
+                <div class="space-y-2 mb-4">${ctaList}</div>
+                <div class="bg-indigo-50 text-indigo-700 text-xs rounded-lg p-3 leading-relaxed">
+                    <b><i class="fa-solid fa-triangle-exclamation mr-1"></i>욕심내서 다 넣지 마세요.</b><br>
+                    가게 단계에 맞춰 <b>1순위 하나만</b>. 링크가 여러 개라면 <b>링크트리·인포크링크</b>로 묶어 하나의 주소로 거세요.
+                    <span class="block mt-1 text-indigo-500">추천 도구: ${esc(g.tool)} / linktr.ee · litt.ly</span>
+                </div>
+             </div>`;
+        return;
+    }
+
+    if (mode === 'rewrite' && !d.existing) {
+        box.innerHTML = warn('고쳐쓰기 모드에서는 "기존 소개글"을 붙여넣어 주세요.');
+        return;
+    }
+
+    const slogans = makeSlogans(d);
+    const targets = makeTargets(d);
+    const values  = makeValues(d);
+
+    for (let i = 0; i < 3; i++) {
+        cards.push(buildThreeLine(d, i, slogans, targets, values));
+    }
+
+    const labels = ['버전 A · 정공법', '버전 B · 차별점 강조', '버전 C · 감성형'];
+    box.innerHTML = cards.map((c, i) =>
+        `<div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-5 fade-in">
+            <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold text-white bg-gradient-to-r from-indigo-500 to-purple-500 px-3 py-1 rounded-full">${labels[i]}</span>
+                <button onclick="copyText(this, this.parentElement.nextElementSibling.innerText)" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold">
+                    <i class="fa-regular fa-copy mr-1"></i>복사
+                </button>
+            </div>
+            <div class="result-card text-[15px] leading-relaxed font-medium">${esc(c)}</div>
+        </div>`).join('');
+}
+
+function warn(msg) {
+    return `<div class="bg-amber-50 border border-amber-200 text-amber-700 rounded-2xl p-5 text-sm fade-in">
+        <i class="fa-solid fa-circle-exclamation mr-2"></i>${esc(msg)}</div>`;
+}
+
+/* ========================= AI 프롬프트 조립 ========================= */
+function buildPrompt() {
+    const d = collect();
+    const kw = d.keywords.join(', ') || '(지역+업종+대표메뉴로 자동)';
+
+    if (mode === 'name') {
+        return `내 인스타 계정 '이름(name)' 칸을 검색 잘 되게 지어줘.
+- 가게: ${d.shopname || '[가게명]'}, 파는 것: ${d.menuRaw || '[대표메뉴]'}
+- 지역/업종: ${d.region || '[지역]'} ${d.type || '[업종]'}
+- '지역+업종+대표메뉴' 조합으로, 손님이 검색창에 칠 단어 기준
+- 너무 길지 않게 후보 5개.`;
+    }
+
+    if (mode === 'link') {
+        const goalTxt = { grow: '신규 손님·팔로워 늘리기', sales: '바로 매출·주문·예약', consult: '상담·문의 받기' };
+        return `내 인스타 프로필 '링크' 칸 전략을 짜줘.
+- 가게: ${d.region || '[지역]'} ${d.type || '[업종]'}, 파는 것: ${d.menuRaw || '[대표메뉴]'}
+- 지금 가장 필요한 것: ${goalTxt[val('f_goal') || 'grow']}
+링크는 '보여주는' 게 아니라 '행동시키는' 것이라는 관점에서,
+1순위로 걸어야 할 링크 하나를 추천하고, 링크 위에 넣을 안내(CTA) 문구도 3개 만들어줘.
+링크가 여러 개면 링크트리로 묶는 방법도 알려줘.`;
+    }
+
+    if (mode === 'simple') {
+        return `나는 ${d.region || '[지역]'} ${d.type || '[업종]'} 사장이야. (${d.diff || '[차별점]'})
+인스타 소개글을 슬로건·타겟·가치 3줄로 써줘.
+검색 잘 되게 '${kw}' 키워드도 넣어서, 3개 버전으로.`;
+    }
+
+    if (mode === 'rewrite') {
+        return `지금 내 소개글이야: "${d.existing || '[기존 소개글 붙여넣기]'}"
+이걸 슬로건·타겟·가치 3줄 구조로 다시 써줘.
+'오늘도 행복하게' 같은 의미 없는 문구는 빼고,
+'${kw}' 키워드 넣어서 3개 버전으로.`;
+    }
+
+    // full
+    return `내 가게 인스타 프로필 소개글을 써줘.
+이 소개글은 두 가지를 동시에 만족해야 해.
+1) AI·검색이 인식하게: '지역+업종+메뉴' 키워드가 자연스럽게 들어갈 것
+2) 사람이 읽고 '여기 가봐야겠다'는 느낌이 들 것
+
+[내 가게]
+- 업종/지역: ${d.region || '[지역]'} ${d.type || '[업종]'}
+- 파는 것: ${d.menuRaw || '[대표메뉴]'}
+- 특징: ${d.feature || '[특징]'}
+- 손님: ${d.customer || '[주 손님]'}
+- 남들과 다른 점: ${d.diff || '[차별점]'}
+
+[구조] 슬로건·타겟·가치 3줄
+- 슬로건: 한 번에 기억되고 마음이 가는 한 줄
+- 타겟: "내 얘기네" 싶게 구체적으로
+- 가치: 팔로우하면 뭘 얻는지 + 검색 키워드(${kw}) 넣기
+
+광고처럼 뻔한 문구 말고, 진짜 가고 싶어지는 톤으로 3개 버전 써줘.`;
+}
+
+/* ========================= 유틸 ========================= */
+function esc(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function toast(msg) {
+    el('toastMsg').textContent = msg;
+    const t = el('toast');
+    t.style.opacity = '1';
+    clearTimeout(window._tt);
+    window._tt = setTimeout(() => t.style.opacity = '0', 1600);
+}
+
+function copyText(btn, text) {
+    navigator.clipboard.writeText(text).then(() => toast('복사되었습니다'))
+        .catch(() => {
+            // 폴백
+            const ta = document.createElement('textarea');
+            ta.value = text; document.body.appendChild(ta); ta.select();
+            document.execCommand('copy'); ta.remove(); toast('복사되었습니다');
+        });
+}
+window.copyText = copyText;
+
+/* ========================= 모드 전환 ========================= */
+const MODE_META = {
+    full:    { label: '소개글 3줄', hint: '빈칸이 있어도 됩니다. 아는 것만 채워도 결과가 나와요.' },
+    simple:  { label: '간단형',     hint: '지역·업종·차별점·키워드만 있으면 충분해요.' },
+    rewrite: { label: '고쳐쓰기',   hint: '기존 소개글을 붙여넣으면 3줄 구조로 바꿔드려요.' },
+    name:    { label: '이름칸 키워드', hint: '검색에 잡히는 계정 이름(name)을 만들어요.' },
+    link:    { label: '링크 추천',    hint: '가게 단계에 맞는 1순위 링크를 추천해요.' }
+};
+
+function setMode(m) {
+    mode = m;
+    document.querySelectorAll('.mode-tab').forEach(b => {
+        const on = b.dataset.mode === m;
+        b.classList.toggle('tab-active', on);
+        b.classList.toggle('bg-white', !on);
+        b.classList.toggle('text-slate-600', !on);
+    });
+    el('modeLabel').textContent = MODE_META[m].label;
+    el('formHint').textContent = MODE_META[m].hint;
+
+    // 모드별 필드 표시
+    el('grp_existing').classList.toggle('hidden', m !== 'rewrite');
+    el('grp_shopname').classList.toggle('hidden', m !== 'name');
+    el('grp_goal').classList.toggle('hidden', m !== 'link');
+    // 이름칸·링크 모드에서는 특징/손님/차별점/키워드 숨김 (핵심만)
+    const slim = (m === 'name' || m === 'link');
+    el('grp_feature').classList.toggle('hidden', slim);
+    el('grp_customer').classList.toggle('hidden', slim);
+    el('grp_diff').classList.toggle('hidden', slim);
+    el('grp_keyword').classList.toggle('hidden', m === 'link');
+
+    // 버튼 라벨을 모드에 맞게
+    const btn = el('btnGenerate');
+    if (m === 'name')      btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles mr-2"></i>이름 후보 5개 만들기';
+    else if (m === 'link') btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles mr-2"></i>1순위 링크 추천받기';
+    else                   btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles mr-2"></i>3가지 버전 만들기';
+}
+
+document.querySelectorAll('.mode-tab').forEach(b =>
+    b.addEventListener('click', () => setMode(b.dataset.mode)));
+
+el('btnGenerate').addEventListener('click', render);
+el('btnCopyPrompt').addEventListener('click', () => copyText(null, buildPrompt()));
+
+// Enter로도 생성 (textarea 제외)
+document.querySelectorAll('input').forEach(inp =>
+    inp.addEventListener('keydown', e => { if (e.key === 'Enter') render(); }));
+
+setMode('full');
+</script>
+</body>
+</html>
