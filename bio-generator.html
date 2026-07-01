@@ -52,6 +52,7 @@
         <button data-mode="simple"  class="mode-tab bg-white text-slate-600 text-sm font-bold px-4 py-2 rounded-full border border-slate-200 transition">간단형</button>
         <button data-mode="rewrite" class="mode-tab bg-white text-slate-600 text-sm font-bold px-4 py-2 rounded-full border border-slate-200 transition">고쳐쓰기</button>
         <button data-mode="name"    class="mode-tab bg-white text-slate-600 text-sm font-bold px-4 py-2 rounded-full border border-slate-200 transition">이름칸 키워드</button>
+        <button data-mode="link"    class="mode-tab bg-white text-slate-600 text-sm font-bold px-4 py-2 rounded-full border border-slate-200 transition">링크 추천</button>
     </div>
 
     <div class="grid md:grid-cols-2 gap-8">
@@ -107,6 +108,16 @@
                 <div id="grp_shopname" class="hidden">
                     <label class="block text-xs font-bold text-slate-500 mb-1">가게명</label>
                     <input id="f_shopname" type="text" placeholder="예: 행복분식" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none">
+                </div>
+
+                <div id="grp_goal" class="hidden">
+                    <label class="block text-xs font-bold text-slate-500 mb-1">지금 내 가게에 가장 필요한 것은?</label>
+                    <select id="f_goal" class="w-full text-sm border border-slate-200 rounded-lg px-3 py-2 focus:ring-2 focus:ring-indigo-400 focus:outline-none bg-white">
+                        <option value="grow">신규 손님·팔로워 늘리기 (아직 팔로워가 적어요)</option>
+                        <option value="sales">바로 매출·주문·예약 만들기 (단골·매출이 급해요)</option>
+                        <option value="consult">상담·문의 받기 (병원·미용·수리 등 상담형)</option>
+                    </select>
+                    <p class="text-[11px] text-slate-400 mt-1">가게 단계에 맞는 <b>1순위 링크 하나</b>를 추천해 드려요.</p>
                 </div>
             </div>
 
@@ -252,6 +263,41 @@ function makeNameField(d) {
     return [...new Set(out)].filter(Boolean).slice(0, 5);
 }
 
+/* ---------- 링크 추천 데이터 ---------- */
+const LINK_GUIDE = {
+    grow: {
+        title: '무료 PDF · 이벤트 링크',
+        icon: 'fa-gift', color: 'from-blue-500 to-indigo-500',
+        why: '아직 팔로워가 적을 땐 "판매"보다 "모으기"가 먼저예요. 무료 미끼로 팔로우·연락처(DB)를 쌓으세요.',
+        what: ['무료 전자책·PDF 받기', '무료 쿠폰·시식권', '이벤트 응모 폼(구글폼)'],
+        tool: '구글폼 · 스티비 · 카카오채널 이벤트'
+    },
+    sales: {
+        title: '실제 판매 · 예약 링크',
+        icon: 'fa-store', color: 'from-emerald-500 to-green-500',
+        why: '단골과 매출이 급하면 클릭 한 번에 바로 사거나 예약하게 만드세요. 중간 단계를 없애는 게 핵심이에요.',
+        what: ['주문·구매 페이지 직링', '네이버 예약·캐치테이블', '배달의민족·스마트스토어'],
+        tool: '스마트스토어 · 네이버예약 · 배민'
+    },
+    consult: {
+        title: '실시간 카톡 문의 링크',
+        icon: 'fa-comments', color: 'from-amber-500 to-orange-500',
+        why: '병원·미용·수리처럼 "물어보고 결정"하는 업종은 즉시 상담이 매출로 이어져요. 카카오채널로 바로 연결하세요.',
+        what: ['카카오톡 채널 상담', '전화 바로 걸기', '실시간 예약 문의'],
+        tool: '카카오톡 채널 · 채널톡'
+    }
+};
+
+function makeLinkCTA(d, guide) {
+    const menu = menuText(d.menus);
+    const loc = d.region || '';
+    return [
+        `👇 ${guide.what[0]} (프로필 링크)`,
+        `📌 ${loc} ${menu} · 아래 링크에서 바로!`.replace(/\s+/g,' ').trim(),
+        `🔗 ${guide.what[0]} → 링크 클릭`
+    ];
+}
+
 /* ---------- 3줄 블록 조립 ---------- */
 function buildThreeLine(d, i, slogans, targets, values) {
     const s = pick(slogans, i), t = pick(targets, i), v = pick(values, i);
@@ -281,6 +327,39 @@ function render() {
             `<div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-5 fade-in">
                 <p class="text-xs text-slate-400 mb-3">검색창에 손님이 칠 단어 기준 · <b>지역+업종+대표메뉴</b> 조합</p>
                 ${list}
+             </div>`;
+        return;
+    }
+
+    if (mode === 'link') {
+        const goal = val('f_goal') || 'grow';
+        const g = LINK_GUIDE[goal];
+        const ctas = makeLinkCTA(d, g);
+        const whatList = g.what.map(w => `<li class="flex items-start gap-2"><i class="fa-solid fa-check text-green-500 mt-0.5"></i><span>${esc(w)}</span></li>`).join('');
+        const ctaList = ctas.map(c =>
+            `<div class="flex items-center justify-between gap-2 bg-slate-50 rounded-lg px-3 py-2">
+                <span class="text-sm">${esc(c)}</span>
+                <button onclick="copyText(this,'${esc(c).replace(/'/g,"\\'")}')" class="text-xs text-indigo-600 hover:text-indigo-800 font-bold shrink-0"><i class="fa-regular fa-copy"></i></button>
+            </div>`).join('');
+        box.innerHTML =
+            `<div class="bg-white rounded-2xl shadow-lg border border-slate-100 p-5 fade-in">
+                <div class="flex items-center gap-3 mb-3">
+                    <div class="w-11 h-11 rounded-full bg-gradient-to-r ${g.color} flex items-center justify-center text-white text-lg shrink-0"><i class="fa-solid ${g.icon}"></i></div>
+                    <div>
+                        <p class="text-[11px] font-bold text-indigo-600">1순위 추천 링크</p>
+                        <p class="font-black text-lg leading-tight">${esc(g.title)}</p>
+                    </div>
+                </div>
+                <p class="text-sm text-slate-600 leading-relaxed mb-4">${esc(g.why)}</p>
+                <p class="text-xs font-bold text-slate-500 mb-2">이런 걸 링크로 걸어요</p>
+                <ul class="text-sm space-y-1.5 mb-4">${whatList}</ul>
+                <p class="text-xs font-bold text-slate-500 mb-2">링크 바로 위에 넣을 안내 문구 (복사해서 사용)</p>
+                <div class="space-y-2 mb-4">${ctaList}</div>
+                <div class="bg-indigo-50 text-indigo-700 text-xs rounded-lg p-3 leading-relaxed">
+                    <b><i class="fa-solid fa-triangle-exclamation mr-1"></i>욕심내서 다 넣지 마세요.</b><br>
+                    가게 단계에 맞춰 <b>1순위 하나만</b>. 링크가 여러 개라면 <b>링크트리·인포크링크</b>로 묶어 하나의 주소로 거세요.
+                    <span class="block mt-1 text-indigo-500">추천 도구: ${esc(g.tool)} / linktr.ee · litt.ly</span>
+                </div>
              </div>`;
         return;
     }
@@ -327,6 +406,16 @@ function buildPrompt() {
 - 지역/업종: ${d.region || '[지역]'} ${d.type || '[업종]'}
 - '지역+업종+대표메뉴' 조합으로, 손님이 검색창에 칠 단어 기준
 - 너무 길지 않게 후보 5개.`;
+    }
+
+    if (mode === 'link') {
+        const goalTxt = { grow: '신규 손님·팔로워 늘리기', sales: '바로 매출·주문·예약', consult: '상담·문의 받기' };
+        return `내 인스타 프로필 '링크' 칸 전략을 짜줘.
+- 가게: ${d.region || '[지역]'} ${d.type || '[업종]'}, 파는 것: ${d.menuRaw || '[대표메뉴]'}
+- 지금 가장 필요한 것: ${goalTxt[val('f_goal') || 'grow']}
+링크는 '보여주는' 게 아니라 '행동시키는' 것이라는 관점에서,
+1순위로 걸어야 할 링크 하나를 추천하고, 링크 위에 넣을 안내(CTA) 문구도 3개 만들어줘.
+링크가 여러 개면 링크트리로 묶는 방법도 알려줘.`;
     }
 
     if (mode === 'simple') {
@@ -392,7 +481,8 @@ const MODE_META = {
     full:    { label: '소개글 3줄', hint: '빈칸이 있어도 됩니다. 아는 것만 채워도 결과가 나와요.' },
     simple:  { label: '간단형',     hint: '지역·업종·차별점·키워드만 있으면 충분해요.' },
     rewrite: { label: '고쳐쓰기',   hint: '기존 소개글을 붙여넣으면 3줄 구조로 바꿔드려요.' },
-    name:    { label: '이름칸 키워드', hint: '검색에 잡히는 계정 이름(name)을 만들어요.' }
+    name:    { label: '이름칸 키워드', hint: '검색에 잡히는 계정 이름(name)을 만들어요.' },
+    link:    { label: '링크 추천',    hint: '가게 단계에 맞는 1순위 링크를 추천해요.' }
 };
 
 function setMode(m) {
@@ -409,11 +499,19 @@ function setMode(m) {
     // 모드별 필드 표시
     el('grp_existing').classList.toggle('hidden', m !== 'rewrite');
     el('grp_shopname').classList.toggle('hidden', m !== 'name');
-    // 이름칸 모드에서는 특징/손님/차별점 숨김 (핵심만)
-    const nameMode = (m === 'name');
-    el('grp_feature').classList.toggle('hidden', nameMode);
-    el('grp_customer').classList.toggle('hidden', nameMode);
-    el('grp_diff').classList.toggle('hidden', nameMode);
+    el('grp_goal').classList.toggle('hidden', m !== 'link');
+    // 이름칸·링크 모드에서는 특징/손님/차별점/키워드 숨김 (핵심만)
+    const slim = (m === 'name' || m === 'link');
+    el('grp_feature').classList.toggle('hidden', slim);
+    el('grp_customer').classList.toggle('hidden', slim);
+    el('grp_diff').classList.toggle('hidden', slim);
+    el('grp_keyword').classList.toggle('hidden', m === 'link');
+
+    // 버튼 라벨을 모드에 맞게
+    const btn = el('btnGenerate');
+    if (m === 'name')      btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles mr-2"></i>이름 후보 5개 만들기';
+    else if (m === 'link') btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles mr-2"></i>1순위 링크 추천받기';
+    else                   btn.innerHTML = '<i class="fa-solid fa-wand-magic-sparkles mr-2"></i>3가지 버전 만들기';
 }
 
 document.querySelectorAll('.mode-tab').forEach(b =>
