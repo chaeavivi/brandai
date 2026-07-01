@@ -1,0 +1,3 @@
+# 모든 검색엔진의 수집(색인) 차단
+User-agent: *
+Disallow: /
