@@ -1,0 +1,548 @@
+<!DOCTYPE html>
+<!-- ================================================================================== -->
+<!-- 활용 프로그램. 프롬프트 블록 조립 게임 (역할·목적·대상·형식·조건) -->
+<!-- 노션에 임베드하거나, 이 파일 하나만 있으면 단독으로 실행됩니다. (API 키 불필요) -->
+<!-- ================================================================================== -->
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>프롬프트 블록 조립 게임</title>
+<style>
+  :root{
+    --navy:#1F3864; --blue:#2E5496; --lightblue:#D6E2F0; --pale:#EEF3FB;
+    --accent:#C00000; --ink:#222B3A; --gray:#6B7280; --green:#2E7D32; --gold:#E8A317;
+    --paper:#F7F9FC;
+    --role:#2E5496; --task:#C00000; --target:#1F3864; --format:#2E7D32; --cond:#E8A317;
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  body{
+    font-family:'Malgun Gothic','맑은 고딕',sans-serif;
+    background:
+      radial-gradient(1200px 500px at 80% -10%, #26406f 0%, transparent 60%),
+      linear-gradient(160deg,#1a2f52 0%,#14243f 100%);
+    color:var(--ink); min-height:100vh; padding:22px 16px 60px;
+  }
+  .wrap{max-width:1080px;margin:0 auto;}
+  header{text-align:center;color:#fff;margin-bottom:22px;}
+  .kicker{font-size:14px;letter-spacing:3px;color:var(--lightblue);font-weight:700;}
+  h1{font-size:34px;margin:6px 0 4px;letter-spacing:-1px;}
+  .sub{color:#AEC3E0;font-size:15px;}
+
+  /* 미션 진행 표시 (한 번에 채점) */
+  .steps{
+    display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-bottom:16px;
+  }
+  .step{
+    background:rgba(255,255,255,.08);color:#AEC3E0;border:1.5px solid rgba(255,255,255,.18);
+    border-radius:999px;padding:7px 14px;font-size:13px;font-weight:700;cursor:pointer;
+    transition:all .15s;display:flex;align-items:center;gap:7px;
+  }
+  .step:hover{background:rgba(255,255,255,.16);color:#fff;}
+  .step.active{background:#fff;color:var(--navy);border-color:#fff;}
+  .step .tick{font-size:12px;}
+  .step.done{border-color:#7FB77E;color:#DCEFDB;}
+  .step.perfect{background:rgba(46,125,50,.28);border-color:var(--green);color:#EAF6EA;}
+  .step.partial{background:rgba(232,163,23,.22);border-color:var(--gold);color:#FBEFD3;}
+  .step.miss{background:rgba(192,0,0,.20);border-color:var(--accent);color:#F7D9D9;}
+
+  /* 미션 카드 */
+  .mission{
+    background:var(--paper);border-radius:16px;padding:18px 20px;margin-bottom:16px;
+    box-shadow:0 12px 30px rgba(10,20,40,.35);
+    display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+  }
+  .mission .badge{
+    background:var(--navy);color:#fff;border-radius:12px;padding:8px 14px;font-weight:700;
+    font-size:13px;white-space:nowrap;
+  }
+  .mission .goal{flex:1;min-width:220px;}
+  .mission .goal b{color:var(--navy);font-size:17px;}
+  .mission .goal .desc{color:var(--gray);font-size:13.5px;margin-top:2px;}
+  .mission .nav{display:flex;gap:8px;}
+  .mission button.mbtn{
+    border:1px solid var(--lightblue);background:#fff;color:var(--navy);
+    border-radius:10px;padding:8px 12px;font-weight:700;cursor:pointer;font-size:13px;
+  }
+  .mission button.mbtn:hover{background:var(--pale);}
+
+  /* 조립 트레이 */
+  .tray{
+    background:#fff;border-radius:16px;padding:16px 18px 6px;margin-bottom:16px;
+    box-shadow:0 12px 30px rgba(10,20,40,.35);
+  }
+  .tray-title{font-size:13px;font-weight:700;color:var(--gray);letter-spacing:1px;margin-bottom:8px;}
+  .assembled{
+    min-height:74px;border:2px dashed #C6D3E6;border-radius:12px;background:var(--pale);
+    padding:12px;display:flex;gap:8px;flex-wrap:wrap;align-items:center;
+    transition:border-color .2s;
+  }
+  .assembled.filled{border-style:solid;border-color:var(--blue);background:#fff;}
+  .assembled .placeholder{color:#9AAAC4;font-size:14px;}
+  .slot{
+    color:#fff;border-radius:10px;padding:9px 12px;font-size:14px;font-weight:600;
+    display:inline-flex;align-items:center;gap:8px;cursor:pointer;
+    animation:pop .18s ease;position:relative;
+  }
+  @keyframes pop{from{transform:scale(.7);opacity:0}to{transform:scale(1);opacity:1}}
+  .slot .x{opacity:.75;font-weight:800;}
+  .slot:hover .x{opacity:1;}
+  .slot .cat{font-size:10px;opacity:.85;background:rgba(255,255,255,.22);
+    padding:1px 6px;border-radius:6px;font-weight:700;}
+
+  /* 완성 문장 */
+  .sentence{
+    margin-top:12px;background:var(--navy);color:#fff;border-radius:12px;padding:14px 16px;
+    font-size:16.5px;line-height:1.5;min-height:52px;
+  }
+  .sentence .lead{color:#8FA8D0;font-size:12px;font-weight:700;letter-spacing:1px;display:block;margin-bottom:4px;}
+  .sentence .live{font-weight:600;}
+  .sentence .empty{color:#6E86B5;}
+
+  .bar{display:flex;gap:10px;margin-top:12px;flex-wrap:wrap;align-items:center;}
+  .score{font-weight:800;color:var(--navy);font-size:15px;background:var(--lightblue);
+    padding:8px 14px;border-radius:10px;}
+  .btn{border:none;border-radius:10px;padding:10px 16px;font-weight:700;cursor:pointer;font-size:14px;}
+  .btn.primary{background:var(--accent);color:#fff;}
+  .btn.primary:hover{background:#a30000;}
+  .btn.ghost{background:#fff;color:var(--navy);border:1px solid var(--lightblue);}
+  .btn.ghost:hover{background:var(--pale);}
+  .feedback{font-size:14px;font-weight:700;padding:8px 4px;min-height:22px;}
+  .feedback.good{color:var(--green);}
+  .feedback.warn{color:var(--accent);}
+
+  /* 블록 팔레트 */
+  .palette{
+    background:#fff;border-radius:16px;padding:16px 18px;box-shadow:0 12px 30px rgba(10,20,40,.35);
+  }
+  .cat-block{margin-bottom:14px;}
+  .cat-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;}
+  .dot{width:12px;height:12px;border-radius:4px;}
+  .cat-head b{font-size:15px;color:var(--ink);}
+  .cat-head .hint{font-size:12px;color:var(--gray);}
+  .chips{display:flex;gap:8px;flex-wrap:wrap;}
+  .chip{
+    border:1.5px solid #DCE5F1;background:#fff;border-radius:999px;padding:8px 14px;
+    font-size:13.5px;cursor:pointer;transition:all .12s;color:var(--ink);font-weight:500;
+  }
+  .chip:hover{transform:translateY(-1px);box-shadow:0 4px 10px rgba(20,40,80,.12);}
+  .chip.picked{color:#fff;border-color:transparent;font-weight:600;}
+
+  /* 결과 패널 (한 번에 채점) */
+  .result{
+    background:#fff;border-radius:16px;margin-top:16px;padding:0;overflow:hidden;
+    box-shadow:0 12px 30px rgba(10,20,40,.35);display:none;
+  }
+  .result.show{display:block;animation:pop .2s ease;}
+  .result .rtop{
+    background:linear-gradient(135deg,var(--navy),var(--blue));color:#fff;
+    padding:22px 24px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+  }
+  .result .big{font-size:44px;font-weight:900;line-height:1;}
+  .result .big small{font-size:18px;font-weight:700;opacity:.8;}
+  .result .rtxt b{font-size:18px;display:block;}
+  .result .rtxt span{font-size:13.5px;color:#CBD8EE;}
+  .result .rgrade{margin-left:auto;font-size:15px;font-weight:800;background:rgba(255,255,255,.16);
+    padding:10px 16px;border-radius:12px;}
+  .rows{padding:8px 12px 14px;}
+  .rrow{
+    display:flex;align-items:center;gap:12px;padding:11px 12px;border-bottom:1px solid #EEF2F8;
+    cursor:pointer;
+  }
+  .rrow:last-child{border-bottom:none;}
+  .rrow:hover{background:var(--pale);}
+  .rrow .rbar{width:120px;height:9px;border-radius:6px;background:#EAEFF7;overflow:hidden;flex-shrink:0;}
+  .rrow .rbar i{display:block;height:100%;border-radius:6px;}
+  .rrow .rname{font-weight:700;font-size:14px;min-width:140px;}
+  .rrow .rscore{font-weight:800;font-size:14px;margin-left:auto;}
+  .rrow .rnote{font-size:12.5px;color:var(--gray);flex:1;min-width:160px;}
+  .rrow .rnote .warnc{color:var(--accent);font-weight:700;}
+  .rrow .rnote .okc{color:var(--green);font-weight:700;}
+
+  .legend{color:#AEC3E0;font-size:12.5px;text-align:center;margin-top:16px;line-height:1.6;}
+  .toast{
+    position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);
+    background:var(--navy);color:#fff;padding:12px 22px;border-radius:12px;font-weight:700;
+    box-shadow:0 12px 30px rgba(0,0,0,.4);opacity:0;pointer-events:none;transition:all .25s;z-index:50;
+  }
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+  @media (max-width:640px){h1{font-size:26px;} .sentence{font-size:15px;} .result .big{font-size:34px;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <div class="kicker">생성형 AI 활용 · 프롬프트 실습</div>
+    <h1>프롬프트 블록 조립 게임</h1>
+    <div class="sub">블록을 눌러 쌓으면 프롬프트가 완성돼요 · 역할 + 목적 + 대상 + 형식 + 조건</div>
+  </header>
+
+  <!-- 미션 진행 표시: 6개 미션을 모두 담은 뒤 한 번에 채점 -->
+  <div class="steps" id="steps"></div>
+
+  <div class="mission">
+    <div class="badge" id="mnum">미션 1 / 6</div>
+    <div class="goal">
+      <b id="mgoal"></b>
+      <div class="desc" id="mdesc"></div>
+    </div>
+    <div class="nav">
+      <button class="mbtn" id="prev">◀ 이전</button>
+      <button class="mbtn" id="next">다음 ▶</button>
+    </div>
+  </div>
+
+  <div class="tray">
+    <div class="tray-title">조립판 — 블록을 눌러 담고, 담긴 블록을 누르면 빠져요 · 보기가 많아 헷갈리니 잘 골라보세요</div>
+    <div class="assembled" id="assembled">
+      <span class="placeholder">아래에서 블록을 골라 눌러보세요 (순서는 자유예요)</span>
+    </div>
+    <div class="sentence">
+      <span class="lead">완성된 프롬프트</span>
+      <span id="live" class="live"><span class="empty">아직 블록이 없어요…</span></span>
+    </div>
+    <div class="bar">
+      <span class="score" id="score">담은 미션 0 / 6</span>
+      <button class="btn primary" id="check">전체 채점하기 (6개 미션 한 번에)</button>
+      <button class="btn ghost" id="resetOne">이 미션 다시 담기</button>
+      <button class="btn ghost" id="resetAll">전체 초기화</button>
+      <button class="btn ghost" id="copy">문장 복사</button>
+    </div>
+    <div class="feedback" id="feedback"></div>
+  </div>
+
+  <div class="palette" id="palette"></div>
+
+  <!-- 한 번에 채점한 결과 -->
+  <div class="result" id="result">
+    <div class="rtop">
+      <div class="big" id="rbig">0<small>/600</small></div>
+      <div class="rtxt">
+        <b id="rtitle">전체 채점 결과</b>
+        <span id="rsub"></span>
+      </div>
+      <div class="rgrade" id="rgrade"></div>
+    </div>
+    <div class="rows" id="rrows"></div>
+  </div>
+
+  <div class="legend">
+    이 게임은 <b>정답을 외우는 게 아니라</b>, 다섯 가지 재료(역할·목적·대상·형식·조건)를 빠짐없이·알맞게 넣는 습관을 들이는 연습이에요.<br>
+    보기 중엔 <b>그럴듯하지만 살짝 어긋난 함정</b>도 섞여 있어요. 실제 AI에 넣을 때는 내담자 이름 대신 <b>A씨</b>처럼 비식별화하는 것, 잊지 마세요!
+  </div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const CATS = [
+  {key:'role',   label:'역할',  color:'var(--role)',   hint:'"너는 ~야"'},
+  {key:'task',   label:'목적',  color:'var(--task)',   hint:'무엇을 해달라는지'},
+  {key:'target', label:'대상',  color:'var(--target)', hint:'누구를 위한 내용'},
+  {key:'format', label:'형식',  color:'var(--format)', hint:'어떤 형태로'},
+  {key:'cond',   label:'조건',  color:'var(--cond)',   hint:'분량·말투·규칙'},
+];
+const COLOR = {role:'#2E5496',task:'#C00000',target:'#1F3864',format:'#2E7D32',cond:'#E8A317'};
+
+// 미션별 블록 세트 (정신건강복지센터 + 일반 사무 혼합)
+// 각 카테고리 첫 번째(index 0)가 정답. 나머지는 '그럴듯한 함정' 보기.
+const MISSIONS = [
+  {
+    goal:'미션 1 · 보호자용 안내문 만들기',
+    desc:'우울 증상을 겪는 가족을 둔 보호자에게 전할 따뜻한 안내문을 프롬프트로 요청해 보세요.',
+    blocks:{
+      role:['너는 정신건강 상담 전문가야','너는 정신과 전문의야','너는 보건소 행정 담당자야','너는 의학 논문 저자야'],
+      task:['보호자용 안내문을 작성해줘','우울증 진단을 내려줘','치료 계획서를 작성해줘','상담 예약을 대신 잡아줘'],
+      target:['우울 증상을 겪는 가족을 둔 보호자를 대상으로','우울 증상을 겪는 당사자를 대상으로','정신과 의료진을 대상으로','일반 대중 전체를 대상으로'],
+      format:['5문장 내외의 안내문으로','전문 의학 보고서로','증상 체크리스트 표로','한 문단짜리 긴 글로'],
+      cond:['따뜻한 말투로, 전문용어 없이 쉽게','객관적이고 건조한 말투로','의학 용어를 정확히 넣어서','최대한 짧게 핵심 단어만'],
+    },
+    answer:{role:0,task:0,target:0,format:0,cond:0}
+  },
+  {
+    goal:'미션 2 · 상담일지 정리',
+    desc:'비식별화된 상담 메모를 표준 항목에 맞춰 상담일지로 정리하도록 요청해 보세요.',
+    blocks:{
+      role:['너는 상담 기록 정리 도우미야','너는 심리검사 채점자야','너는 데이터 분석가야','너는 콜센터 상담원이야'],
+      task:['상담 메모를 상담일지로 정리해줘','상담 내용을 통계로 요약해줘','내담자에게 보낼 답장을 써줘','상담 내용을 평가·채점해줘'],
+      target:['정신건강복지센터 상담자가 기록·보관하도록','내담자 본인이 읽도록','외부 연구자가 분석하도록','SNS에 공유하도록'],
+      format:['상담유형·문제종류·상담내용·상담결과 항목으로','자유 서술형 줄글로','별점 평가표로','시간순 대화 녹취록으로'],
+      cond:['사실만 기록하고, 위험도 판단은 상담자 몫으로 비워두고','상담자의 추측과 감정을 덧붙여서','내담자 실명을 그대로 넣어서','모든 대화를 빠짐없이 옮겨서'],
+    },
+    answer:{role:0,task:0,target:0,format:0,cond:0}
+  },
+  {
+    goal:'미션 3 · 회의록 자동 정리',
+    desc:'거친 회의 메모를 담당자가 빠르게 파악할 수 있는 회의록으로 바꾸도록 요청해 보세요.',
+    blocks:{
+      role:['너는 회의록 정리 전문가야','너는 속기사야','너는 회의 사회자야','너는 발표자료 디자이너야'],
+      task:['회의 메모를 회의록으로 정리해줘','회의 내용을 그대로 받아써줘','다음 회의 안건을 새로 만들어줘','참석자 발언을 평가해줘'],
+      target:['기관 담당자가 빠르게 파악하도록','회의에 불참한 상급자 보고용으로','외부 언론 배포용으로','참석자 개인 소장용으로'],
+      format:['안건·논의·결정·담당자 표로','발언 순서대로 옮긴 녹취록으로','한 문단 요약으로','이메일 본문 형식으로'],
+      cond:['간결하게, 결정사항과 담당자 위주로','모든 발언을 빠짐없이 그대로','정리자의 개인 의견을 덧붙여서','존댓말 대화체로 길게'],
+    },
+    answer:{role:0,task:0,target:0,format:0,cond:0}
+  },
+  {
+    goal:'미션 4 · 협력기관 이메일',
+    desc:'합동 회의 일정을 협의하는 정중한 업무 메일 초안을 요청해 보세요.',
+    blocks:{
+      role:['너는 행정 담당자야','너는 홍보 마케터야','너는 법률 자문가야','너는 콜센터 안내원이야'],
+      task:['회의 일정을 협의하는 메일 초안을 써줘','협력기관과의 계약서를 작성해줘','회의 결과 보도자료를 써줘','협력기관을 홍보해줘'],
+      target:['협력기관 실무 담당자에게','우리 기관 내부 직원에게','불특정 다수 시민에게','기관장 보고용으로'],
+      format:['제목·인사말·본문·맺음말을 갖춘 이메일로','짧은 문자 메시지로','딱딱한 공문 양식으로','메신저 대화체로'],
+      cond:['정중하고 간결하게, 협의할 날짜 후보를 제시해서','친근한 반말로 편하게','격식 없이 요점만 툭','최대한 길고 상세하게'],
+    },
+    answer:{role:0,task:0,target:0,format:0,cond:0}
+  },
+  {
+    goal:'미션 5 · 보고서 초안',
+    desc:'주간 사업 실적을 기관장에게 보고하는 보고서 초안을 요청해 보세요.',
+    blocks:{
+      role:['너는 보고서 작성 전문가야','너는 데이터 시각화 디자이너야','너는 사업 기획자야','너는 감사 담당관이야'],
+      task:['주간 실적 보고서 초안을 만들어줘','실적을 그래프로 그려줘','내년 사업계획을 새로 세워줘','실적 부진 직원을 지적해줘'],
+      target:['기관장에게 보고하기 위해','실무 팀원끼리 공유하기 위해','외부 투자자에게 발표하기 위해','지역 주민에게 홍보하기 위해'],
+      format:['개요·주요실적·이슈·향후계획 목차로','자유 형식 에세이로','슬라이드 발표 대본으로','질의응답 형식으로'],
+      cond:['핵심만 간결하게, 수치는 표로 정리해서','성과를 최대한 부풀려서','모든 세부 활동을 나열해서','감성적인 표현을 많이 써서'],
+    },
+    answer:{role:0,task:0,target:0,format:0,cond:0}
+  },
+  {
+    goal:'미션 6 · 카드뉴스 문구',
+    desc:'지역 주민을 위한 스트레스 관리 홍보용 카드뉴스 문구를 요청해 보세요.',
+    blocks:{
+      role:['너는 홍보 콘텐츠 기획자야','너는 학술 강사야','너는 뉴스 기자야','너는 행사 진행자야'],
+      task:['스트레스 관리 카드뉴스 문구를 만들어줘','스트레스 관련 논문을 요약해줘','스트레스 관리 강의안을 짜줘','스트레스 측정 설문을 만들어줘'],
+      target:['지역 주민이 쉽게 이해하도록','심리학 전공자를 위해','의료 전문가를 위해','기관 내부 직원 교육용으로'],
+      format:['표지+본문 5장, 각 장 제목과 한 줄 문구로','긴 칼럼 기사로','강의 슬라이드 30장으로','질문 목록으로'],
+      cond:['쉽고 공감되는 말투로, 실천 팁을 담아서','전문 용어를 많이 써서 정확하게','통계와 각주를 자세히 달아서','최대한 격식 있고 딱딱하게'],
+    },
+    answer:{role:0,task:0,target:0,format:0,cond:0}
+  },
+];
+
+// 상태: 미션별 선택을 각각 저장해 두었다가 마지막에 한 번에 채점
+let mIndex = 0;
+let allPicks = MISSIONS.map(()=>({}));        // [{role:0,...}, ...] 미션별 선택
+let orders   = MISSIONS.map(m=>{              // 미션별 보기 순서(한 번만 섞어 고정 → 클릭해도 안 흔들림)
+  const o = {};
+  CATS.forEach(cat=>{
+    const idx = m.blocks[cat.key].map((_,i)=>i);
+    shuffle(idx);
+    o[cat.key] = idx;
+  });
+  return o;
+});
+let scored = null;                            // 채점 결과 저장(있으면 진행표시에 반영)
+
+const el = id => document.getElementById(id);
+const palette = el('palette');
+const assembled = el('assembled');
+const live = el('live');
+
+function picked(){ return allPicks[mIndex]; }
+
+function renderSteps(){
+  const steps = el('steps');
+  steps.innerHTML = '';
+  MISSIONS.forEach((m,i)=>{
+    const s = document.createElement('button');
+    s.className = 'step' + (i===mIndex?' active':'');
+    let tick = '';
+    if(scored){
+      const r = scored.perMission[i];
+      if(r.filled<5){ s.classList.add('miss'); tick='<span class="tick">✕</span>'; }
+      else if(r.score===100){ s.classList.add('perfect'); tick='<span class="tick">✓</span>'; }
+      else { s.classList.add('partial'); tick='<span class="tick">'+r.score+'</span>'; }
+    } else {
+      const filled = CATS.filter(c=>pickedFilled(i,c.key)).length;
+      if(filled===5){ s.classList.add('done'); tick='<span class="tick">✓</span>'; }
+      else if(filled>0){ tick='<span class="tick">'+filled+'/5</span>'; }
+    }
+    s.innerHTML = '미션 '+(i+1)+tick;
+    s.onclick = ()=>{ mIndex=i; renderMission(); };
+    steps.appendChild(s);
+  });
+}
+function pickedFilled(mi,key){ return allPicks[mi][key]!==undefined; }
+
+function renderMission(){
+  const m = MISSIONS[mIndex];
+  el('mnum').textContent = '미션 ' + (mIndex+1) + ' / ' + MISSIONS.length;
+  el('mgoal').textContent = m.goal;
+  el('mdesc').textContent = m.desc;
+  buildPalette();
+  renderAssembled();
+  renderSteps();
+  updateFilledCount();
+}
+
+function buildPalette(){
+  const m = MISSIONS[mIndex];
+  const p = picked();
+  palette.innerHTML = '';
+  CATS.forEach(cat=>{
+    const wrap = document.createElement('div');
+    wrap.className = 'cat-block';
+    wrap.innerHTML =
+      '<div class="cat-head"><span class="dot" style="background:'+cat.color+'"></span>'+
+      '<b>'+cat.label+'</b><span class="hint">'+cat.hint+'</span></div>';
+    const chips = document.createElement('div');
+    chips.className = 'chips';
+    // 고정된 순서(orders)로 보기 표시 → 클릭해도 위치가 흔들리지 않음
+    orders[mIndex][cat.key].forEach(i=>{
+      const t = m.blocks[cat.key][i];
+      const chip = document.createElement('button');
+      chip.className = 'chip';
+      chip.textContent = t;
+      if(p[cat.key]===i){chip.classList.add('picked');chip.style.background=cat.color;}
+      chip.onclick = ()=>{
+        if(p[cat.key]===i){ delete p[cat.key]; }
+        else { p[cat.key]=i; }
+        scored=null;               // 새로 담으면 이전 채점 결과는 초기화
+        el('result').classList.remove('show');
+        buildPalette(); renderAssembled(); renderSteps(); updateFilledCount();
+      };
+      chips.appendChild(chip);
+    });
+    wrap.appendChild(chips);
+    palette.appendChild(wrap);
+  });
+}
+
+function renderAssembled(){
+  const p = picked();
+  assembled.innerHTML='';
+  const order = ['role','task','target','format','cond'];
+  const chosen = order.filter(k=>p[k]!==undefined);
+  if(chosen.length===0){
+    assembled.classList.remove('filled');
+    assembled.innerHTML='<span class="placeholder">아래에서 블록을 골라 눌러보세요 (순서는 자유예요)</span>';
+  } else {
+    assembled.classList.add('filled');
+    chosen.forEach(k=>{
+      const cat = CATS.find(c=>c.key===k);
+      const txt = MISSIONS[mIndex].blocks[k][p[k]];
+      const s = document.createElement('span');
+      s.className='slot';
+      s.style.background = cat.color;
+      s.innerHTML = '<span class="cat">'+cat.label+'</span>'+txt+'<span class="x">✕</span>';
+      s.onclick = ()=>{ delete p[k]; scored=null; el('result').classList.remove('show');
+        buildPalette(); renderAssembled(); renderSteps(); updateFilledCount(); };
+      assembled.appendChild(s);
+    });
+  }
+  // 완성 문장
+  const parts = order.filter(k=>p[k]!==undefined).map(k=>MISSIONS[mIndex].blocks[k][p[k]]);
+  if(parts.length===0){
+    live.innerHTML='<span class="empty">아직 블록이 없어요…</span>';
+  } else {
+    live.textContent = parts.join(' ') + '.';
+  }
+}
+
+function updateFilledCount(){
+  const done = MISSIONS.filter((_,i)=>CATS.every(c=>pickedFilled(i,c.key))).length;
+  el('score').textContent = '담은 미션 ' + done + ' / ' + MISSIONS.length;
+}
+
+// === 한 번에 채점 ===
+function scoreAll(){
+  const perMission = MISSIONS.map((m,mi)=>{
+    const p = allPicks[mi];
+    let score=0; const missing=[], wrong=[];
+    let filled=0;
+    CATS.forEach(cat=>{
+      const v = p[cat.key];
+      if(v===undefined){ missing.push(cat.label); }
+      else{
+        filled++;
+        if(v===m.answer[cat.key]) score+=20;
+        else wrong.push(cat.label);
+      }
+    });
+    return {mi,score,missing,wrong,filled};
+  });
+  const total = perMission.reduce((a,r)=>a+r.score,0);
+  scored = {perMission,total};
+
+  // 상단 요약
+  el('rbig').innerHTML = total + '<small>/600</small>';
+  const pct = Math.round(total/6);
+  const perfectCount = perMission.filter(r=>r.score===100).length;
+  el('rsub').textContent = '만점 미션 ' + perfectCount + '/6 · 100점 환산 ' + pct + '점';
+  let grade, gmsg;
+  if(total===600){ grade='S · 프롬프트 마스터 🏆'; gmsg='여섯 미션 모두 완벽! 함정 보기를 전부 피했어요.'; }
+  else if(total>=480){ grade='A · 아주 좋아요'; gmsg='거의 다 맞았어요. 놓친 재료만 다시 점검!'; }
+  else if(total>=360){ grade='B · 감을 잡았어요'; gmsg='그럴듯한 함정에 몇 개 걸렸네요. 아래를 확인!'; }
+  else if(total>=180){ grade='C · 조금 더!'; gmsg='재료를 빠뜨리거나 함정을 골랐어요. 다시 도전!'; }
+  else { grade='D · 다시 담아볼까요'; gmsg='먼저 6개 미션의 블록을 모두 채워보세요.'; }
+  el('rgrade').textContent = grade;
+  el('rtitle').textContent = '전체 채점 결과 — 총점 ' + total + ' / 600';
+  el('rsub').textContent = '만점 미션 ' + perfectCount + '/6 · 100점 환산 ' + pct + '점 · ' + gmsg;
+
+  // 미션별 상세
+  const rrows = el('rrows');
+  rrows.innerHTML = '';
+  perMission.forEach(r=>{
+    const m = MISSIONS[r.mi];
+    const row = document.createElement('div');
+    row.className = 'rrow';
+    const color = r.score===100 ? 'var(--green)' : (r.filled<5 ? 'var(--accent)' : 'var(--gold)');
+    let note;
+    if(r.filled<5){ note = '<span class="warnc">미완성</span> · 안 넣은 재료: '+r.missing.join(', '); }
+    else if(r.score===100){ note = '<span class="okc">완벽!</span> 다섯 재료 모두 알맞아요'; }
+    else { note = '<span class="warnc">다시 볼 재료</span>: '+r.wrong.join(', '); }
+    row.innerHTML =
+      '<span class="rname">미션 '+(r.mi+1)+'</span>'+
+      '<span class="rbar"><i style="width:'+r.score+'%;background:'+color+'"></i></span>'+
+      '<span class="rnote">'+note+'</span>'+
+      '<span class="rscore" style="color:'+color+'">'+r.score+'/100</span>';
+    row.onclick = ()=>{ mIndex=r.mi; renderMission(); window.scrollTo({top:0,behavior:'smooth'}); };
+    rrows.appendChild(row);
+  });
+
+  el('result').classList.add('show');
+  renderSteps();
+
+  if(total===600){ toast('만점! 프롬프트 마스터 🏆'); burst(); }
+  else { toast('총점 '+total+' / 600 — 아래 상세를 확인하세요'); }
+  el('result').scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function shuffle(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+function toast(t){const el=document.getElementById('toast');el.textContent=t;el.classList.add('show');setTimeout(()=>el.classList.remove('show'),1800);}
+function burst(){
+  const colors=['#2E5496','#C00000','#1F3864','#2E7D32','#E8A317'];
+  for(let i=0;i<28;i++){
+    const d=document.createElement('div');
+    d.style.cssText='position:fixed;width:9px;height:9px;border-radius:2px;z-index:60;pointer-events:none;'+
+      'left:'+(50+(Math.random()*30-15))+'%;top:40%;background:'+colors[i%5]+';';
+    document.body.appendChild(d);
+    const dx=(Math.random()*2-1)*260, dy=(Math.random()*-1-.2)*260;
+    d.animate([{transform:'translate(0,0)',opacity:1},{transform:'translate('+dx+'px,'+(dy+300)+'px)',opacity:0}],
+      {duration:1000+Math.random()*500,easing:'cubic-bezier(.2,.7,.3,1)'}).onfinish=()=>d.remove();
+  }
+}
+
+el('check').onclick = scoreAll;
+el('resetOne').onclick = ()=>{
+  allPicks[mIndex]={}; scored=null; el('result').classList.remove('show');
+  buildPalette(); renderAssembled(); renderSteps(); updateFilledCount();
+  toast('이 미션을 비웠어요');
+};
+el('resetAll').onclick = ()=>{
+  allPicks = MISSIONS.map(()=>({})); scored=null; el('result').classList.remove('show');
+  renderMission(); toast('전체 초기화 완료');
+};
+el('copy').onclick = ()=>{
+  const t = live.textContent;
+  if(!t || t.includes('아직')){toast('먼저 블록을 담아주세요');return;}
+  navigator.clipboard.writeText(t).then(()=>toast('복사됐어요! AI에 붙여넣어 보세요'));
+};
+el('next').onclick = ()=>{mIndex=(mIndex+1)%MISSIONS.length;renderMission();};
+el('prev').onclick = ()=>{mIndex=(mIndex-1+MISSIONS.length)%MISSIONS.length;renderMission();};
+
+renderMission();
+</script>
+</body>
+</html>
