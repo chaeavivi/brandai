@@ -1,5 +1,5 @@
 <!-- ================================================================================== -->
-<!-- WIDGET. 프롬프트 복사기 (Prompt Copier) -->
+<!-- WIDGET. 프롬프트 복사기 (Prompt Copier) — 젬(Gems)용: 이름 / 설명 / 요청사항 분리 -->
 <!-- 이 부분을 복사해서 노션에 임베드하세요 -->
 <!-- ================================================================================== -->
 <!DOCTYPE html>
@@ -14,10 +14,8 @@
     <style>
         body { margin: 0; padding: 40px 16px 48px; font-family: 'Noto Sans KR', sans-serif; background-color: #0f172a; }
         .prompt-body { white-space: pre-wrap; word-break: break-word; }
-        /* 복사 완료 시 살짝 눌리는 느낌 */
         .copied { animation: pop 0.3s ease; }
         @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(0.94); } 100% { transform: scale(1); } }
-        /* 토스트 */
         #toast { transition: opacity 0.3s, transform 0.3s; }
     </style>
 </head>
@@ -26,10 +24,11 @@
 
         <!-- 헤더 -->
         <div class="text-center mb-8">
-            <span class="text-indigo-400 font-bold tracking-widest text-xs">PROMPT COPIER</span>
-            <h1 class="text-2xl md:text-3xl font-black mt-2 mb-3">복사해서 바로 쓰는 프롬프트</h1>
-            <p class="text-gray-400 text-sm font-light">
-                버튼 하나로 프롬프트를 복사하고, AI 챗봇에 붙여넣어 보세요.
+            <span class="text-indigo-400 font-bold tracking-widest text-xs">PROMPT COPIER · FOR GEMS</span>
+            <h1 class="text-2xl md:text-3xl font-black mt-2 mb-3">복사해서 바로 만드는 나만의 젬</h1>
+            <p class="text-gray-400 text-sm font-light leading-relaxed">
+                젬(Gem) 만들기 화면의 <b class="text-gray-200">이름 · 설명 · 요청사항</b> 칸에<br class="hidden sm:block">
+                각각 복사해서 붙여넣으면 끝!
             </p>
         </div>
 
@@ -37,26 +36,25 @@
         <div id="cards" class="space-y-5"></div>
 
         <p class="text-center text-gray-600 text-xs mt-10">
-            프롬프트를 복사해 ChatGPT · Claude · Gemini 등에 붙여넣으세요.
+            Gemini(젬) · GPTs · Claude Projects 등 커스텀 챗봇에 그대로 사용하세요.
         </p>
     </div>
 
     <!-- 복사 완료 토스트 -->
     <div id="toast" class="fixed left-1/2 bottom-6 -translate-x-1/2 translate-y-4 opacity-0 pointer-events-none
                 bg-indigo-500 text-white text-sm font-bold px-5 py-3 rounded-full shadow-lg z-50">
-        <i class="fa-solid fa-check mr-1"></i> 복사되었어요!
+        <i class="fa-solid fa-check mr-1"></i> <span id="toast-msg">복사되었어요!</span>
     </div>
 
     <script>
-        // ================= 프롬프트 데이터 =================
+        // ================= 프롬프트 데이터 (이름 / 설명 / 요청사항) =================
         const PROMPTS = [
             {
-                num: "③",
-                icon: "fa-align-left",
-                title: "요약 챗봇",
-                subtitle: "긴 글·회의 내용을 핵심만 뽑아주는 도우미",
+                num: "③", icon: "fa-align-left",
+                name: "요약 도우미",
+                desc: "긴 글·회의 내용을 핵심만 뽑아주는 요약 챗봇입니다.",
                 test: "이 회의 내용 요약해줘: [내용]",
-                text:
+                instructions:
 `너는 긴 글을 핵심만 뽑아주는 요약 도우미야.
 [역할] 사용자가 준 내용을 짧고 명확하게 요약해.
 [해야 할 일]
@@ -66,12 +64,11 @@
 [말투] 간결하고 담백하게.`
             },
             {
-                num: "④",
-                icon: "fa-wand-magic-sparkles",
-                title: "말투 변환 챗봇",
-                subtitle: "같은 내용을 상황에 맞는 말투로 바꿔주는 도우미",
+                num: "④", icon: "fa-wand-magic-sparkles",
+                name: "말투 변환 도우미",
+                desc: "같은 내용을 상황에 맞는 말투로 바꿔주는 챗봇입니다.",
                 test: "이 문자를 보호자용 정중한 안내문으로 바꿔줘: [문장]",
-                text:
+                instructions:
 `너는 문장의 말투를 바꿔주는 도우미야.
 [역할] 뜻은 그대로 두고, 요청한 말투로 다시 써줘.
 [해야 할 일]
@@ -81,12 +78,11 @@
 [말투] 친절한 편집자 느낌.`
             },
             {
-                num: "⑤",
-                icon: "fa-lightbulb",
-                title: "아이디어·기획 챗봇",
-                subtitle: "프로그램·행사 아이디어를 던져주는 도우미",
+                num: "⑤", icon: "fa-lightbulb",
+                name: "아이디어·기획 도우미",
+                desc: "프로그램·행사 아이디어를 다양하게 던져주는 챗봇입니다.",
                 test: "지역주민 대상 스트레스 관리 행사 아이디어 줘",
-                text:
+                instructions:
 `너는 아이디어를 도와주는 기획 도우미야.
 [역할] 주제를 주면 실현 가능한 아이디어를 다양하게 제안해.
 [해야 할 일]
@@ -97,12 +93,11 @@
 [말투] 밝고 적극적으로.`
             },
             {
-                num: "⑥",
-                icon: "fa-graduation-cap",
-                title: "쉽게 풀어주는 설명 챗봇",
-                subtitle: "어려운 개념·용어를 쉽게 설명해주는 도우미",
+                num: "⑥", icon: "fa-graduation-cap",
+                name: "쉽게 풀어주는 설명 도우미",
+                desc: "어려운 개념·용어를 누구나 알기 쉽게 설명해주는 챗봇입니다.",
                 test: "'사례관리'가 뭔지 쉽게 설명해줘",
-                text:
+                instructions:
 `너는 어려운 내용을 쉽게 풀어주는 설명 도우미야.
 [역할] 전문용어나 복잡한 개념을 누구나 알게 설명해.
 [해야 할 일]
@@ -112,12 +107,11 @@
 [말투] 친근하고 쉽게, 초등학생도 알 수 있게.`
             },
             {
-                num: "⑦",
-                icon: "fa-list-check",
-                title: "체크리스트 챗봇",
-                subtitle: "업무·행사 준비물을 빠짐없이 정리해주는 도우미",
+                num: "⑦", icon: "fa-list-check",
+                name: "체크리스트 도우미",
+                desc: "업무·행사 준비물을 빠짐없이 정리해주는 챗봇입니다.",
                 test: "생명존중 교육 행사 준비 체크리스트 만들어줘",
-                text:
+                instructions:
 `너는 준비사항을 정리해주는 체크리스트 도우미야.
 [역할] 어떤 일을 하는지 물어보고, 필요한 준비 항목을 체크리스트로 만들어.
 [해야 할 일]
@@ -127,12 +121,11 @@
 [말투] 꼼꼼하고 든든하게.`
             },
             {
-                num: "⑧",
-                icon: "fa-envelope",
-                title: "이메일·공문 초안 챗봇",
-                subtitle: "상황만 말하면 격식 있는 초안을 잡아주는 도우미",
+                num: "⑧", icon: "fa-envelope",
+                name: "이메일·공문 초안 도우미",
+                desc: "상황만 말하면 격식 있는 이메일·공문 초안을 잡아주는 챗봇입니다.",
                 test: "협력기관에 합동회의 일정 조율하는 메일 초안 써줘",
-                text:
+                instructions:
 `너는 업무 이메일·공문 초안을 잡아주는 도우미야.
 [역할] 사용자가 상황을 말하면, 바로 보낼 수 있는 초안을 써줘.
 [해야 할 일]
@@ -143,12 +136,11 @@
 [말투] 정중하고 간결하게.`
             },
             {
-                num: "⑨",
-                icon: "fa-comments",
-                title: "역질문 코치 챗봇",
-                subtitle: "뭘 물어야 할지 모를 때, AI가 먼저 질문해주는 도우미",
+                num: "⑨", icon: "fa-comments",
+                name: "역질문 코치 도우미",
+                desc: "뭘 물어야 할지 모를 때, AI가 먼저 질문해 요청을 구체화해주는 챗봇입니다.",
                 test: "보고서를 써야 하는데 뭘 알려줘야 할지 모르겠어",
-                text:
+                instructions:
 `너는 사용자의 요청을 구체화해주는 질문 코치야.
 [역할] 사용자가 막연하게 요청하면, 좋은 결과를 위해 필요한 정보를
        네가 먼저 하나씩 질문해서 채워줘.
@@ -160,38 +152,66 @@
             }
         ];
 
-        // ================= 카드 렌더링 =================
+        // ================= 렌더링 =================
         function esc(s) {
             return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // 복사할 필드 정의: key / 라벨 / 아이콘 / pre 여부
+        const FIELDS = [
+            { key: "name",         label: "이름",   icon: "fa-tag",       pre: false },
+            { key: "desc",         label: "설명",   icon: "fa-circle-info", pre: false },
+            { key: "instructions", label: "요청사항", icon: "fa-list-ul",   pre: true  }
+        ];
+
+        function fieldBlock(p, f, cardIdx) {
+            const val = p[f.key];
+            const bodyClass = f.pre
+                ? "prompt-body bg-slate-900/70 border border-slate-700 rounded-lg p-3 text-gray-200 text-[13px] leading-relaxed font-sans"
+                : "bg-slate-900/70 border border-slate-700 rounded-lg p-3 text-gray-200 text-[13px] leading-relaxed";
+            return `
+                <div>
+                    <div class="flex items-center justify-between mb-1.5">
+                        <span class="text-xs font-bold text-indigo-300 flex items-center gap-1.5">
+                            <i class="fa-solid ${f.icon} text-[11px]"></i>${f.label}
+                        </span>
+                        <button data-card="${cardIdx}" data-field="${f.key}"
+                            class="copy-btn text-[11px] font-bold text-indigo-300 hover:text-white
+                                   bg-indigo-500/20 hover:bg-indigo-500/40 px-2.5 py-1 rounded-md transition-colors
+                                   flex items-center gap-1">
+                            <i class="fa-regular fa-copy"></i><span class="btn-label">복사</span>
+                        </button>
+                    </div>
+                    <${f.pre ? "pre" : "div"} class="${bodyClass}">${esc(val)}</${f.pre ? "pre" : "div"}>
+                </div>`;
         }
 
         const wrap = document.getElementById("cards");
         wrap.innerHTML = PROMPTS.map((p, i) => `
             <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden">
                 <!-- 카드 헤더 -->
-                <div class="flex items-start gap-3 p-4 md:p-5">
+                <div class="flex items-center gap-3 p-4 md:p-5 pb-3 border-b border-slate-700/60">
                     <div class="shrink-0 w-11 h-11 rounded-xl bg-indigo-500/20 text-indigo-300 flex items-center justify-center">
                         <i class="fa-solid ${p.icon} text-lg"></i>
                     </div>
                     <div class="min-w-0 flex-1">
                         <h3 class="font-bold text-base leading-snug">
-                            <span class="text-indigo-400 mr-1">${p.num}</span>${esc(p.title)}
+                            <span class="text-indigo-400 mr-1">${p.num}</span>${esc(p.name)}
                         </h3>
-                        <p class="text-gray-400 text-xs mt-0.5">${esc(p.subtitle)}</p>
                     </div>
-                    <button data-idx="${i}"
-                        class="copy-btn shrink-0 bg-indigo-500 hover:bg-indigo-600 active:bg-indigo-700
-                               text-white text-xs font-bold px-3.5 py-2 rounded-lg transition-colors flex items-center gap-1.5">
-                        <i class="fa-regular fa-copy"></i><span class="btn-label">복사</span>
+                    <button data-card="${i}" data-field="all"
+                        class="copy-btn shrink-0 bg-slate-700 hover:bg-slate-600 text-gray-200 text-[11px] font-bold
+                               px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5"
+                        title="이름·설명·요청사항 전체를 한 번에 복사">
+                        <i class="fa-solid fa-layer-group"></i><span class="btn-label">전체</span>
                     </button>
                 </div>
 
-                <!-- 프롬프트 본문 -->
-                <div class="px-4 md:px-5 pb-4">
-                    <pre class="prompt-body bg-slate-900/70 border border-slate-700 rounded-xl p-4
-                                text-gray-200 text-[13px] leading-relaxed font-sans">${esc(p.text)}</pre>
-                    <div class="flex items-center gap-2 mt-3 text-xs text-gray-500">
-                        <i class="fa-solid fa-flask text-amber-400/80"></i>
+                <!-- 3개 필드 -->
+                <div class="p-4 md:p-5 pt-3 space-y-3.5">
+                    ${FIELDS.map(f => fieldBlock(p, f, i)).join("")}
+                    <div class="flex items-start gap-2 pt-1 text-xs text-gray-500">
+                        <i class="fa-solid fa-flask text-amber-400/80 mt-0.5"></i>
                         <span>테스트: <span class="text-gray-400">${esc(p.test)}</span></span>
                     </div>
                 </div>
@@ -200,9 +220,11 @@
 
         // ================= 복사 로직 =================
         const toast = document.getElementById("toast");
+        const toastMsg = document.getElementById("toast-msg");
         let toastTimer = null;
 
-        function showToast() {
+        function showToast(msg) {
+            toastMsg.textContent = msg;
             toast.style.opacity = "1";
             toast.style.transform = "translate(-50%, 0)";
             clearTimeout(toastTimer);
@@ -218,44 +240,48 @@
                     await navigator.clipboard.writeText(text);
                     return true;
                 }
-            } catch (e) { /* 폴백으로 진행 */ }
-            // 폴백: 임시 textarea + execCommand
+            } catch (e) { /* 폴백 진행 */ }
             try {
                 const ta = document.createElement("textarea");
                 ta.value = text;
                 ta.style.position = "fixed";
                 ta.style.top = "-9999px";
                 document.body.appendChild(ta);
-                ta.focus();
-                ta.select();
+                ta.focus(); ta.select();
                 const ok = document.execCommand("copy");
                 document.body.removeChild(ta);
                 return ok;
-            } catch (e) {
-                return false;
+            } catch (e) { return false; }
+        }
+
+        function valueFor(p, field) {
+            if (field === "all") {
+                return `[이름]\n${p.name}\n\n[설명]\n${p.desc}\n\n[요청사항]\n${p.instructions}`;
             }
+            return p[field];
         }
 
         wrap.addEventListener("click", async (e) => {
             const btn = e.target.closest(".copy-btn");
             if (!btn) return;
-            const idx = +btn.dataset.idx;
-            const ok = await copyText(PROMPTS[idx].text);
+            const p = PROMPTS[+btn.dataset.card];
+            const field = btn.dataset.field;
+            const ok = await copyText(valueFor(p, field));
             const label = btn.querySelector(".btn-label");
             const icon = btn.querySelector("i");
+            const original = label.textContent;
+            const origIcon = icon.className;
             if (ok) {
                 btn.classList.add("copied");
                 setTimeout(() => btn.classList.remove("copied"), 300);
                 label.textContent = "완료";
                 icon.className = "fa-solid fa-check";
-                showToast();
-                setTimeout(() => {
-                    label.textContent = "복사";
-                    icon.className = "fa-regular fa-copy";
-                }, 1600);
+                const names = { name: "이름", desc: "설명", instructions: "요청사항", all: "전체" };
+                showToast(`${names[field]} 복사됨!`);
+                setTimeout(() => { label.textContent = original; icon.className = origIcon; }, 1500);
             } else {
                 label.textContent = "실패";
-                setTimeout(() => { label.textContent = "복사"; }, 1600);
+                setTimeout(() => { label.textContent = original; }, 1500);
             }
         });
     </script>
