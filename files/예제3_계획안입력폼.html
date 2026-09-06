@@ -1,0 +1,216 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>계획안 입력폼</title>
+<!--
+  ▶ 2일차 3교시 예제 ③ 계획안 입력폼 (같이 걷자 계획안 생성기 · 1단계)
+  - 이 단계는 "입력 화면"만 만듭니다. 계산·규칙·계획안 출력은 4교시(예제4), 5교시(예제5)에서 붙입니다.
+  - [미리보기]를 누르면 입력값을 항목 이름과 함께 그대로 보여줍니다. 꾸미지 않습니다.
+  - 필수값이 비어 있으면 미리보기를 막고 빈 칸에 빨간 테두리 + 위쪽에 안내 문구가 나옵니다.
+  - 파일 하나로 동작합니다. 서버·AI·로그인 없음. 입력은 이 브라우저에만 있습니다.
+  - 수정 실습: "여기를 바꿔보세요" 표시가 있는 곳(제목·색·프로그램 줄 수)을 고쳐 보세요.
+-->
+<style>
+  :root{
+    --navy:#1F3A5F;   /* ← 여기를 바꿔보세요: 대표 색 */
+    --accent:#2B6CB0;
+    --bg:#F6F8FB; --line:#D9E0E8; --soft:#EEF2F7; --ink:#1D2430; --mute:#5F6B7A;
+    --field:#FFF9DB;  /* 입력칸 색 */
+    --warn:#C53030;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Malgun Gothic","맑은 고딕",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
+  header{background:var(--navy);color:#fff;padding:16px 20px}
+  header h1{margin:0;font-size:20px}header p{margin:4px 0 0;font-size:13px;opacity:.85}
+  main{max-width:1000px;margin:0 auto;padding:16px 20px 40px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+  .card h2{margin:0 0 10px;font-size:16px;color:var(--navy)}
+  .field{margin-bottom:10px}
+  .field label{display:block;font-size:13px;color:var(--mute);margin-bottom:4px}
+  .req{color:var(--warn);font-weight:bold}
+  input,textarea{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;font-size:15px;font-family:inherit;background:var(--field)}
+  input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-2px}
+  input.bad,textarea.bad{border-color:var(--warn);background:#FFF1F1}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .prog input{margin-bottom:6px}
+  .row{display:grid;grid-template-columns:1.6fr 1fr .7fr .7fr 36px;gap:6px;align-items:center;margin-bottom:6px}
+  .row.head{font-size:12px;color:var(--mute);font-weight:bold}
+  .num{text-align:right}
+  button{padding:9px 14px;border:1px solid var(--line);background:#fff;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit}
+  button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  button.del{padding:6px;color:#b00;border:none;background:none;font-size:16px}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .tip{font-size:13px;color:var(--mute);margin-top:8px}
+  .warn{display:none;border:1px solid var(--warn);background:#FFF1F1;color:var(--warn);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:14px}
+  .warn.on{display:block}
+  pre#out{margin:0;padding:12px;background:var(--soft);border:1px solid var(--line);border-radius:8px;min-height:180px;
+          font-family:Consolas,"맑은 고딕",monospace;font-size:14px;line-height:1.7;white-space:pre-wrap}
+  @media(max-width:760px){.two{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}.row.head{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>계획안 입력폼</h1>  <!-- ← 여기를 바꿔보세요: 제목 -->
+  <p>같이 걷자 계획안 생성기 · 1단계 — 입력 화면만 만듭니다</p>
+</header>
+<main>
+
+  <div class="card">
+    <h2>입력</h2>
+    <div class="two">
+      <div class="field">
+        <label for="title">사업명 <span class="req">*</span></label>
+        <input id="title" data-name="사업명" placeholder="예: 같이 걷자 생명존중 숲길 걷기">
+      </div>
+      <div class="field">
+        <label for="when">일시 <span class="req">*</span></label>
+        <input id="when" data-name="일시" placeholder="예: 2024-10-26 10:00~13:00">
+      </div>
+      <div class="field">
+        <label for="place">장소 <span class="req">*</span></label>
+        <input id="place" data-name="장소" placeholder="예: 원주 치악산 둘레길 일원">
+      </div>
+      <div class="field">
+        <label for="people">대상 인원 <span class="req">*</span></label>
+        <input id="people" data-name="대상 인원" class="num" type="number" min="0" placeholder="예: 200">
+      </div>
+    </div>
+
+    <div class="field prog">
+      <label>프로그램 <span class="req">*</span> (한 줄 이상)</label>
+      <!-- ← 여기를 바꿔보세요: 프로그램 줄 수 -->
+      <input class="prog-line" data-name="프로그램" placeholder="1) 예: 준비체조">
+      <input class="prog-line" placeholder="2) 예: O/X 퀴즈">
+      <input class="prog-line" placeholder="3) 예: 생명의 나무">
+    </div>
+
+    <div class="field">
+      <label>예산 <span class="req">*</span> (한 행 이상 · 항목 | 단가 | 수량 | 횟수)</label>
+      <div class="row head"><div>항목</div><div>단가(원)</div><div>수량</div><div>횟수</div><div></div></div>
+      <div id="rows"></div>
+      <div class="bar"><button id="add">+ 행 추가</button></div>
+    </div>
+
+    <div class="two">
+      <div class="field">
+        <label for="coop">협조기관 (선택)</label>
+        <input id="coop" data-name="협조기관" placeholder="예: 원주시 보건소, 치악산국립공원사무소">
+      </div>
+      <div class="field">
+        <label for="attach">붙임 (선택)</label>
+        <input id="attach" data-name="붙임" placeholder="예: 세부 진행표">
+      </div>
+    </div>
+
+    <div class="bar"><button class="primary" id="preview">미리보기</button><button id="sample">예시 넣기</button></div>
+    <p class="tip">별표(<span class="req">*</span>)는 반드시 채워야 하는 칸입니다. 이 단계에서는 입력값을 그대로 보여주기만 합니다.</p>
+  </div>
+
+  <div class="card">
+    <h2>미리보기</h2>
+    <div class="warn" id="warn"></div>
+    <pre id="out">[미리보기] 버튼을 누르면 여기에 입력값이 나옵니다.</pre>
+  </div>
+
+</main>
+<script>
+// ── 예산 행 만들기 ────────────────────────────────────────────────
+const $rows = document.getElementById('rows');
+function addRow(d){
+  d = d || {};
+  const r = document.createElement('div'); r.className = 'row';
+  r.innerHTML = `
+    <input class="item" data-name="예산 항목" placeholder="예: 현수막 제작" value="${d.item || ''}">
+    <input class="price num" type="number" min="0" placeholder="0" value="${d.price || ''}">
+    <input class="qty num" type="number" min="0" placeholder="1" value="${d.qty || ''}">
+    <input class="times num" type="number" min="0" placeholder="1" value="${d.times || ''}">
+    <button class="del" title="이 행 삭제">✕</button>`;
+  r.querySelector('.del').onclick = () => r.remove();
+  $rows.appendChild(r);
+}
+[0,1,2].forEach(() => addRow());              // 처음에 3행
+document.getElementById('add').onclick = () => addRow();
+
+// ── 입력값 모으기 ─────────────────────────────────────────────────
+function val(id){ return document.getElementById(id).value.trim(); }
+function programs(){ return [...document.querySelectorAll('.prog-line')].map(el => el.value.trim()).filter(v => v); }
+function budgets(){
+  return [...$rows.children].map(r => ({
+    item: r.querySelector('.item').value.trim(),
+    price: r.querySelector('.price').value.trim(),
+    qty: r.querySelector('.qty').value.trim(),
+    times: r.querySelector('.times').value.trim()
+  })).filter(b => b.item);
+}
+
+// ── "○○을(를) 채우면 됩니다" — 받침에 맞춰 을/를 고르기 ──────────
+function josa(word){
+  const code = word.charCodeAt(word.length - 1) - 0xAC00;
+  if (code < 0 || code > 11171) return '을';       // 한글이 아니면 '을'
+  return (code % 28) ? '을' : '를';                 // 받침 있으면 '을', 없으면 '를'
+}
+
+// ── 필수값 검사 ───────────────────────────────────────────────────
+function check(){
+  document.querySelectorAll('.bad').forEach(el => el.classList.remove('bad'));
+  const missing = [];
+  ['title','when','place','people'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()){ el.classList.add('bad'); missing.push(el.dataset.name); }
+  });
+  if (!programs().length){
+    document.querySelectorAll('.prog-line').forEach(el => el.classList.add('bad'));
+    missing.push('프로그램');
+  }
+  if (!budgets().length){
+    [...$rows.children].forEach(r => r.querySelector('.item').classList.add('bad'));
+    missing.push('예산 항목');
+  }
+  return missing;
+}
+
+// ── 미리보기: 입력값을 항목 이름과 함께 그대로 ────────────────────
+document.getElementById('preview').onclick = () => {
+  const $warn = document.getElementById('warn'), $out = document.getElementById('out');
+  const missing = check();
+  if (missing.length){
+    $warn.textContent = missing.join(', ') + josa(missing[missing.length - 1]) + ' 채우면 됩니다';
+    $warn.classList.add('on');
+    $out.textContent = '필수 칸을 채운 뒤 다시 눌러 주세요.';
+    return;
+  }
+  $warn.classList.remove('on');
+  const lines = [];
+  lines.push('사업명 : ' + val('title'));
+  lines.push('일시 : ' + val('when'));
+  lines.push('장소 : ' + val('place'));
+  lines.push('대상 인원 : ' + val('people'));
+  lines.push('프로그램 :');
+  programs().forEach((p, i) => lines.push('  ' + (i + 1) + ') ' + p));
+  lines.push('예산 :');
+  budgets().forEach(b => lines.push('  ' + [b.item, b.price, b.qty, b.times].join(' | ')));
+  lines.push('협조기관 : ' + (val('coop') || '(비어 있음)'));
+  lines.push('붙임 : ' + (val('attach') || '(비어 있음)'));
+  $out.textContent = lines.join('\n');
+};
+
+// ── 예시 넣기 (수업 중 빠르게 채울 때) ────────────────────────────
+document.getElementById('sample').onclick = () => {
+  document.getElementById('title').value = '같이 걷자 생명존중 숲길 걷기';
+  document.getElementById('when').value  = '2024-10-26 10:00~13:00';
+  document.getElementById('place').value = '원주 치악산 둘레길 일원';
+  document.getElementById('people').value = '200';
+  const p = document.querySelectorAll('.prog-line');
+  p[0].value = '준비체조'; p[1].value = 'O/X 퀴즈'; p[2].value = '생명의 나무';
+  $rows.innerHTML = '';
+  addRow({item:'현수막 제작', price:200000, qty:1, times:1});
+  addRow({item:'참가자 기념품', price:5000, qty:200, times:1});
+  addRow({item:'생수', price:500, qty:200, times:1});
+  document.getElementById('coop').value = '원주시 보건소';
+  document.getElementById('attach').value = '세부 진행표';
+};
+</script>
+</body>
+</html>

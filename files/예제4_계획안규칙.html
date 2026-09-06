@@ -1,0 +1,305 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>계획안 규칙 적용</title>
+<!--
+  ▶ 2일차 4교시 예제 ④ 계획안 규칙 적용 (같이 걷자 계획안 생성기 · 2단계)
+  - 예제3_계획안입력폼.html을 복사해 규칙을 세 가지 순서로 붙였습니다: 계산 → 판단 → 서식
+    ① 계산 : 금액 = 단가 × 수량 × 횟수, 합계, 산출근거 문장
+    ② 판단 : 필수값 누락 / 예산 합계 0 / 대상 인원 0 → 미리보기를 막고 이유를 한 줄로
+    ③ 서식 : 항목번호(1. / 가. / 1))와 공백 들여쓰기 0·2·4칸, 날짜·시간·금액·인원 표기, 라벨 띄어쓰기
+  - 미리보기는 아직 "항목별 값 나열"입니다. 계획안 문장은 5교시(예제5)에서 만듭니다.
+  - 파일 하나로 동작합니다. 서버·AI·로그인 없음.
+  - 수정 실습: "여기를 바꿔보세요" 표시(색·들여쓰기 칸 수·인원 표기)를 고쳐 보세요.
+-->
+<style>
+  :root{
+    --navy:#1F3A5F;   /* ← 여기를 바꿔보세요: 대표 색 */
+    --accent:#2B6CB0;
+    --bg:#F6F8FB; --line:#D9E0E8; --soft:#EEF2F7; --ink:#1D2430; --mute:#5F6B7A;
+    --field:#FFF9DB;
+    --warn:#C53030;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Malgun Gothic","맑은 고딕",system-ui,sans-serif;background:var(--bg);color:var(--ink);font-size:15px;line-height:1.5}
+  header{background:var(--navy);color:#fff;padding:16px 20px}
+  header h1{margin:0;font-size:20px}header p{margin:4px 0 0;font-size:13px;opacity:.85}
+  main{max-width:1000px;margin:0 auto;padding:16px 20px 40px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:12px;padding:16px;margin-bottom:14px}
+  .card h2{margin:0 0 10px;font-size:16px;color:var(--navy)}
+  .field{margin-bottom:10px}
+  .field label{display:block;font-size:13px;color:var(--mute);margin-bottom:4px}
+  .req{color:var(--warn);font-weight:bold}
+  input,textarea{width:100%;padding:8px;border:1px solid var(--line);border-radius:8px;font-size:15px;font-family:inherit;background:var(--field)}
+  input:focus,textarea:focus{outline:2px solid var(--accent);outline-offset:-2px}
+  input[readonly]{background:var(--soft);color:var(--mute)}
+  input.bad,textarea.bad{border-color:var(--warn);background:#FFF1F1}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .prog input{margin-bottom:6px}
+  .row{display:grid;grid-template-columns:1.6fr 1fr .7fr .7fr 1.1fr 36px;gap:6px;align-items:center;margin-bottom:6px}
+  .row.head{font-size:12px;color:var(--mute);font-weight:bold}
+  .num{text-align:right}
+  button{padding:9px 14px;border:1px solid var(--line);background:#fff;border-radius:8px;font-size:14px;cursor:pointer;font-family:inherit}
+  button.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  button.del{padding:6px;color:#b00;border:none;background:none;font-size:16px}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
+  .total{display:flex;justify-content:flex-end;gap:16px;align-items:center;font-size:16px;margin-top:8px}
+  .total b{font-size:20px;color:var(--navy)}
+  .tip{font-size:13px;color:var(--mute);margin-top:8px}
+  .warn{display:none;border:1px solid var(--warn);background:#FFF1F1;color:var(--warn);border-radius:8px;padding:10px 12px;margin-bottom:10px;font-size:14px}
+  .warn.on{display:block}
+  pre#out{margin:0;padding:12px;background:var(--soft);border:1px solid var(--line);border-radius:8px;min-height:200px;
+          font-family:Consolas,"맑은 고딕",monospace;font-size:14px;line-height:1.7;white-space:pre-wrap}
+  @media(max-width:760px){.two{grid-template-columns:1fr}.row{grid-template-columns:1fr 1fr}.row.head{display:none}}
+</style>
+</head>
+<body>
+<header>
+  <h1>계획안 규칙 적용</h1>  <!-- ← 여기를 바꿔보세요: 제목 -->
+  <p>같이 걷자 계획안 생성기 · 2단계 — 계산 → 판단 → 서식</p>
+</header>
+<main>
+
+  <div class="card">
+    <h2>입력</h2>
+    <div class="two">
+      <div class="field">
+        <label for="title">사업명 <span class="req">*</span></label>
+        <input id="title" data-name="사업명" placeholder="예: 같이 걷자 생명존중 숲길 걷기">
+      </div>
+      <div class="field">
+        <label for="when">일시 <span class="req">*</span> — 2024-10-26 10:00~13:00 형식</label>
+        <input id="when" data-name="일시" placeholder="2024-10-26 10:00~13:00">
+      </div>
+      <div class="field">
+        <label for="place">장소 <span class="req">*</span></label>
+        <input id="place" data-name="장소" placeholder="예: 원주 치악산 둘레길 일원">
+      </div>
+      <div class="field">
+        <label for="people">대상 인원 <span class="req">*</span></label>
+        <input id="people" data-name="대상 인원" class="num" inputmode="numeric" placeholder="예: 200">
+      </div>
+    </div>
+
+    <div class="field prog">
+      <label>프로그램 <span class="req">*</span> (한 줄 이상)</label>
+      <input class="prog-line" placeholder="1) 예: 준비체조">
+      <input class="prog-line" placeholder="2) 예: O/X 퀴즈">
+      <input class="prog-line" placeholder="3) 예: 생명의 나무">
+    </div>
+
+    <div class="field">
+      <label>예산 <span class="req">*</span> (한 행 이상 · 금액은 단가 × 수량 × 횟수로 자동 계산)</label>
+      <div class="row head"><div>항목</div><div>단가(원)</div><div>수량</div><div>횟수</div><div>금액(원)</div><div></div></div>
+      <div id="rows"></div>
+      <div class="total">합계 <b id="sum">0</b> 원</div>
+      <div class="bar"><button id="add">+ 행 추가</button></div>
+    </div>
+
+    <div class="two">
+      <div class="field">
+        <label for="coop">협조기관 (선택)</label>
+        <input id="coop" placeholder="예: 원주시 보건소, 치악산국립공원사무소">
+      </div>
+      <div class="field">
+        <label for="attach">붙임 (선택)</label>
+        <input id="attach" placeholder="예: 세부 진행표">
+      </div>
+    </div>
+
+    <div class="bar"><button class="primary" id="preview">미리보기</button><button id="sample">예시 넣기</button></div>
+    <p class="tip">숫자가 아닌 값은 0으로 보고 빨간 테두리로 표시합니다. 합계는 이 도구가 계산한 값이니 결재 전 한 번 더 검산하세요.</p>
+  </div>
+
+  <div class="card">
+    <h2>미리보기 (항목별 값 나열 · 서식 규칙 적용)</h2>
+    <div class="warn" id="warn"></div>
+    <pre id="out">[미리보기] 버튼을 누르면 여기에 나옵니다.</pre>
+  </div>
+
+</main>
+<script>
+/* ══════════ 공통 ══════════ */
+const INDENT = [0, 2, 4];      /* ← 여기를 바꿔보세요: 1. / 가. / 1) 들여쓰기 칸 수 */
+const HANGUL = '가나다라마바사아자차카타파하';
+const fmt = n => Number(n || 0).toLocaleString('ko-KR');
+
+/* 숫자 읽기 — 숫자가 아니면 NaN (호출한 쪽에서 0으로 보고 빨간 테두리) */
+function num(v){
+  const s = String(v).replace(/,/g, '').trim();
+  if (s === '') return NaN;
+  return /^\d+(\.\d+)?$/.test(s) ? Number(s) : NaN;
+}
+
+/* ══════════ ① 계산 규칙 ══════════ */
+const $rows = document.getElementById('rows');
+function addRow(d){
+  d = d || {};
+  const r = document.createElement('div'); r.className = 'row';
+  r.innerHTML = `
+    <input class="item" placeholder="예: 현수막 제작" value="${d.item || ''}">
+    <input class="price num" inputmode="numeric" placeholder="0" value="${d.price || ''}">
+    <input class="qty num" inputmode="numeric" placeholder="1" value="${d.qty || ''}">
+    <input class="times num" inputmode="numeric" placeholder="1" value="${d.times || ''}">
+    <input class="amt num" readonly>
+    <button class="del" title="이 행 삭제">✕</button>`;
+  r.querySelector('.del').onclick = () => { r.remove(); recalc(); };
+  r.querySelectorAll('input').forEach(el => el.addEventListener('input', recalc));
+  $rows.appendChild(r);
+}
+/* 한 행 읽기: 금액 = 단가 × 수량 × 횟수 */
+function readRow(r){
+  const cells = ['price','qty','times'].map(k => {
+    const el = r.querySelector('.' + k), v = num(el.value);
+    if (isNaN(v) && el.value.trim() !== '') el.classList.add('bad'); else el.classList.remove('bad');
+    return isNaN(v) ? 0 : v;                       // 숫자가 아니면 0으로 본다
+  });
+  const [price, qty, times] = cells;
+  return { item: r.querySelector('.item').value.trim(), price, qty, times, amount: price * qty * times };
+}
+function budgets(){ return [...$rows.children].map(readRow).filter(b => b.item); }
+/* 산출근거 문장 */
+function basis(b){ return `${fmt(b.price)}원 × ${b.qty} × ${b.times}회`; }
+function recalc(){
+  let sum = 0;
+  [...$rows.children].forEach(r => {
+    const b = readRow(r); sum += b.amount;
+    r.querySelector('.amt').value = b.amount ? fmt(b.amount) : '';
+  });
+  document.getElementById('sum').textContent = fmt(sum);
+  return sum;
+}
+
+/* ══════════ ③ 서식 규칙 ══════════ */
+/* 항목번호 + 공백 들여쓰기 (표는 쓰지 않는다) */
+function no1(n, text){ return ' '.repeat(INDENT[0]) + `${n}. ${text}`; }
+function no2(n, text){ return ' '.repeat(INDENT[1]) + `${HANGUL[(n-1) % 14]}. ${text}`; }
+function no3(n, text){ return ' '.repeat(INDENT[2]) + `${n}) ${text}`; }
+
+/* 라벨 띄어쓰기 — "대   상", "사 업 명" */
+function label(word){
+  if (word.length === 2) return word[0] + '   ' + word[1];
+  if (word.length === 3) return word.split('').join(' ');
+  return word;
+}
+/* 날짜 "2024년 10월 26일 토요일" · 시간 "10:00~13:00" */
+const WEEK = '일월화수목금토';
+function when(v){
+  const m = v.trim().match(/^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}:\d{2})~(\d{2}:\d{2})$/);
+  if (!m) return null;
+  const d = new Date(+m[1], +m[2] - 1, +m[3]);
+  if (d.getMonth() !== +m[2] - 1 || d.getDate() !== +m[3]) return null;   // 2024-02-31 같은 날짜 거르기
+  return {
+    date: `${+m[1]}년 ${+m[2]}월 ${+m[3]}일 ${WEEK[d.getDay()]}요일`,
+    time: `${m[4]}~${m[5]}`
+  };
+}
+/* 인원 "200명 내외" */      /* ← 여기를 바꿔보세요: 인원 표기 */
+function people(n){ return `${fmt(n)}명 내외`; }
+
+/* ══════════ ② 판단 규칙 ══════════ */
+function val(id){ return document.getElementById(id).value.trim(); }
+function programs(){ return [...document.querySelectorAll('.prog-line')].map(el => el.value.trim()).filter(v => v); }
+function josa(word){
+  const c = word.charCodeAt(word.length - 1) - 0xAC00;
+  if (c < 0 || c > 11171) return '을';
+  return (c % 28) ? '을' : '를';
+}
+function judge(){
+  document.querySelectorAll('.bad').forEach(el => el.classList.remove('bad'));
+  const sum = recalc();
+
+  /* 1) 필수값 누락 */
+  const missing = [];
+  ['title','when','place','people'].forEach(id => {
+    const el = document.getElementById(id);
+    if (!el.value.trim()){ el.classList.add('bad'); missing.push(el.dataset.name); }
+  });
+  if (!programs().length){
+    document.querySelectorAll('.prog-line').forEach(el => el.classList.add('bad'));
+    missing.push('프로그램');
+  }
+  if (!budgets().length){
+    [...$rows.children].forEach(r => r.querySelector('.item').classList.add('bad'));
+    missing.push('예산 항목');
+  }
+  if (missing.length) return missing.join(', ') + josa(missing[missing.length - 1]) + ' 채우면 됩니다';
+
+  /* 2) 일시 형식 */
+  if (!when(val('when'))){
+    document.getElementById('when').classList.add('bad');
+    return '일시는 2024-10-26 10:00~13:00 형식으로 적어 주세요';
+  }
+  /* 3) 대상 인원 0 */
+  const p = num(val('people'));
+  if (isNaN(p) || p === 0){
+    document.getElementById('people').classList.add('bad');
+    return '대상 인원이 0명입니다. 인원을 적어 주세요';
+  }
+  /* 4) 예산 합계 0 */
+  if (sum === 0){
+    [...$rows.children].forEach(r => r.querySelector('.price').classList.add('bad'));
+    return '예산 합계가 0원입니다. 단가·수량·횟수를 확인해 주세요';
+  }
+  return '';                                        // 통과
+}
+
+/* ══════════ 미리보기 ══════════ */
+document.getElementById('preview').onclick = () => {
+  const $warn = document.getElementById('warn'), $out = document.getElementById('out');
+  const reason = judge();
+  if (reason){
+    $warn.textContent = reason; $warn.classList.add('on');
+    $out.textContent = '위 안내를 고친 뒤 다시 눌러 주세요.';
+    return;
+  }
+  $warn.classList.remove('on');
+
+  const w = when(val('when')), rows = budgets();
+  const sum = rows.reduce((a, b) => a + b.amount, 0);
+  const out = [];
+
+  out.push(no1(1, '입력 확인'));
+  let i = 1;
+  out.push(no2(i++, `${label('사업명')} : ${val('title')}`));
+  out.push(no2(i++, `${label('일시')} : ${w.date} ${w.time}`));
+  out.push(no2(i++, `${label('장소')} : ${val('place')}`));
+  out.push(no2(i++, `${label('대상')} : ${people(num(val('people')))}`));
+  out.push(no2(i++, label('프로그램')));
+  programs().forEach((p, k) => out.push(no3(k + 1, p)));
+  if (val('coop'))   out.push(no2(i++, `${label('협조기관')} : ${val('coop')}`));
+  if (val('attach')) out.push(no2(i++, `${label('붙임')} : ${val('attach')}`));
+
+  out.push('');
+  out.push(no1(2, '예산'));
+  rows.forEach((b, k) => out.push(no2(k + 1, `${b.item} : ${basis(b)} = ${fmt(b.amount)}원`)));
+  out.push(no2(rows.length + 1, `${label('합계')} : ${fmt(sum)}원`));
+
+  $out.textContent = out.join('\n');
+};
+
+/* ══════════ 예시 넣기 ══════════ */
+document.getElementById('sample').onclick = () => {
+  document.getElementById('title').value = '같이 걷자 생명존중 숲길 걷기';
+  document.getElementById('when').value  = '2024-10-26 10:00~13:00';
+  document.getElementById('place').value = '원주 치악산 둘레길 일원';
+  document.getElementById('people').value = '200';
+  const p = document.querySelectorAll('.prog-line');
+  p[0].value = '준비체조'; p[1].value = 'O/X 퀴즈'; p[2].value = '생명의 나무';
+  $rows.innerHTML = '';
+  addRow({item:'현수막 제작', price:200000, qty:1, times:1});
+  addRow({item:'참가자 기념품', price:5000, qty:200, times:1});
+  addRow({item:'생수', price:500, qty:200, times:1});
+  document.getElementById('coop').value = '원주시 보건소';
+  document.getElementById('attach').value = '세부 진행표';
+  recalc();
+};
+
+document.getElementById('add').onclick = () => addRow();
+[0,1,2].forEach(() => addRow());
+recalc();
+</script>
+</body>
+</html>
