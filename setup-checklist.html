@@ -53,7 +53,6 @@
   .btn:hover{background:#17304f}
   .btn.ghost{background:#fff;color:var(--accent);border-color:var(--line)}
   .btn.ghost:hover{border-color:var(--accent)}
-  .btn.unset{opacity:.55}
   .btn.saved{color:var(--okink);border-color:var(--okline);background:var(--ok)}
 
   table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0}
@@ -142,7 +141,7 @@
   <h2>B. AI 스튜디오 준비<span class="who">전원</span></h2>
   <ul class="steps" data-key="B">
     <li><label class="step"><input type="checkbox"><span class="no">B1</span><span class="txt"><span class="url">aistudio.google.com</span> 접속 → 구글 계정으로 로그인</span></label></li>
-    <li><label class="step"><input type="checkbox"><span class="no">B2</span><span class="txt">위쪽 <b>Build</b> 화면을 열어 어떤 화면인지 보기 — <b>오늘은 만들지 않습니다.</b> 2일차에 여기서 도구를 만듭니다</span></label></li>
+    <li><label class="step"><input type="checkbox"><span class="no">B2</span><span class="txt">위쪽 <b>Build</b> 화면을 열어 어떤 화면인지 보기 — 2일차에 여기서 도구를 만듭니다</span></label></li>
   </ul>
 </div>
 
@@ -172,12 +171,11 @@
 
 <div class="card">
   <div class="actions">
-    <!-- 제출함 주소: 아래 href="" 안에 제출함 앱 주소를 넣으세요 -->
-    <a class="btn" id="submit-link" href="" target="_blank" rel="noopener">제출함 열기</a>
+    <!-- 허브 상단 "과제 제출" 링크와 같은 주소. 바뀌면 허브와 함께 고칠 것 -->
+    <a class="btn" id="submit-link" href="https://service-704587947766.us-west1.run.app/" target="_blank" rel="noopener">제출함 열기</a>
     <button type="button" class="btn ghost" id="save-json">결과 JSON 내려받기</button>
   </div>
-  <div class="hint" id="submit-hint"></div>
-  <div class="note">제출함이 열리지 않으면 <b>결과 JSON 내려받기</b>로 파일을 저장해 강사에게 전달하세요. 이름·소속·Pages 주소와 체크 상태가 파일 안에 담깁니다. (파일명 예: <span class="url">setup-checklist_20260906_1730.json</span>)</div>
+  <div class="note"><b>제출함 열기</b>는 허브 상단 「과제 제출」과 같은 곳입니다. 제출함이 열리지 않으면 <b>결과 JSON 내려받기</b>로 파일을 저장해 강사에게 전달하세요 — 이름·소속·Pages 주소와 체크 상태가 파일 안에 담깁니다. (파일명 예: <span class="url">setup-checklist_20260906_1730.json</span>)</div>
 </div>
 
 </main>
@@ -275,16 +273,6 @@
     saveBtn.textContent='저장됨'; saveBtn.classList.add('saved');
     setTimeout(function(){saveBtn.textContent=old;saveBtn.classList.remove('saved')},1200);
   });
-
-  /* ---- 제출함 ---- */
-  var sub=document.getElementById('submit-link'),subHint=document.getElementById('submit-hint');
-  if(!sub.getAttribute('href')){
-    sub.classList.add('unset');
-    sub.addEventListener('click',function(e){
-      e.preventDefault();
-      subHint.textContent='제출함 주소가 아직 입력되지 않았습니다. 아래 결과 JSON을 내려받아 전달하세요.';
-    });
-  }
 
   paint();
 })();
