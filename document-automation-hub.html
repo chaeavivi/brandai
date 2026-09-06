@@ -43,6 +43,9 @@
   button.copy{font:inherit;font-size:13px;color:var(--accent);background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
   button.copy:hover{border-color:var(--accent)}
   button.copy.copied{color:#1f6b35;border-color:#9fc9a8;background:var(--ok)}
+  .frame{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;margin:10px 0}
+  .frame iframe{display:block;width:100%;height:660px;border:0}
+  @media(max-width:720px){.frame iframe{height:520px}}
   .lock{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
   .lock input{font:inherit;font-size:15px;letter-spacing:.4em;width:8em;padding:8px 10px;border:1px solid var(--line);border-radius:8px;text-align:center}
   .lock button{font:inherit;font-size:14px;color:#fff;background:var(--navy);border:1px solid var(--navy);border-radius:8px;padding:9px 16px;cursor:pointer}
@@ -66,6 +69,14 @@
   <span class="progress" id="prog"></span>
 </div></nav>
 <main>
+
+<div class="card" data-lesson="submit" data-open="1">
+  <h2>과제 제출함</h2>
+  <div class="goal">교시별 산출물을 여기에 올립니다. 7교시 기획서 MD 파일도 이 앱에 첨부해 제출합니다.</div>
+  <div class="frame"><iframe src="https://service-704587947766.us-west1.run.app/" title="과제 제출함" loading="lazy" allow="clipboard-write"></iframe></div>
+  <div class="files"><a href="https://service-704587947766.us-west1.run.app/" target="_blank" rel="noopener">▶ 새 창에서 열기</a></div>
+  <p class="meta">화면이 비어 보이면 위 <b>새 창에서 열기</b>로 제출하세요. 제목을 누르면 접을 수 있습니다.</p>
+</div>
 
 <!-- ================= 시작 전 준비 ================= -->
 <section class="tab on" id="tab-prep">
@@ -214,7 +225,7 @@
       <li>기획서 작성: 입력값(무엇을 넣나) / 출력값(무엇이 나오나) / 규칙(어떻게 계산·판단하나) — 이 세 칸이 비면 2일차에 못 만듦</li>
       <li>옆 사람과 교환 검토: "입력값만 보고 출력값이 예측되나?"</li>
       <li>기획서 변환기에 옮겨 적기 → 빌드 프롬프트 MD 내려받기 → 옆 사람과 교환 검토</li>
-      <li>제출: 내려받은 MD 파일을 제출함 앱 1일차 7교시에 첨부해 제출</li>
+      <li>제출: 내려받은 MD 파일을 <a href="https://service-704587947766.us-west1.run.app/" target="_blank" rel="noopener">제출함 앱</a> 1일차 7교시에 첨부해 제출</li>
     </ol>
     <div class="files"><a href="files/업무도구기획서_양식.docx">업무도구 기획서 양식.docx</a><a href="#" onclick="return false">기획서 예시(예산 계산기)</a></div>
     <div class="check" data-key="d1-7"><label><input type="checkbox">기획서 입력값·출력값·규칙 3칸 완성</label><label><input type="checkbox">상호 검토 완료</label></div>
@@ -480,7 +491,8 @@
       h.setAttribute('aria-expanded',open?'true':'false');
       if(save) ls(function(){localStorage.setItem(k,open?'1':'0')});
     }
-    set(ls(function(){return localStorage.getItem(k)})==='1',false);
+    var stored=ls(function(){return localStorage.getItem(k)});
+    set(stored===null?c.dataset.open==='1':stored==='1',false);
     function toggle(){set(!c.classList.contains('open'),true)}
     h.addEventListener('click',toggle);
     h.addEventListener('keydown',function(e){
