@@ -34,6 +34,20 @@
   code{background:var(--soft);padding:1px 6px;border-radius:4px;font-size:13px}
   .tree{background:#f3f5f8;border-radius:8px;padding:10px 14px;font-family:Consolas,monospace;font-size:13px;white-space:pre;overflow-x:auto}
   .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:var(--soft);color:var(--mute);margin-left:6px;vertical-align:middle}
+  .card[data-lesson]>h2{cursor:pointer;display:flex;align-items:baseline;gap:8px}
+  .card[data-lesson]>h2::before{content:"\25B8";flex:none;color:var(--mute);font-size:14px;display:inline-block;transition:transform .15s ease}
+  .card[data-lesson].open>h2::before{transform:rotate(90deg)}
+  .card[data-lesson]:not(.open)>:not(h2):not(.goal){display:none}
+  .card[data-lesson]>h2:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:6px}
+  .prompt{background:#f3f5f8;border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:8px 0;font-family:Consolas,"D2Coding",monospace;font-size:13px;line-height:1.65;white-space:pre-wrap;overflow-x:auto}
+  button.copy{font:inherit;font-size:13px;color:var(--accent);background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
+  button.copy:hover{border-color:var(--accent)}
+  button.copy.copied{color:#1f6b35;border-color:#9fc9a8;background:var(--ok)}
+  .lock{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
+  .lock input{font:inherit;font-size:15px;letter-spacing:.4em;width:8em;padding:8px 10px;border:1px solid var(--line);border-radius:8px;text-align:center}
+  .lock button{font:inherit;font-size:14px;color:#fff;background:var(--navy);border:1px solid var(--navy);border-radius:8px;padding:9px 16px;cursor:pointer}
+  .lock-msg{font-size:13px;color:#a33}
+  @media(prefers-reduced-motion:reduce){.card[data-lesson]>h2::before{transition:none}}
   footer{max-width:1040px;margin:10px auto 40px;padding:0 20px;font-size:12px;color:var(--mute)}
   .progress{font-size:12px;color:var(--mute);margin-left:auto;align-self:center;white-space:nowrap}
 </style>
@@ -48,6 +62,7 @@
   <button data-tab="d1">1일차 · 문서</button>
   <button data-tab="d2">2일차 · 도구</button>
   <button data-tab="files">자료·범위 안내</button>
+  <button data-tab="plus">플러스 🔒</button>
   <span class="progress" id="prog"></span>
 </div></nav>
 <main>
@@ -60,7 +75,7 @@
     <h3>① 자료 내려받기</h3>
     <div class="files">
       <span>▶ 웹하드 링크 (강의 당일 안내)</span>
-      <a href="#" onclick="return false">강사 제작 자료 묶음.zip</a>
+      <a href="files/강사제작자료.zip">강사제작자료.zip</a>
     </div>
     <h3>② 폴더 만들기 — 이름과 구조를 똑같이</h3>
     <div class="tree">정신건강복지센터_지식베이스/
@@ -121,7 +136,7 @@
       <li>지식베이스 구축(20분): "시작 전 준비" ①~④ 그대로</li>
       <li>마스터 시트 안내(15분): 0_안내 → 같이 걷자가 8개 시트를 지나가는 길 → 6번 시트에 내 사업 한 줄</li>
     </ol>
-    <div class="files"><a href="#" onclick="return false">마스터입력시트.xlsx</a><a href="#" onclick="return false">마스터시트 설명서.docx</a></div>
+    <div class="files"><a href="files/마스터입력시트_원주시정신건강복지센터.xlsx">마스터입력시트.xlsx</a><a href="files/마스터시트_강사용설명서.docx">마스터시트 설명서.docx</a></div>
     <div class="check" data-key="d1-1"><label><input type="checkbox">진단 제출</label><label><input type="checkbox">노트북 생성</label><label><input type="checkbox">6번 시트에 내 사업 1줄 입력</label></div>
   </div>
 
@@ -132,10 +147,11 @@
       <li>규칙은 이미 있다(8분): 「문서 작성 방법」 + 양식 메모 확인. 계획안 항목 구성(가.~차. vs 1.~7.) 현행 확인</li>
       <li>문체 추출(15분): 같이 걷자 원문 + 프롬프트 P2-1 → 문체 규칙 표. 정답지와 비교, 매일 쓰는 분 쪽 채택</li>
       <li>규칙 블록 완성(10분): P2-2의 [ ] 채우기 → 새 대화에 붙여 "필요성 3문장" 테스트</li>
+      <li>서식 변환(3분): 03_서식의 hwp를 한글에서 다른 이름으로 저장 → hwpx와 PDF. hwp(원본)·hwpx(자동화용)·PDF(AI 읽기용) 세 벌</li>
       <li>한글에 심기(12분): 스타일 템플릿(맑은 고딕 11pt 160%, 제목 15pt) · 개요 번호 모양(1.→가.→1)) · 찾아바꾸기(조건식)로 스타일 일괄 적용 · "문자열을 표로"</li>
       <li>HWPX 생성 시연(5분): 입력 → JSON → 서식 유지된 hwpx. "완성형은 이렇게까지 된다"</li>
     </ol>
-    <div class="files"><a href="#" onclick="return false">2교시 프롬프트팩.md</a><a href="#" onclick="return false">계획안 스타일 템플릿.hwp</a><a href="#" onclick="return false">같이걷자 원문(txt)</a></div>
+    <div class="files"><a href="files/2교시_프롬프트팩.md">2교시 프롬프트팩.md</a><a href="files/계획안_스타일템플릿.hwp">계획안 스타일 템플릿.hwp</a><a href="files/같이걷자_계획안_원문(배포용).txt">같이걷자 계획안 원문.txt</a></div>
     <div class="check" data-key="d1-2"><label><input type="checkbox">규칙 블록 저장(메모장/구글문서)</label><label><input type="checkbox">스타일 템플릿 저장</label><label><input type="checkbox">찾아바꾸기로 스타일 일괄 적용 성공</label></div>
   </div>
 
@@ -148,6 +164,7 @@
       <li>예산표: 산출근거 형식으로 재작성 → 합계 검산 (엑셀 수식)</li>
       <li>한글 템플릿에 붙여넣기 → 찾아바꾸기로 스타일 → 결재 올릴 수 있는 상태인지 P2-3 점검</li>
     </ol>
+    <div class="files"><a href="files/3-5교시_프롬프트팩.md">3~5교시 프롬프트 팩.md</a><a href="files/사전생성_결과팩(AI막힐때).md">사전 생성 결과 팩.md</a></div>
     <div class="check" data-key="d1-3"><label><input type="checkbox">내 사업 계획안 초안 1건</label><label><input type="checkbox">예산표 합계 검산 완료</label></div>
   </div>
 
@@ -172,7 +189,7 @@
       <li>회의록·공문: 규칙 블록 + 회의 텍스트 → 회의록 / 공문 문투 교정</li>
       <li>예시 회의 음성 → 클로바노트 → 회의록 자동 생성</li>
     </ol>
-    <div class="files"><a href="files/회의음성.mp3">예시 회의 음성.mp3</a></div>
+    <div class="files"><a href="files/회의음성_같이걷자_준비회의.mp3">예시 회의 음성</a><a href="files/예시회의_대본(녹음용).md">회의 대본·정답표</a></div>
     <div class="check" data-key="d1-5"><label><input type="checkbox">7번 시트 달성률 확인</label><label><input type="checkbox">회의록 1건</label></div>
   </div>
 
@@ -185,6 +202,7 @@
       <li>규칙 위반 찾기: 일부러 망가뜨린 계획안 2개 → 사람이 먼저, P2-3으로 대조</li>
       <li>AI 결과 검증: 사전 생성 결과 팩에서 사업안내·평가지침과 어긋난 문장 원문 대조</li>
     </ol>
+    <div class="files"><a href="files/규칙위반찾기_계획안A.txt">규칙 위반 찾기 · 계획안 A.txt</a><a href="files/규칙위반찾기_계획안B.txt">규칙 위반 찾기 · 계획안 B.txt</a></div>
     <div class="check" data-key="d1-6"><label><input type="checkbox">도구별 비교표</label><label><input type="checkbox">규칙 위반 5개 이상 발견</label></div>
   </div>
 
@@ -195,8 +213,10 @@
       <li>도구 후보 고르기: 예산 산출표 · 출장비 계산기 · 상담 건수 집계 · 항목번호 변환기 · 연차 계산기 · 계획안 입력폼</li>
       <li>기획서 작성: 입력값(무엇을 넣나) / 출력값(무엇이 나오나) / 규칙(어떻게 계산·판단하나) — 이 세 칸이 비면 2일차에 못 만듦</li>
       <li>옆 사람과 교환 검토: "입력값만 보고 출력값이 예측되나?"</li>
+      <li>기획서 변환기에 옮겨 적기 → 빌드 프롬프트 MD 내려받기 → 옆 사람과 교환 검토</li>
+      <li>제출: 내려받은 MD 파일을 제출함 앱 1일차 7교시에 첨부해 제출</li>
     </ol>
-    <div class="files"><a href="#" onclick="return false">업무도구 기획서 양식.docx</a><a href="#" onclick="return false">기획서 예시(예산 계산기)</a></div>
+    <div class="files"><a href="files/업무도구기획서_양식.docx">업무도구 기획서 양식.docx</a><a href="#" onclick="return false">기획서 예시(예산 계산기)</a></div>
     <div class="check" data-key="d1-7"><label><input type="checkbox">기획서 입력값·출력값·규칙 3칸 완성</label><label><input type="checkbox">상호 검토 완료</label></div>
   </div>
 
@@ -211,7 +231,7 @@
       <li>예제 파일 수정 한 줄(제목·색) → 저장 → 재배포 — "고치면 바로 반영된다" 체험</li>
       <li>조별 상호 지원: 완료자가 옆 자리 도움</li>
     </ol>
-    <div class="files"><a href="#" onclick="return false">예제① 예산 산출 계산기.html</a><a href="#" onclick="return false">예제② 항목번호 변환기.html</a><a href="#" onclick="return false">세팅 체크리스트.pdf</a></div>
+    <div class="files"><a href="files/예제1_예산산출계산기.html">예제① 예산 산출 계산기.html</a><a href="files/예제2_항목번호변환기.html">예제② 항목번호 변환기.html</a><a href="files/세팅체크리스트.pdf">세팅 체크리스트.pdf</a></div>
     <div class="check" data-key="d1-8"><label><input type="checkbox">GitHub Pages 링크 열림</label><label><input type="checkbox">Gemini CLI 동작 확인</label><label><input type="checkbox">예제 파일 수정→재배포 성공</label></div>
   </div>
 </section>
@@ -246,7 +266,7 @@
   <div class="card" data-lesson="d2-3">
     <h2>3~5교시 · 제작 (입력 → 규칙 → 출력)</h2>
     <ol><li>입력 화면: 기획서 입력값을 그대로 폼으로. 필수값 비면 경고</li><li>규칙: 계산식(예산 = 단가×수량×횟수, 합계), 판단(필수항목 누락 검사), 서식(항목번호·공백 들여쓰기)</li><li>출력: 계획안 텍스트 → 복사 / 다운로드. 강사 시연: 같은 JSON으로 HWPX 직접 생성</li></ol>
-    <div class="files"><a href="#" onclick="return false">JSON 규격 예시(plan_gachi.json)</a><a href="#" onclick="return false">엔진 사용법 README</a></div>
+    <div class="files"><a href="files/plan_gachi.json">JSON 규격 예시(plan_gachi.json)</a><a href="files/README.md">엔진 사용법 README.md</a></div>
     <div class="check" data-key="d2-3"><label><input type="checkbox">입력 화면</label><label><input type="checkbox">규칙 동작</label><label><input type="checkbox">출력·다운로드</label></div>
   </div>
   <div class="card" data-lesson="d2-6">
@@ -316,18 +336,242 @@
     </ol>
   </div>
 </section>
+
+<!-- ================= 플러스 ================= -->
+<section class="tab" id="tab-plus">
+  <div class="card" id="plus-gate">
+    <h2>플러스 자료</h2>
+    <div class="goal">강의 중 안내되는 <b>4자리 코드</b>를 넣으면 열립니다. 한 번 열면 이 브라우저에서는 계속 열려 있습니다.</div>
+    <form class="lock" id="plus-form">
+      <label for="plus-code" class="meta" style="margin:0">코드</label>
+      <input id="plus-code" type="text" inputmode="numeric" maxlength="4" autocomplete="off" placeholder="0000">
+      <button type="submit">열기</button>
+      <span class="lock-msg" id="plus-msg" role="status"></span>
+    </form>
+  </div>
+
+  <div id="plus-body" hidden>
+    <div class="card">
+      <h2>플러스 — 프롬프트 저장소</h2>
+      <div class="goal">수업에서 쓴 프롬프트와 아래 실습 프롬프트를 한곳에 모아 둔 곳입니다. 복사해서 바로 쓰세요.</div>
+      <!-- TODO: 프롬프트 저장소 주소로 교체 -->
+      <div class="files"><a href="#" onclick="return false">▶ 프롬프트 저장소 열기 (GitHub)</a></div>
+    </div>
+
+    <div class="card" data-lesson="plus-1">
+      <h2>① 증명사진·프로필 사진 만들기 (ChatGPT 이미지·10분)</h2>
+      <div class="goal">내 사진 한 장으로 서류용 증명사진과 업무용 프로필 사진을 만든다.</div>
+      <ol>
+        <li>아래 복사기에서 배경·복장·용도를 고르고 프롬프트 복사</li>
+        <li>ChatGPT에 <b>본인 사진을 첨부</b>하고 복사한 프롬프트 붙여넣기</li>
+        <li>나온 사진에서 얼굴·안경·머리 모양이 어색하지 않은지 확인 후 저장</li>
+      </ol>
+      <div class="files"><a href="https://chaeavivi.github.io/brandai/id-photo-prompt-copier.html" target="_blank" rel="noopener">▶ 증명사진 프롬프트 복사기 열기</a></div>
+      <p class="meta">※ 사진은 <b>본인 것만</b> 사용합니다. 동료·내담자 사진은 올리지 않습니다.</p>
+      <div class="check" data-key="plus-1"><label><input type="checkbox">사진 1장 완성</label></div>
+    </div>
+
+    <div class="card" data-lesson="plus-2">
+      <h2>② 사업 홍보 카드뉴스 3장 (Canva AI·15분)</h2>
+      <div class="goal">담당 사업 하나를 인스타그램 카드뉴스 3장으로 만든다.</div>
+      <div class="prompt" id="p-card">[정신건강복지센터 사업 홍보 카드뉴스 3장]
+사업명:
+대상:
+핵심 메시지(한 문장):
+신청 방법:
+문의(전화·주소):
+
+위 내용으로 인스타그램 정사각형(1080×1080) 카드뉴스 3장을 만들어 줘.
+1장 - 시선을 끄는 제목 + 대상
+2장 - 프로그램 내용 3가지, 각각 아이콘과 함께
+3장 - 신청 방법 + 문의처
+
+톤: 공공기관. 차분하고 신뢰감 있는 파랑·초록 계열.
+글자는 장당 30자 이내로 최소화하고, 사업명과 문의처는 반드시 넣을 것.</div>
+      <div class="files"><button type="button" class="copy" data-target="p-card">프롬프트 복사</button></div>
+      <div class="check" data-key="plus-2"><label><input type="checkbox">카드뉴스 3장 완성</label></div>
+    </div>
+
+    <div class="card" data-lesson="plus-3">
+      <h2>③ 공문 문투 교정기 (아무 AI·10분)</h2>
+      <div class="goal">쓴 문장을 결재 올릴 수 있는 공문 문투로 바꾼다.</div>
+      <div class="prompt" id="p-gongmun">아래 문장을 공공기관 공문 문투로 고쳐 줘.
+
+규칙
+- 개조식(~함, ~임, ~하고자 함)으로, 한 항목에 한 문장
+- 주관적·감정 표현 제거, 추측성 표현은 근거를 묻는 표시를 남길 것
+- 숫자·날짜·금액·기관명은 원문 그대로 두고 절대 바꾸지 말 것
+- 원문에 없는 내용을 새로 지어내지 말 것
+
+출력
+1) 고친 문장만 먼저
+2) 그 아래 표로 [원문 / 고친 문장 / 바꾼 이유]
+
+[원문]
+</div>
+      <div class="files"><button type="button" class="copy" data-target="p-gongmun">프롬프트 복사</button></div>
+      <div class="check" data-key="plus-3"><label><input type="checkbox">공문 1건 교정</label></div>
+    </div>
+
+    <div class="card" data-lesson="plus-4">
+      <h2>④ 노트북LM 오디오 개요 (NotebookLM·10분)</h2>
+      <div class="goal">기준자료를 두 사람이 대화하는 오디오로 바꿔 출퇴근길에 듣는다.</div>
+      <ol>
+        <li>노트북LM에서 1교시에 만든 <code>센터 문서작성 기준</code> 노트북 열기</li>
+        <li>오른쪽 Studio → 오디오 개요 → 생성 (2~3분 걸립니다)</li>
+        <li>들으면서 우리 센터 실제 기준과 다르게 말하는 부분을 메모 — 그 부분이 AI가 틀리기 쉬운 지점</li>
+      </ol>
+      <div class="check" data-key="plus-4"><label><input type="checkbox">오디오 개요 1개 생성</label></div>
+    </div>
+
+    <div class="card" data-lesson="plus-5">
+      <h2>⑤ 엑셀 수식 도우미 (아무 AI·10분)</h2>
+      <div class="goal">수식이 기억나지 않을 때 시트 구조만 알려주고 받아 쓴다.</div>
+      <div class="prompt" id="p-excel">엑셀 수식을 만들어 줘.
+
+시트 구조: (예) A열 날짜, B열 프로그램명, C열 참여인원, D열 예산액, 2행부터 데이터
+하고 싶은 것: (예) 프로그램별 참여인원 합계와 1인당 예산 구하기
+엑셀 버전: (예) Microsoft 365 / 2016
+
+출력 순서
+1) 수식 한 줄 (바로 붙여넣을 수 있게)
+2) 각 인수가 내 시트의 어디를 가리키는지 설명
+3) 값이 비어 있거나 오류일 때 처리 방법</div>
+      <div class="files"><button type="button" class="copy" data-target="p-excel">프롬프트 복사</button></div>
+      <div class="check" data-key="plus-5"><label><input type="checkbox">수식 1개 적용</label></div>
+    </div>
+
+    <div class="card" data-lesson="plus-6">
+      <h2>⑥ 회의 음성 → 회의록 (클로바노트·15분)</h2>
+      <div class="goal">녹음 파일 하나로 회의록 초안까지 만든다.</div>
+      <ol>
+        <li>아래 예시 회의 음성 내려받기</li>
+        <li>클로바노트에 업로드 → 자동 변환 (약 9분 분량)</li>
+        <li>변환된 텍스트를 1일차 <b>[센터 문서 규칙] 블록</b>과 함께 AI에 넣어 회의록 완성</li>
+      </ol>
+      <div class="files"><a href="files/회의음성_같이걷자_준비회의.mp3">예시 회의 음성</a></div>
+      <div class="check" data-key="plus-6"><label><input type="checkbox">회의록 1건</label></div>
+    </div>
+
+    <div class="card" data-lesson="plus-7">
+      <h2>⑦ 내 업무 자동화 후보 10개 (종이·10분)</h2>
+      <div class="goal">2일차에 만들 도구를 고르는 가장 빠른 방법.</div>
+      <ol>
+        <li>지난 한 달 동안 <b>두 번 이상 반복한</b> 문서 작업을 10개 적기</li>
+        <li>각각 옆에 [입력값 / 출력값 / 규칙] 세 칸이 채워지는지 O·X 표시</li>
+        <li>세 칸이 모두 O인 것부터 도구 후보 — 7교시 기획서로 넘기기</li>
+      </ol>
+      <div class="check" data-key="plus-7"><label><input type="checkbox">후보 10개 작성</label></div>
+    </div>
+  </div>
+</section>
 </main>
 <footer>체크 표시는 이 브라우저에만 저장됩니다. 한국폴리텍대학 원주캠퍼스 「생성형AI 활용 업무 워크플로우 실무」 심화과정.</footer>
 <script>
 (function(){
+  var BONUS_CODE='1224';
+  function ls(fn){try{return fn()}catch(e){return null}}
+
+  /* ---- 탭 ---- */
   var tabs=document.querySelectorAll('nav button'),secs=document.querySelectorAll('section.tab');
-  function show(id){tabs.forEach(function(b){b.classList.toggle('on',b.dataset.tab===id)});secs.forEach(function(s){s.classList.toggle('on',s.id==='tab-'+id)});try{localStorage.setItem('hub.tab',id)}catch(e){}window.scrollTo(0,0)}
+  function show(id){
+    tabs.forEach(function(b){b.classList.toggle('on',b.dataset.tab===id)});
+    secs.forEach(function(s){s.classList.toggle('on',s.id==='tab-'+id)});
+    ls(function(){localStorage.setItem('hub.tab',id)});
+    window.scrollTo(0,0);
+  }
   tabs.forEach(function(b){b.addEventListener('click',function(){show(b.dataset.tab)})});
-  var boxes=document.querySelectorAll('.check input');
-  function key(i){var g=i.closest('.check').dataset.key;var idx=Array.prototype.indexOf.call(i.closest('.check').querySelectorAll('input'),i);return 'hub.'+g+'.'+idx}
-  function paint(){var done=0;boxes.forEach(function(i){if(i.checked)done++;});document.getElementById('prog').textContent=done+' / '+boxes.length+' 완료';document.querySelectorAll('.card[data-lesson]').forEach(function(c){var ins=c.querySelectorAll('.check input');var all=ins.length&&Array.prototype.every.call(ins,function(i){return i.checked});c.classList.toggle('done',all)})}
-  boxes.forEach(function(i){try{i.checked=localStorage.getItem(key(i))==='1'}catch(e){}i.addEventListener('change',function(){try{localStorage.setItem(key(i),i.checked?'1':'0')}catch(e){}paint()})});
-  var t='prep';try{t=localStorage.getItem('hub.tab')||'prep'}catch(e){}show(t);paint();
+
+  /* ---- 교시 카드 접기/펼치기 ---- */
+  document.querySelectorAll('.card[data-lesson]').forEach(function(c){
+    var h=c.querySelector('h2'); if(!h) return;
+    var k='hub.open.'+c.dataset.lesson;
+    h.setAttribute('role','button'); h.setAttribute('tabindex','0');
+    function set(open,save){
+      c.classList.toggle('open',open);
+      h.setAttribute('aria-expanded',open?'true':'false');
+      if(save) ls(function(){localStorage.setItem(k,open?'1':'0')});
+    }
+    set(ls(function(){return localStorage.getItem(k)})==='1',false);
+    function toggle(){set(!c.classList.contains('open'),true)}
+    h.addEventListener('click',toggle);
+    h.addEventListener('keydown',function(e){
+      if(e.key==='Enter'||e.key===' '||e.key==='Spacebar'){e.preventDefault();toggle()}
+    });
+  });
+
+  /* ---- 체크박스 저장 + 진행률 ---- */
+  var boxes=Array.prototype.slice.call(document.querySelectorAll('.check input'));
+  function key(i){
+    var g=i.closest('.check').dataset.key;
+    var idx=Array.prototype.indexOf.call(i.closest('.check').querySelectorAll('input'),i);
+    return 'hub.'+g+'.'+idx;
+  }
+  function counted(){
+    return boxes.filter(function(i){return !i.closest('#plus-body[hidden]')});
+  }
+  function paint(){
+    var list=counted(),done=0;
+    list.forEach(function(i){if(i.checked)done++});
+    document.getElementById('prog').textContent=done+' / '+list.length+' 완료';
+    document.querySelectorAll('.card[data-lesson]').forEach(function(c){
+      var ins=c.querySelectorAll('.check input');
+      var all=ins.length&&Array.prototype.every.call(ins,function(i){return i.checked});
+      c.classList.toggle('done',!!all);
+    });
+  }
+  boxes.forEach(function(i){
+    i.checked=ls(function(){return localStorage.getItem(key(i))})==='1';
+    i.addEventListener('change',function(){
+      ls(function(){localStorage.setItem(key(i),i.checked?'1':'0')});
+      paint();
+    });
+  });
+
+  /* ---- 플러스 탭 코드 잠금 ---- */
+  var gate=document.getElementById('plus-gate'),
+      body=document.getElementById('plus-body'),
+      form=document.getElementById('plus-form'),
+      code=document.getElementById('plus-code'),
+      msg=document.getElementById('plus-msg');
+  function unlock(save){
+    body.hidden=false; gate.hidden=true;
+    if(save) ls(function(){localStorage.setItem('hub.plus','1')});
+    paint();
+  }
+  if(ls(function(){return localStorage.getItem('hub.plus')})==='1') unlock(false);
+  form.addEventListener('submit',function(e){
+    e.preventDefault();
+    if(code.value.trim()===BONUS_CODE){msg.textContent='';unlock(true)}
+    else{msg.textContent='코드가 맞지 않습니다.';code.select()}
+  });
+
+  /* ---- 프롬프트 복사 ---- */
+  document.querySelectorAll('button.copy').forEach(function(b){
+    b.addEventListener('click',function(){
+      if(b.classList.contains('copied')) return;
+      var src=document.getElementById(b.dataset.target); if(!src) return;
+      var text=src.textContent, label=b.textContent;
+      function done(){
+        b.textContent='복사됨'; b.classList.add('copied');
+        setTimeout(function(){b.textContent=label;b.classList.remove('copied')},1200);
+      }
+      function fallback(){
+        var ta=document.createElement('textarea');
+        ta.value=text; ta.setAttribute('readonly','');
+        ta.style.position='fixed'; ta.style.left='-9999px';
+        document.body.appendChild(ta); ta.select();
+        try{document.execCommand('copy');done()}catch(e){}
+        document.body.removeChild(ta);
+      }
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done,fallback);
+      }else fallback();
+    });
+  });
+
+  show(ls(function(){return localStorage.getItem('hub.tab')})||'prep');
+  paint();
 })();
 </script>
 </body>
