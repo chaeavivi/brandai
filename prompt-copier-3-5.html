@@ -1,0 +1,404 @@
+<!-- ================================================================================== -->
+<!-- WIDGET. 3~5교시 프롬프트 복사기 (Document Prompt Copier) -->
+<!-- 이 부분을 복사해서 노션에 임베드하세요 -->
+<!-- ================================================================================== -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3~5교시 프롬프트 복사기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { margin: 0; padding: 40px 16px 48px; font-family: 'Noto Sans KR', sans-serif; background-color: #0f172a; }
+        .prompt-body { white-space: pre-wrap; word-break: break-word; font-family: 'Noto Sans KR', sans-serif; }
+        .clamped { max-height: 16rem; overflow: hidden; }
+        .clamp-wrap { position: relative; }
+        .clamp-wrap.is-clamped::after {
+            content: ""; position: absolute; left: 0; right: 0; bottom: 0; height: 4.5rem;
+            background: linear-gradient(to bottom, rgba(15,23,42,0), rgba(15,23,42,0.95));
+            pointer-events: none; border-radius: 0 0 0.5rem 0.5rem;
+        }
+        .copied { animation: pop 0.3s ease; }
+        @keyframes pop { 0% { transform: scale(1); } 50% { transform: scale(0.94); } 100% { transform: scale(1); } }
+        #toast { transition: opacity 0.3s, transform 0.3s; }
+        textarea { font-family: 'Noto Sans KR', sans-serif; }
+    </style>
+</head>
+<body>
+    <div class="max-w-2xl mx-auto text-white">
+
+        <!-- 헤더 -->
+        <div class="text-center mb-7">
+            <span class="text-indigo-400 font-bold tracking-widest text-xs">PROMPT COPIER · 3~5교시</span>
+            <h1 class="text-2xl md:text-3xl font-black mt-2 mb-3">계획안 · 사업계획서 · 결과보고 프롬프트</h1>
+            <p class="text-gray-400 text-sm font-light leading-relaxed">
+                아래에 2교시에서 만든 <b class="text-gray-200">[센터 문서 규칙] 블록</b>을 한 번만 붙여넣으면<br class="hidden sm:block">
+                복사할 때마다 프롬프트 맨 위에 <b class="text-gray-200">자동으로 합쳐집니다.</b>
+            </p>
+        </div>
+
+        <!-- STEP 1. 센터 문서 규칙 블록 -->
+        <div class="bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden mb-5">
+            <div class="flex items-center gap-3 p-4 md:p-5 pb-3">
+                <div class="shrink-0 w-11 h-11 rounded-xl bg-amber-500/20 text-amber-300 flex items-center justify-center">
+                    <i class="fa-solid fa-paste text-lg"></i>
+                </div>
+                <div class="min-w-0 flex-1">
+                    <h2 class="font-bold text-base leading-snug">먼저 한 번 · [센터 문서 규칙] 블록 붙여넣기</h2>
+                    <p class="text-gray-400 text-xs mt-0.5">2교시 산출물 · 이 브라우저에 저장되어 다음에도 남습니다</p>
+                </div>
+                <span id="rule-state" class="shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-md bg-slate-700 text-gray-400">비어 있음</span>
+            </div>
+            <div class="px-4 md:px-5 pb-5">
+                <textarea id="rule-input" rows="5" placeholder="[센터 문서 규칙]&#10;- 문체: ~함/~임 체, 명사형 종결&#10;- 항목번호: 1. → 가. → 1) → 가)&#10;- 개인정보는 A씨로 표기&#10;..."
+                    class="w-full bg-slate-900/70 border border-slate-700 focus:border-indigo-500 outline-none rounded-lg p-3
+                           text-gray-200 text-[13px] leading-relaxed resize-y"></textarea>
+                <div class="flex flex-wrap items-center gap-2 mt-2.5">
+                    <button id="rule-clear" class="text-[11px] font-bold text-gray-400 hover:text-white bg-slate-700 hover:bg-slate-600 px-2.5 py-1 rounded-md transition-colors">
+                        <i class="fa-regular fa-trash-can mr-1"></i>지우기
+                    </button>
+                    <span class="text-[11px] text-gray-500">비워두면 <code class="text-gray-400">[센터 문서 규칙]</code> 자리 표시만 붙습니다</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- 공통 규칙 -->
+        <div class="bg-slate-800/60 rounded-2xl border border-slate-700/60 p-4 md:p-5 mb-5">
+            <h2 class="font-bold text-sm mb-2.5 flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation text-amber-400"></i>공통 규칙 (모든 프롬프트에 적용)
+            </h2>
+            <ul class="text-[13px] text-gray-400 leading-relaxed space-y-1 list-disc pl-5">
+                <li>맨 위 <code class="text-gray-300">[센터 문서 규칙]</code> 자리에 2교시에서 만든 블록을 붙인다.</li>
+                <li>없는 사실은 만들지 않는다. 모르는 값은 <code class="text-gray-300">[확인 필요]</code>.</li>
+                <li>한 번에 표 하나·문서 하나만 요청한다.</li>
+            </ul>
+        </div>
+
+        <!-- 교시 필터 -->
+        <div id="filters" class="flex flex-wrap gap-2 mb-5">
+            <button data-filter="all"  class="filter-btn text-xs font-bold px-3 py-1.5 rounded-lg transition-colors">전체</button>
+            <button data-filter="3"    class="filter-btn text-xs font-bold px-3 py-1.5 rounded-lg transition-colors">3교시 · 계획안</button>
+            <button data-filter="4"    class="filter-btn text-xs font-bold px-3 py-1.5 rounded-lg transition-colors">4교시 · 사업계획서</button>
+            <button data-filter="5"    class="filter-btn text-xs font-bold px-3 py-1.5 rounded-lg transition-colors">5교시 · 결과보고</button>
+        </div>
+
+        <!-- 프롬프트 카드 목록 -->
+        <div id="cards" class="space-y-5"></div>
+
+        <p class="text-center text-gray-600 text-xs mt-10">
+            Gemini · ChatGPT · Claude 어디에 붙여넣어도 됩니다. 결과가 이상하면 규칙 블록부터 확인하세요.
+        </p>
+    </div>
+
+    <!-- 복사 완료 토스트 -->
+    <div id="toast" class="fixed left-1/2 bottom-6 -translate-x-1/2 translate-y-4 opacity-0 pointer-events-none
+                bg-indigo-500 text-white text-sm font-bold px-5 py-3 rounded-full shadow-lg z-50">
+        <i class="fa-solid fa-check mr-1"></i> <span id="toast-msg">복사되었어요!</span>
+    </div>
+
+    <script>
+        // ================= 프롬프트 데이터 =================
+        // body 안의 [센터 문서 규칙] 자리는 복사할 때 위쪽 입력칸 내용으로 바뀝니다.
+        const PROMPTS = [
+            {
+                id: "P3-1", lesson: "3", icon: "fa-file-lines",
+                name: "계획안 초안",
+                desc: "기본정보만 넣으면 센터 서식 계획안(붙임문서) 초안이 나옵니다.",
+                input: "마스터 시트 8번 입력폼",
+                output: "한글 계획안 초안 1건",
+                body:
+`[센터 문서 규칙]
+
+[역할] 원주시정신건강복지센터 사업 담당자. 아래 [입력정보]로 내부 계획안(붙임문서)을 작성한다.
+
+[작성 규칙]
+- 항목 순서: 1. 필요성 → 2. 목적 → 3. 사업 내용 → 4. 예산 → 5. 진행 및 역할분담 → 6. 평가 → 7. 기대효과 → 붙임
+- 번호와 들여쓰기는 텍스트로 직접 쓴다: "1." 0칸, "  가." 2칸, "    1)" 4칸, "      가)" 6칸
+- 필요성은 3문장: ① 입력된 통계·근거 → ② 지역사회 과제로 해석 → ③ 따라서 본 사업. 근거가 없으면 [근거 통계 확인 필요]
+- 대상·일시·장소·접수는 "가. 대   상 : " 형식(라벨 글자 사이 띄움)
+- 예산은 표: 구분 | 산출내역(단가 × 수량 × 횟수) | 단위(원). 합계를 계산해 "총 계" 행에 쓴다
+- 기대효과는 가.나.다. 3개 이내, 명사형 종결
+- 마지막 줄: "붙임  1. ○○ 1부.  2. ○○ 1부.  끝."
+
+[입력정보]
+사업명:
+추진배경(근거 통계·출처):
+목적:
+대상·인원:
+일시:
+장소:
+프로그램·세부내용:
+협조기관:
+예산(재원, 항목, 단가, 수량, 횟수):
+평가 방법:
+기대효과:
+붙임:`
+            },
+            {
+                id: "P3-2", lesson: "3", icon: "fa-calculator",
+                name: "예산표만 다시",
+                desc: "산출근거(단가 × 수량 × 횟수)와 검산 한 줄이 남는 예산표로 다시 씁니다.",
+                input: "계획안의 예산 항목",
+                output: "산출근거 표 + 검산 줄",
+                body:
+`아래 예산 항목을 "구분 | 항목 | 산출근거 | 금액(원)" 표로 다시 쓰세요.
+산출근거는 "단가 × 수량 × 횟수", 금액은 1,000,000 형식, 마지막 행 "총 계".
+표 아래에 "검산: a + b + c = 합계" 한 줄.
+
+[예산 항목]
+(붙여넣기)`
+            },
+            {
+                id: "P4-1", lesson: "4", icon: "fa-magnifying-glass-chart",
+                name: "환경분석 (PEST · SWOT)",
+                desc: "기초자료에 있는 사실만으로 PEST 표를 만들고 SWOT 4칸으로 정리합니다.",
+                input: "마스터 시트 1번 기초자료",
+                output: "시트 2번 PEST 표 + SWOT",
+                body:
+`[센터 문서 규칙]
+
+[역할] 사업계획서 "환경분석" 작성 담당자.
+[할 일] 아래 [기초자료]만 근거로 PEST 표를 만들고, 그 아래 SWOT 4칸으로 정리한다.
+
+PEST 표(열 5개): 구분(P/E/S/T) | 번호(P1, E1…) | Key Point(사실 한 문장) | 근거자료(출처명) | 시사점("센터는 ~해야 한다")
+- 기초자료에 있는 사실만. 근거 없는 행은 쓰지 않는다
+- 구분별 2개 이상, 총 8~12행
+
+SWOT: S/W/O/T 각 2~3개, 항목 뒤에 근거 번호(예: P1, S2)를 괄호로 붙인다.
+마지막에 "전년도 개선과제 반영" 1줄.
+
+[기초자료]
+(시트 1번의 지역통계·정책·전년도 개선과제 행을 복사해 붙여넣기)`
+            },
+            {
+                id: "P4-2", lesson: "4", icon: "fa-bullseye",
+                name: "KPI 설계 + 6기준 체크",
+                desc: "전략과제마다 KPI 1개. 6기준에 X가 있으면 대안 지표까지 받습니다.",
+                input: "마스터 시트 4번 전략과제",
+                output: "시트 5번 KPI 표",
+                body:
+`[센터 문서 규칙]
+
+아래 [전략과제]마다 KPI 1개를 설계하세요.
+형식: 전략과제 | 성과지표명 | 측정산식 | 목표치(숫자) | 담당팀 | 6기준 체크
+6기준: 구체성 · 측정가능성 · 원인성 · 신뢰성 · 기한성 · 대표성 — 각 O/X와 한 줄 이유
+- 계량·결과지표 우선. 만족도만으로 끝내지 않는다
+- X가 하나라도 있으면 대안 지표를 하나 더 제시
+
+[전략과제]
+(시트 4번에서 복사)`
+            },
+            {
+                id: "P5-1", lesson: "5", icon: "fa-chart-line",
+                name: "결과보고 (추진결과)",
+                desc: "달성률·집행률을 주어진 숫자로만 계산하고, 개선과제를 행동 문장으로 씁니다.",
+                input: "마스터 시트 7번 한 행",
+                output: "결과보고서 \"추진결과\" 표",
+                body:
+`[센터 문서 규칙]
+
+아래 [추진결과 정보]로 결과보고서 "추진결과"를 작성하세요.
+
+출력:
+① 성과 표: 성과지표명 | 목표 | 실적 | 달성률(%)
+② 예산 표: 계획 | 집행 | 집행률(%) | 저조 사유
+③ 주요 내용: 실행 내용 + 실적, 5줄 이내
+④ 성과 분석 표: 잘된 점·부족한 점 | 개선과제 | 다음 연도 반영 계획
+
+- 달성률·집행률은 주어진 숫자로만 계산(소수 첫째 자리)
+- 개선과제는 "~을 ~로 조정" 형태의 행동 문장
+
+[추진결과 정보]
+(시트 7번 한 행)`
+            },
+            {
+                id: "P5-2", lesson: "5", icon: "fa-clipboard-list",
+                name: "회의록",
+                desc: "발언을 옮기지 않고 결정과 근거만. 결정사항은 무엇을·누가·언제까지.",
+                input: "클로바노트 변환 텍스트",
+                output: "회의록 1건",
+                body:
+`[센터 문서 규칙]
+
+아래 [회의 내용]을 회의록으로 정리하세요.
+형식: 회의명 / 일시 / 장소 / 참석자(직위만, 이름은 쓰지 않는다) / 안건 / 논의 내용(안건별 가.나.다.) / 결정사항(번호 · 담당 · 기한) / 미결 / 향후 일정
+- 발언을 옮기지 말고 결정과 근거 중심으로
+- 결정사항은 "무엇을 · 누가 · 언제까지"가 다 있어야 한다
+- 결정 안 된 것은 "미결"에 둔다
+
+[회의 내용]
+(클로바노트 변환 텍스트)`
+            }
+        ];
+
+        const RULE_KEY = "brandai-center-rule-block";
+        const RULE_MARK = "[센터 문서 규칙]";
+
+        function esc(s) {
+            return s.replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+        }
+
+        // ================= 규칙 블록 =================
+        const ruleInput = document.getElementById("rule-input");
+        const ruleState = document.getElementById("rule-state");
+
+        function loadRule() {
+            try { return localStorage.getItem(RULE_KEY) || ""; } catch (e) { return ""; }
+        }
+        function saveRule(v) {
+            try { localStorage.setItem(RULE_KEY, v); } catch (e) { /* 저장 불가 시 이번 세션만 사용 */ }
+        }
+        function paintRuleState() {
+            const filled = ruleInput.value.trim().length > 0;
+            ruleState.textContent = filled ? "적용 중" : "비어 있음";
+            ruleState.className = "shrink-0 text-[11px] font-bold px-2.5 py-1 rounded-md " +
+                (filled ? "bg-emerald-500/20 text-emerald-300" : "bg-slate-700 text-gray-400");
+        }
+        ruleInput.value = loadRule();
+        paintRuleState();
+        ruleInput.addEventListener("input", () => { saveRule(ruleInput.value); paintRuleState(); });
+        document.getElementById("rule-clear").addEventListener("click", () => {
+            ruleInput.value = ""; saveRule(""); paintRuleState();
+        });
+
+        // 프롬프트 맨 위 [센터 문서 규칙] 자리에 입력한 블록을 끼워 넣는다
+        function withRule(body) {
+            const rule = ruleInput.value.trim();
+            if (!rule) return body;
+            if (body.startsWith(RULE_MARK)) {
+                return rule + body.slice(RULE_MARK.length);
+            }
+            return rule + "\n\n" + body;
+        }
+
+        // ================= 렌더링 =================
+        const wrap = document.getElementById("cards");
+        wrap.innerHTML = PROMPTS.map((p, i) => `
+            <div class="card bg-slate-800 rounded-2xl border border-slate-700 overflow-hidden" data-lesson="${p.lesson}">
+                <div class="flex items-center gap-3 p-4 md:p-5 pb-3 border-b border-slate-700/60">
+                    <div class="shrink-0 w-11 h-11 rounded-xl bg-indigo-500/20 text-indigo-300 flex items-center justify-center">
+                        <i class="fa-solid ${p.icon} text-lg"></i>
+                    </div>
+                    <div class="min-w-0 flex-1">
+                        <h3 class="font-bold text-base leading-snug">
+                            <span class="text-indigo-400 mr-1.5">${p.id}</span>${esc(p.name)}
+                        </h3>
+                        <p class="text-gray-400 text-xs mt-0.5 leading-relaxed">${esc(p.desc)}</p>
+                    </div>
+                    <button data-card="${i}"
+                        class="copy-btn shrink-0 bg-indigo-500/20 hover:bg-indigo-500/40 text-indigo-300 hover:text-white
+                               text-[11px] font-bold px-3 py-1.5 rounded-lg transition-colors flex items-center gap-1.5"
+                        title="규칙 블록을 합쳐서 복사">
+                        <i class="fa-regular fa-copy"></i><span class="btn-label">복사</span>
+                    </button>
+                </div>
+
+                <div class="p-4 md:p-5 pt-3.5">
+                    <div class="flex flex-wrap gap-x-4 gap-y-1 text-[11px] text-gray-500 mb-3">
+                        <span><i class="fa-solid fa-arrow-right-to-bracket mr-1 text-gray-600"></i>넣는 것: <span class="text-gray-400">${esc(p.input)}</span></span>
+                        <span><i class="fa-solid fa-arrow-right-from-bracket mr-1 text-gray-600"></i>나오는 것: <span class="text-gray-400">${esc(p.output)}</span></span>
+                    </div>
+                    <div class="clamp-wrap is-clamped">
+                        <pre class="prompt-body clamped bg-slate-900/70 border border-slate-700 rounded-lg p-3 text-gray-200 text-[13px] leading-relaxed">${esc(p.body)}</pre>
+                    </div>
+                    <button data-more="${i}" class="more-btn text-[11px] font-bold text-gray-400 hover:text-white mt-2">
+                        전체 보기 <i class="fa-solid fa-chevron-down ml-0.5"></i>
+                    </button>
+                </div>
+            </div>
+        `).join("");
+
+        // 전체 보기 / 접기
+        wrap.addEventListener("click", (e) => {
+            const btn = e.target.closest(".more-btn");
+            if (!btn) return;
+            const box = btn.previousElementSibling;
+            const pre = box.querySelector("pre");
+            const open = !pre.classList.contains("clamped");
+            pre.classList.toggle("clamped", open);
+            box.classList.toggle("is-clamped", open);
+            btn.innerHTML = open
+                ? '전체 보기 <i class="fa-solid fa-chevron-down ml-0.5"></i>'
+                : '접기 <i class="fa-solid fa-chevron-up ml-0.5"></i>';
+        });
+
+        // ================= 교시 필터 =================
+        const filterBtns = document.querySelectorAll(".filter-btn");
+        function applyFilter(v) {
+            filterBtns.forEach(b => {
+                const on = b.dataset.filter === v;
+                b.className = "filter-btn text-xs font-bold px-3 py-1.5 rounded-lg transition-colors " +
+                    (on ? "bg-indigo-500 text-white" : "bg-slate-800 text-gray-400 hover:bg-slate-700 hover:text-gray-200");
+            });
+            document.querySelectorAll(".card").forEach(c => {
+                c.style.display = (v === "all" || c.dataset.lesson === v) ? "" : "none";
+            });
+        }
+        filterBtns.forEach(b => b.addEventListener("click", () => applyFilter(b.dataset.filter)));
+        applyFilter("all");
+
+        // ================= 복사 로직 =================
+        const toast = document.getElementById("toast");
+        const toastMsg = document.getElementById("toast-msg");
+        let toastTimer = null;
+
+        function showToast(msg) {
+            toastMsg.textContent = msg;
+            toast.style.opacity = "1";
+            toast.style.transform = "translate(-50%, 0)";
+            clearTimeout(toastTimer);
+            toastTimer = setTimeout(() => {
+                toast.style.opacity = "0";
+                toast.style.transform = "translate(-50%, 16px)";
+            }, 1800);
+        }
+
+        async function copyText(text) {
+            try {
+                if (navigator.clipboard && window.isSecureContext) {
+                    await navigator.clipboard.writeText(text);
+                    return true;
+                }
+            } catch (e) { /* 폴백 진행 */ }
+            try {
+                const ta = document.createElement("textarea");
+                ta.value = text;
+                ta.style.position = "fixed";
+                ta.style.top = "-9999px";
+                document.body.appendChild(ta);
+                ta.focus(); ta.select();
+                const ok = document.execCommand("copy");
+                document.body.removeChild(ta);
+                return ok;
+            } catch (e) { return false; }
+        }
+
+        wrap.addEventListener("click", async (e) => {
+            const btn = e.target.closest(".copy-btn");
+            if (!btn) return;
+            const p = PROMPTS[+btn.dataset.card];
+            const ok = await copyText(withRule(p.body));
+            const label = btn.querySelector(".btn-label");
+            const icon = btn.querySelector("i");
+            const original = label.textContent;
+            const origIcon = icon.className;
+            if (ok) {
+                btn.classList.add("copied");
+                setTimeout(() => btn.classList.remove("copied"), 300);
+                label.textContent = "완료";
+                icon.className = "fa-solid fa-check";
+                showToast(ruleInput.value.trim()
+                    ? `${p.id} · 규칙 블록까지 복사됨!`
+                    : `${p.id} 복사됨 · 규칙 블록은 비어 있어요`);
+                setTimeout(() => { label.textContent = original; icon.className = origIcon; }, 1500);
+            } else {
+                label.textContent = "실패";
+                setTimeout(() => { label.textContent = original; }, 1500);
+            }
+        });
+    </script>
+</body>
+</html>
