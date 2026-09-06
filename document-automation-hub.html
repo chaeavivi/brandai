@@ -16,6 +16,8 @@
   nav .wrap{max-width:1040px;margin:0 auto;display:flex;gap:6px;padding:8px 20px;overflow-x:auto}
   nav button{border:1px solid var(--line);background:#fff;padding:8px 14px;border-radius:999px;font-size:14px;cursor:pointer;white-space:nowrap;color:var(--mute)}
   nav button.on{background:var(--navy);color:#fff;border-color:var(--navy)}
+  nav a.navlink{border:1px solid var(--accent);background:#fff;padding:8px 14px;border-radius:999px;font-size:14px;white-space:nowrap;color:var(--accent);text-decoration:none;align-self:center}
+  nav a.navlink:hover{background:var(--accent);color:#fff}
   main{max-width:1040px;margin:0 auto;padding:20px}
   section.tab{display:none}section.tab.on{display:block}
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:0 0 14px}
@@ -43,9 +45,6 @@
   button.copy{font:inherit;font-size:13px;color:var(--accent);background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
   button.copy:hover{border-color:var(--accent)}
   button.copy.copied{color:#1f6b35;border-color:#9fc9a8;background:var(--ok)}
-  .frame{border:1px solid var(--line);border-radius:8px;overflow:hidden;background:#fff;margin:10px 0}
-  .frame iframe{display:block;width:100%;height:660px;border:0}
-  @media(max-width:720px){.frame iframe{height:520px}}
   .lock{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
   .lock input{font:inherit;font-size:15px;letter-spacing:.4em;width:8em;padding:8px 10px;border:1px solid var(--line);border-radius:8px;text-align:center}
   .lock button{font:inherit;font-size:14px;color:#fff;background:var(--navy);border:1px solid var(--navy);border-radius:8px;padding:9px 16px;cursor:pointer}
@@ -66,17 +65,10 @@
   <button data-tab="d2">2일차 · 도구</button>
   <button data-tab="files">자료·범위 안내</button>
   <button data-tab="plus">플러스 🔒</button>
+  <a class="navlink" href="https://service-704587947766.us-west1.run.app/" target="_blank" rel="noopener">과제 제출 ↗</a>
   <span class="progress" id="prog"></span>
 </div></nav>
 <main>
-
-<div class="card" data-lesson="submit" data-open="1">
-  <h2>과제 제출함</h2>
-  <div class="goal">교시별 산출물을 여기에 올립니다. 7교시 기획서 MD 파일도 이 앱에 첨부해 제출합니다.</div>
-  <div class="frame"><iframe src="https://service-704587947766.us-west1.run.app/" title="과제 제출함" loading="lazy" allow="clipboard-write"></iframe></div>
-  <div class="files"><a href="https://service-704587947766.us-west1.run.app/" target="_blank" rel="noopener">▶ 새 창에서 열기</a></div>
-  <p class="meta">화면이 비어 보이면 위 <b>새 창에서 열기</b>로 제출하세요. 제목을 누르면 접을 수 있습니다.</p>
-</div>
 
 <!-- ================= 시작 전 준비 ================= -->
 <section class="tab on" id="tab-prep">
@@ -491,8 +483,7 @@
       h.setAttribute('aria-expanded',open?'true':'false');
       if(save) ls(function(){localStorage.setItem(k,open?'1':'0')});
     }
-    var stored=ls(function(){return localStorage.getItem(k)});
-    set(stored===null?c.dataset.open==='1':stored==='1',false);
+    set(ls(function(){return localStorage.getItem(k)})==='1',false);
     function toggle(){set(!c.classList.contains('open'),true)}
     h.addEventListener('click',toggle);
     h.addEventListener('keydown',function(e){
