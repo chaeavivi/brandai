@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>생성형AI 업무문서 자동화 심화과정 — 과정 허브</title>
 <style>
-  :root{--navy:#1f3a5f;--ink:#1d2430;--mute:#5f6b7a;--line:#d9e0e8;--bg:#f6f8fb;--card:#fff;--soft:#eef2f7;--warn:#fff4e5;--ok:#e8f4ea;--accent:#2b6cb0}
+  :root{--navy:#1f3a5f;--ink:#1d2430;--mute:#5f6b7a;--line:#d9e0e8;--bg:#f6f8fb;--card:#fff;--soft:#eef2f7;--ok:#e8f4ea;--accent:#2b6cb0}
   *{box-sizing:border-box}
   body{margin:0;font-family:"Malgun Gothic","맑은 고딕",Pretendard,-apple-system,system-ui,sans-serif;color:var(--ink);background:var(--bg);line-height:1.6}
   header{background:var(--navy);color:#fff;padding:22px 20px}
@@ -26,8 +26,6 @@
   ol,ul{margin:6px 0 6px 20px;padding:0}li{margin:4px 0}
   .files a,.files span{display:inline-block;margin:4px 6px 0 0;padding:5px 10px;border:1px solid var(--line);border-radius:8px;font-size:13px;text-decoration:none;color:var(--accent);background:#fff}
   .files span{color:var(--mute);border-style:dashed}
-  .alt{background:var(--warn);border-radius:8px;padding:10px 12px;font-size:13px;margin-top:10px}
-  .alt b{color:#8a4b00}
   .check{margin-top:10px;font-size:14px}.check label{display:block;padding:4px 0;cursor:pointer}
   .check input{margin-right:8px;transform:scale(1.15)}
   .done{border-color:#9fc9a8;background:var(--ok)}
@@ -36,7 +34,6 @@
   code{background:var(--soft);padding:1px 6px;border-radius:4px;font-size:13px}
   .tree{background:#f3f5f8;border-radius:8px;padding:10px 14px;font-family:Consolas,monospace;font-size:13px;white-space:pre;overflow-x:auto}
   .tag{display:inline-block;font-size:11px;padding:2px 8px;border-radius:999px;background:var(--soft);color:var(--mute);margin-left:6px;vertical-align:middle}
-  .tag.ai{background:#e6efff;color:#1d4e89}.tag.noai{background:#e8f4ea;color:#1f6b35}
   footer{max-width:1040px;margin:10px auto 40px;padding:0 20px;font-size:12px;color:var(--mute)}
   .progress{font-size:12px;color:var(--mute);margin-left:auto;align-self:center;white-space:nowrap}
 </style>
@@ -116,7 +113,7 @@
   </div>
 
   <div class="card" data-lesson="d1-1">
-    <h2>1교시 · 워밍업 · 지식베이스 · 마스터 시트 <span class="tag ai">AI</span><span class="tag noai">AI 없이도 가능</span></h2>
+    <h2>1교시 · 워밍업 · 지식베이스 · 마스터 시트</h2>
     <div class="goal">내 수준을 확인하고, 이틀치 재료를 한 곳에 모은다.</div>
     <ol>
       <li>진단 실습(15분): 담당 사업 하나를 골라 3줄 요약 → <a href="https://ai-edu-01.ai.studio/" target="_blank">진단 앱</a> 제출</li>
@@ -125,12 +122,11 @@
       <li>마스터 시트 안내(15분): 0_안내 → 같이 걷자가 8개 시트를 지나가는 길 → 6번 시트에 내 사업 한 줄</li>
     </ol>
     <div class="files"><a href="#" onclick="return false">마스터입력시트.xlsx</a><a href="#" onclick="return false">마스터시트 설명서.docx</a></div>
-    <div class="alt"><b>AI가 막히면</b> 진단은 종이로, 노트북LM은 강사 화면 시연으로. 마스터 시트는 엑셀만 있으면 됩니다.</div>
     <div class="check" data-key="d1-1"><label><input type="checkbox">진단 제출</label><label><input type="checkbox">노트북 생성</label><label><input type="checkbox">6번 시트에 내 사업 1줄 입력</label></div>
   </div>
 
   <div class="card" data-lesson="d1-2">
-    <h2>2교시 · 규칙 확정 → 한글에 심기 → HWPX 시연 <span class="tag ai">AI</span><span class="tag noai">AI 없이도 가능</span></h2>
+    <h2>2교시 · 규칙 확정 → 한글에 심기 → HWPX 시연</h2>
     <div class="goal">서식 규칙은 센터에 이미 있다(확인해서 옮긴다). 문체 규칙만 AI로 뽑는다. 둘을 합친 <b>[센터 문서 규칙] 블록</b>이 오후 모든 프롬프트의 맨 위에 붙는다.</div>
     <ol>
       <li>규칙은 이미 있다(8분): 「문서 작성 방법」 + 양식 메모 확인. 계획안 항목 구성(가.~차. vs 1.~7.) 현행 확인</li>
@@ -140,12 +136,11 @@
       <li>HWPX 생성 시연(5분): 입력 → JSON → 서식 유지된 hwpx. "완성형은 이렇게까지 된다"</li>
     </ol>
     <div class="files"><a href="#" onclick="return false">2교시 프롬프트팩.md</a><a href="#" onclick="return false">계획안 스타일 템플릿.hwp</a><a href="#" onclick="return false">같이걷자 원문(txt)</a></div>
-    <div class="alt"><b>AI가 막히면</b> 문체 규칙 정답지를 배포하고 바로 규칙 블록 완성으로. 한글 파트는 AI와 무관.</div>
     <div class="check" data-key="d1-2"><label><input type="checkbox">규칙 블록 저장(메모장/구글문서)</label><label><input type="checkbox">스타일 템플릿 저장</label><label><input type="checkbox">찾아바꾸기로 스타일 일괄 적용 성공</label></div>
   </div>
 
   <div class="card" data-lesson="d1-3">
-    <h2>3교시 · 계획안 계열 (가.~차., 예산 산출근거·검산) <span class="tag ai">AI</span></h2>
+    <h2>3교시 · 계획안 계열 (가.~차., 예산 산출근거·검산)</h2>
     <div class="goal">기본정보만 넣으면 센터 서식 계획안 초안이 나온다. 예산은 단가×수량×횟수로 산출근거가 남는다.</div>
     <ol>
       <li>마스터 시트 8번 입력폼에 내 사업 입력 (같이 걷자 예시 참고)</li>
@@ -153,12 +148,11 @@
       <li>예산표: 산출근거 형식으로 재작성 → 합계 검산 (엑셀 수식)</li>
       <li>한글 템플릿에 붙여넣기 → 찾아바꾸기로 스타일 → 결재 올릴 수 있는 상태인지 P2-3 점검</li>
     </ol>
-    <div class="alt"><b>AI가 막히면</b> 강사의 사전 생성 결과 팩(계획안 초안)을 받아 "검토·수정" 실습으로. 예산 검산은 엑셀만으로 진행.</div>
     <div class="check" data-key="d1-3"><label><input type="checkbox">내 사업 계획안 초안 1건</label><label><input type="checkbox">예산표 합계 검산 완료</label></div>
   </div>
 
   <div class="card" data-lesson="d1-4">
-    <h2>4교시 · 사업계획서 계열 (PEST·SWOT → 전략체계 → 부서별 운영계획) <span class="tag ai">AI</span></h2>
+    <h2>4교시 · 사업계획서 계열 (PEST·SWOT → 전략체계 → 부서별 운영계획)</h2>
     <div class="goal">평가지침 B.1.1이 보는 세 가지 — 환경분석 근거, 환경분석↔전략체계 연계, 전년도 개선과제 반영 — 가 시트의 "근거" 열과 "개선과제" 열에서 나온다.</div>
     <ol>
       <li>1번 기초자료 → 환경분석 프롬프트 → 2번 PEST 시트 형식 출력 (근거 열 비면 감점)</li>
@@ -166,12 +160,11 @@
       <li>5번 KPI 6기준 체크 (구체성·측정가능·원인성·신뢰성·기한성·대표성)</li>
       <li>6번 시트 내 행 → 운영계획 프롬프트 → 서식 표 1세트</li>
     </ol>
-    <div class="alt"><b>AI가 막히면</b> 부서별 정합성 워크숍: 옆 사람과 6번 시트에 나란히 입력하고 용어·지표 차이 찾기 / 자살예방 서식에 같은 코드 매핑.</div>
     <div class="check" data-key="d1-4"><label><input type="checkbox">PEST 시사점 1개 + 근거</label><label><input type="checkbox">내 실행과제 운영계획 표 1세트</label></div>
   </div>
 
   <div class="card" data-lesson="d1-5">
-    <h2>5교시 · 결과보고서 · 회의록·공문 · 음성 회의록 <span class="tag ai">AI</span></h2>
+    <h2>5교시 · 결과보고서 · 회의록·공문 · 음성 회의록</h2>
     <div class="goal">계획(6번)이 결과(7번)로 이어지고, 개선과제가 다음 해 계획으로 돌아간다.</div>
     <ol>
       <li>7번 시트에 실적 입력 → 달성률·집행률 자동 → 잘된 점·부족한 점·개선과제 작성</li>
@@ -180,12 +173,11 @@
       <li>예시 회의 음성 → 클로바노트 → 회의록 자동 생성</li>
     </ol>
     <div class="files"><a href="files/회의음성.mp3">예시 회의 음성.mp3</a></div>
-    <div class="alt"><b>AI가 막히면</b> 회의 음성의 <b>변환 텍스트 파일</b>을 미리 배포해 두었으니 음성 단계 생략 가능. 결과보고는 시트 계산까지만.</div>
     <div class="check" data-key="d1-5"><label><input type="checkbox">7번 시트 달성률 확인</label><label><input type="checkbox">회의록 1건</label></div>
   </div>
 
   <div class="card" data-lesson="d1-6">
-    <h2>6교시 · 도구 비교 + 검증 <span class="tag ai">AI</span></h2>
+    <h2>6교시 · 도구 비교 + 검증</h2>
     <div class="goal">같은 프롬프트, 다른 도구. 문서 유형별로 어느 도구가 맞는지 내 기준을 만든다.</div>
     <ol>
       <li>같은 계획안 프롬프트를 Gemini / ChatGPT / Claude에 → 비교표 (정확성·문체·표 처리·속도)</li>
@@ -197,7 +189,7 @@
   </div>
 
   <div class="card" data-lesson="d1-7">
-    <h2>7교시 · 업무도구 기획서 (핵심) <span class="tag noai">AI 없이 가능</span></h2>
+    <h2>7교시 · 업무도구 기획서 (핵심)</h2>
     <div class="goal">2일차에 만들 도구를 <b>계획안 항목 구조 그대로</b> 기획한다. 필요성·목적·대상은 계획안과 같고, 세부내용은 입력값/출력값, 추진방법은 계산 규칙과 판단 기준.</div>
     <ol>
       <li>도구 후보 고르기: 예산 산출표 · 출장비 계산기 · 상담 건수 집계 · 항목번호 변환기 · 연차 계산기 · 계획안 입력폼</li>
@@ -209,7 +201,7 @@
   </div>
 
   <div class="card" data-lesson="d1-8">
-    <h2>8교시 · 개발 환경 세팅 · 예제 파일 배포 <span class="tag noai">계정 상황별</span></h2>
+    <h2>8교시 · 개발 환경 세팅 · 예제 파일 배포</h2>
     <div class="goal">2일차 시작 전에 전원의 환경이 "동작 확인" 상태여야 한다. 이 교시는 다른 것과 묶지 않는다.</div>
     <ol>
       <li>GitHub 가입 → 저장소 생성 → 예제 파일 올리기 → Pages 켜기 → 링크로 열기 (전원)</li>
@@ -219,7 +211,6 @@
       <li>조별 상호 지원: 완료자가 옆 자리 도움</li>
     </ol>
     <div class="files"><a href="#" onclick="return false">예제① 예산 산출 계산기.html</a><a href="#" onclick="return false">예제② 항목번호 변환기.html</a><a href="#" onclick="return false">세팅 체크리스트.pdf</a></div>
-    <div class="alt"><b>막히면</b> 관리자 권한·프록시가 대부분의 원인. 폴리텍 담당자에게 즉시 요청. GitHub Pages만 되어도 2일차 배포 파트는 진행 가능.</div>
     <div class="check" data-key="d1-8"><label><input type="checkbox">GitHub Pages 링크 열림</label><label><input type="checkbox">Gemini CLI 동작 확인</label><label><input type="checkbox">예제 파일 수정→재배포 성공</label></div>
   </div>
 </section>
@@ -228,7 +219,7 @@
 <section class="tab" id="tab-d2">
   <div class="card">
     <h2>2일차 — 업무도구 제작 및 콘텐츠 시각화 <span class="tag">정경 · 정민경</span></h2>
-    <div class="goal">1일차 기획서를 요구사항으로 삼아 문서생성기를 만들고, 배포하고, 시각화한다. <span class="meta">※ 세부 구성은 담당 강사 확인 후 조정</span></div>
+    <div class="goal">1일차 기획서를 요구사항으로 삼아 문서생성기를 만들고, 배포하고, 시각화한다.</div>
     <table><tr><th>교시</th><th>내용</th><th>산출물</th></tr>
       <tr><td>1</td><td>복습·점검 — 1일차 템플릿으로 문서 1건 재생성, 환경 점검, 기획서 재검토(입력값·출력값·규칙 구체화)</td><td>확정 요구사항서</td></tr>
       <tr><td>2</td><td>Claude Code / Gemini CLI 기초 — 예제 파일 수정하며 작업 흐름, 지시 방법, 오류 대처</td><td>수정된 예제 파일</td></tr>
@@ -255,7 +246,6 @@
     <h2>3~5교시 · 제작 (입력 → 규칙 → 출력)</h2>
     <ol><li>입력 화면: 기획서 입력값을 그대로 폼으로. 필수값 비면 경고</li><li>규칙: 계산식(예산 = 단가×수량×횟수, 합계), 판단(필수항목 누락 검사), 서식(항목번호·공백 들여쓰기)</li><li>출력: 계획안 텍스트 → 복사 / 다운로드. 강사 시연: 같은 JSON으로 HWPX 직접 생성</li></ol>
     <div class="files"><a href="#" onclick="return false">JSON 규격 예시(plan_gachi.json)</a><a href="#" onclick="return false">엔진 사용법 README</a></div>
-    <div class="alt"><b>유료 계정이 없으면</b> Gemini CLI로 동일하게 진행. 완성도 차이는 있지만 흐름은 같음.</div>
     <div class="check" data-key="d2-3"><label><input type="checkbox">입력 화면</label><label><input type="checkbox">규칙 동작</label><label><input type="checkbox">출력·다운로드</label></div>
   </div>
   <div class="card" data-lesson="d2-6">
