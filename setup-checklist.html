@@ -16,8 +16,6 @@
   .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:0 0 14px}
   .card h2{margin:0 0 6px;font-size:18px;color:var(--navy)}
   .card h2 .who{font-size:12px;font-weight:normal;color:var(--mute);margin-left:8px;white-space:nowrap}
-  .goal{background:var(--soft);border-radius:8px;padding:10px 12px;font-size:14px;margin:8px 0}
-  .meta{font-size:13px;color:var(--mute)}
 
   /* 상단 정보 입력 + 진행률 */
   .me{display:grid;grid-template-columns:1fr 1fr;gap:12px}
@@ -44,13 +42,7 @@
   .txt{flex:1;min-width:0;font-size:15px}
   .steps>li.done .txt{color:var(--mute)}
   .steps>li.done .no{color:var(--okink)}
-
-  /* 명령 박스 */
-  .cmd{display:flex;align-items:center;gap:10px;background:#f3f5f8;border:1px solid var(--line);border-radius:8px;padding:8px 10px 8px 12px;margin:8px 0 0 44px}
-  .cmd code{flex:1;min-width:0;font-family:Consolas,"D2Coding",monospace;font-size:14px;color:var(--ink);background:none;padding:0;overflow-x:auto;white-space:pre}
-  button.copy{flex:none;font:inherit;font-size:13px;min-height:40px;padding:0 14px;color:var(--accent);background:#fff;border:1px solid var(--line);border-radius:8px;cursor:pointer}
-  button.copy:hover{border-color:var(--accent)}
-  button.copy.copied{color:var(--okink);border-color:var(--okline);background:var(--ok)}
+  .url{font-family:Consolas,"D2Coding",monospace;font-size:14px;background:var(--soft);padding:1px 6px;border-radius:4px;word-break:break-all}
 
   /* 내 주소 입력 */
   .addr{margin:10px 0 0 44px;padding:12px;background:var(--soft);border-radius:8px}
@@ -61,29 +53,26 @@
   .btn:hover{background:#17304f}
   .btn.ghost{background:#fff;color:var(--accent);border-color:var(--line)}
   .btn.ghost:hover{border-color:var(--accent)}
-  .btn.unset{opacity:.55}
+  .btn.saved{color:var(--okink);border-color:var(--okline);background:var(--ok)}
 
   table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0}
   th,td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
   th{background:var(--soft);color:var(--navy);white-space:nowrap}
   td:first-child{width:38%}
-  .subnote{font-size:13px;color:var(--mute);margin:6px 0 0 44px}
   .note{background:var(--soft);border-radius:8px;padding:10px 12px;font-size:14px;margin:10px 0 0}
-  .submit{text-align:center;padding:20px}
-  .submit .btn{min-width:200px}
-  .hint{font-size:13px;color:#a33;margin-top:8px;min-height:1.2em}
+  .actions{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;padding:6px 0}
+  .actions .btn{min-width:190px}
+  .hint{font-size:13px;color:#a33;margin-top:8px;min-height:1.2em;text-align:center}
   footer{max-width:920px;margin:6px auto 40px;padding:0 20px;font-size:12px;color:var(--mute)}
 
   @media(max-width:720px){
     main{padding:14px}
     .card{padding:16px 14px}
     .me{grid-template-columns:1fr}
-    .cmd{flex-wrap:wrap;margin-left:0}
-    .cmd code{flex-basis:100%;white-space:pre-wrap;word-break:break-all}
-    .subnote{margin-left:0}
     .addr{margin-left:0}
     .addr .row{flex-direction:column}
-    .btn,button.copy{width:100%}
+    .btn{width:100%}
+    .actions{flex-direction:column}
     table,thead,tbody,tr,th,td{display:block}
     thead{display:none}
     tr{border:1px solid var(--line);border-radius:8px;margin-bottom:8px;overflow:hidden}
@@ -101,7 +90,7 @@
 
 <main>
 
-<div class="banner" id="banner">세팅 완료 — 제출함 8교시에 주소와 캡처를 올리세요</div>
+<div class="banner" id="banner">세팅 완료 — 제출함 8교시에 주소를 올리세요</div>
 
 <div class="card">
   <div class="me">
@@ -115,33 +104,32 @@
     </div>
   </div>
   <div class="progwrap">
-    <div class="progline"><span>진행률</span><b id="prog">0 / 14 완료</b></div>
+    <div class="progline"><span>진행률</span><b id="prog">0 / 8 완료</b></div>
     <div class="bar"><i id="bar"></i></div>
   </div>
   <div class="note">
     체크하며 진행하고, 막히면 손을 드세요 — 옆자리 완료자가 도와줍니다.<br>
-    오늘 세팅이 끝나야 2일차가 시작됩니다. <b>A·B는 전원 필수, C는 유료 계정이 있는 분만.</b><br>
-    완료 기준: 내 GitHub Pages 링크가 열리고, 터미널에서 Gemini CLI가 대답하면 끝.
+    <b>A·B 모두 전원 필수입니다.</b> 완료 기준: 내 GitHub Pages 링크가 열리고, AI 스튜디오에 로그인되면 끝.
   </div>
 </div>
 
 <!-- ================= A ================= -->
 <div class="card">
-  <h2>A. GitHub — 파일 올리고 웹 주소 만들기<span class="who">전원 · 15분</span></h2>
+  <h2>A. GitHub Pages — 파일 올리고 웹 주소 만들기<span class="who">전원</span></h2>
   <ul class="steps" data-key="A">
     <li><label class="step"><input type="checkbox"><span class="no">A1</span><span class="txt">github.com 접속 → Sign up → 이메일·비밀번호·사용자이름(영문) → 이메일 인증 코드 입력</span></label></li>
-    <li><label class="step"><input type="checkbox"><span class="no">A2</span><span class="txt">로그인 후 오른쪽 위 <b>+</b> → New repository → Repository name: <b>my-tools</b> → Public 선택 → Add a README file 체크 → Create repository</span></label></li>
+    <li><label class="step"><input type="checkbox"><span class="no">A2</span><span class="txt">로그인 후 오른쪽 위 <b>+</b> → New repository → Repository name: <b>my-tools</b> → <b>Public</b> 선택 → <b>Add a README file</b> 체크 → Create repository</span></label></li>
     <li><label class="step"><input type="checkbox"><span class="no">A3</span><span class="txt">저장소 화면에서 Add file → Upload files → 허브에서 받은 <b>예제1_예산산출계산기.html</b> 끌어다 놓기 → 아래 Commit changes</span></label></li>
     <li><label class="step"><input type="checkbox"><span class="no">A4</span><span class="txt">저장소 상단 Settings → 왼쪽 Pages → Branch를 None → <b>main</b>으로 → Save</span></label></li>
     <li>
-      <label class="step"><input type="checkbox"><span class="no">A5</span><span class="txt">1~2분 기다린 뒤 같은 화면 위에 뜨는 주소 확인: <b>https://사용자이름.github.io/my-tools/</b> → 뒤에 <b>예제1_예산산출계산기.html</b> 붙여서 열기</span></label>
+      <label class="step"><input type="checkbox"><span class="no">A5</span><span class="txt">1~2분 기다린 뒤 내 주소로 예제 파일 열기: <span class="url">https://사용자이름.github.io/my-tools/예제1_예산산출계산기.html</span></span></label>
       <div class="addr">
         <label for="f-pages">내 GitHub Pages 주소</label>
         <div class="row">
-          <input type="url" id="f-pages" data-save="setup.pages" inputmode="url" placeholder="https://사용자이름.github.io/my-tools/">
+          <input type="url" id="f-pages" data-save="setup.pages" inputmode="url" placeholder="https://사용자이름.github.io/my-tools/예제1_예산산출계산기.html">
           <button type="button" class="btn" id="open-pages">열기</button>
         </div>
-        <div class="hint" id="pages-hint"></div>
+        <div class="hint" id="pages-hint" style="text-align:left"></div>
       </div>
     </li>
     <li><label class="step"><input type="checkbox"><span class="no">A6</span><span class="txt">저장소에서 파일 클릭 → 연필(Edit) → 제목 한 글자 바꾸기 → Commit → 1분 뒤 새로고침해서 바뀌었는지 확인 &nbsp;← "고치면 바로 반영된다" 체험</span></label></li>
@@ -150,82 +138,44 @@
 
 <!-- ================= B ================= -->
 <div class="card">
-  <h2>B. Gemini CLI — 터미널에서 AI에게 일 시키기<span class="who">전원 · 15분</span></h2>
+  <h2>B. AI 스튜디오 준비<span class="who">전원</span></h2>
   <ul class="steps" data-key="B">
-    <li><label class="step"><input type="checkbox"><span class="no">B1</span><span class="txt">Node.js 설치: nodejs.org → LTS 버튼 → 내려받은 파일 실행 → 계속 Next → 설치 완료 후 PC 재시작 없이 <b>새 터미널</b></span></label></li>
-    <li>
-      <label class="step"><input type="checkbox"><span class="no">B2</span><span class="txt">터미널 열기: 시작 메뉴에 <b>cmd</b> 또는 <b>PowerShell</b> 검색 → 열기. 아래 입력 후 Enter (버전 숫자가 나오면 성공)</span></label>
-      <div class="cmd"><code>node -v</code><button type="button" class="copy">복사</button></div>
-    </li>
-    <li>
-      <label class="step"><input type="checkbox"><span class="no">B3</span><span class="txt">Gemini CLI 설치 (1~2분 걸림. 빨간 글자가 나와도 마지막에 프롬프트가 돌아오면 됨)</span></label>
-      <div class="cmd"><code>npm install -g @google/gemini-cli</code><button type="button" class="copy">복사</button></div>
-    </li>
-    <li>
-      <label class="step"><input type="checkbox"><span class="no">B4</span><span class="txt">실행 → 처음에 로그인 방식 묻는 화면에서 <b>Login with Google</b> → 브라우저가 열리면 구글 계정으로 로그인 → 터미널로 돌아옴</span></label>
-      <div class="cmd"><code>gemini</code><button type="button" class="copy">복사</button></div>
-    </li>
-    <li>
-      <label class="step"><input type="checkbox"><span class="no">B5</span><span class="txt">동작 확인. 아래 한 줄을 그대로 쳐서 파일 목록을 대답하면 성공. <b>/quit</b> 으로 나가기</span></label>
-      <div class="cmd"><code>이 폴더에 있는 파일 목록을 알려줘</code><button type="button" class="copy">복사</button></div>
-    </li>
-    <li>
-      <label class="step"><input type="checkbox"><span class="no">B6</span><span class="txt">예제 파일이 있는 폴더로 이동해서 다시 실행 → "예산 계산기 제목을 우리 팀 이름으로 바꿔줘" → 바뀐 파일을 브라우저로 열어 확인</span></label>
-      <div class="cmd"><code>cd 다운로드</code><button type="button" class="copy">복사</button></div>
-      <p class="subnote">※ <b>다운로드</b> 자리에 파일을 둔 폴더 이름을 넣습니다.</p>
-    </li>
+    <li><label class="step"><input type="checkbox"><span class="no">B1</span><span class="txt"><span class="url">aistudio.google.com</span> 접속 → 구글 계정으로 로그인</span></label></li>
+    <li><label class="step"><input type="checkbox"><span class="no">B2</span><span class="txt">위쪽 <b>Build</b> 화면을 열어 어떤 화면인지 보기 — 2일차에 여기서 도구를 만듭니다</span></label></li>
   </ul>
 </div>
 
 <!-- ================= C ================= -->
 <div class="card">
-  <h2>C. Claude Code — 유료 계정 보유자만<span class="who">10분 · 나머지는 강사 화면</span></h2>
-  <ul class="steps" data-key="C">
-    <li>
-      <label class="step"><input type="checkbox"><span class="no">C1</span><span class="txt">B1까지 끝난 상태에서 터미널에 입력</span></label>
-      <div class="cmd"><code>npm install -g @anthropic-ai/claude-code</code><button type="button" class="copy">복사</button></div>
-    </li>
-    <li>
-      <label class="step"><input type="checkbox"><span class="no">C2</span><span class="txt">실행 → 브라우저 로그인 (Pro/Max 계정) → 터미널로 돌아와 "이 폴더 파일 목록 보여줘"</span></label>
-      <div class="cmd"><code>claude</code><button type="button" class="copy">복사</button></div>
-    </li>
-  </ul>
-  <div class="note">무료 계정은 실행이 되지 않습니다. 2일차 실습은 Gemini CLI로 동일하게 진행하니 걱정 없이 B까지만 끝내면 됩니다.</div>
-</div>
-
-<!-- ================= D ================= -->
-<div class="card">
-  <h2>D. 막힐 때 — 이 표부터</h2>
+  <h2>C. 막힐 때 — 이 표부터</h2>
   <table>
     <thead><tr><th>증상</th><th>해결</th></tr></thead>
     <tbody>
-      <tr><td>npm install에서 "EACCES" / "권한" 오류</td><td>터미널을 닫고 시작 메뉴에서 cmd 오른쪽 클릭 → "관리자 권한으로 실행" 후 다시. 그래도 안 되면 손 들기(폴리텍 담당자 권한 필요)</td></tr>
-      <tr><td>npm install이 멈춰 있음 / "ETIMEDOUT"</td><td>강의실 망 프록시 문제. 휴대폰 핫스팟으로 잠시 바꿔서 설치만 한 뒤 다시 강의실 와이파이로</td></tr>
-      <tr><td>"node은(는) 내부 또는 외부 명령이 아닙니다"</td><td>Node 설치 후 터미널을 새로 열지 않음. 터미널 전부 닫고 다시 열기</td></tr>
-      <tr><td>gemini 실행 시 로그인 창이 안 뜸</td><td>터미널에 표시된 주소를 복사해 브라우저에 직접 붙여넣기</td></tr>
-      <tr><td>GitHub Pages 주소가 404</td><td>켠 지 1~3분 기다리기. 파일명 대소문자·한글 정확히. Settings → Pages에 초록색 "Your site is live"가 떠야 함</td></tr>
       <tr><td>GitHub 이메일 인증 메일이 안 옴</td><td>스팸함 확인. 그래도 없으면 다른 이메일로 재가입</td></tr>
-      <tr><td>한글 파일명이 주소에서 깨짐</td><td>정상. 브라우저가 알아서 변환함. 안 열리면 파일명을 영문으로 바꿔 다시 올리기</td></tr>
+      <tr><td>GitHub Pages 주소가 404</td><td>켠 지 1~3분 기다리기. Settings → Pages에 초록색 "Your site is live"가 떠야 함</td></tr>
+      <tr><td>한글 파일명이 주소에서 깨짐</td><td>파일명을 영문으로 바꿔 다시 올리기</td></tr>
+      <tr><td>AI 스튜디오 접속이 안 됨</td><td>다른 브라우저(크롬)로 열기. 그래도 안 되면 휴대폰 핫스팟으로 잠시 바꿔서 접속</td></tr>
     </tbody>
   </table>
 </div>
 
-<!-- ================= E ================= -->
+<!-- ================= D ================= -->
 <div class="card">
-  <h2>E. 완료 확인<span class="who">강사 또는 옆자리 완료자가 체크</span></h2>
-  <ul class="steps" data-key="E" id="final">
-    <li><label class="step"><input type="checkbox"><span class="txt">내 GitHub Pages 주소에서 예제 파일이 열린다</span></label></li>
-    <li><label class="step"><input type="checkbox"><span class="txt">파일을 고치고 재배포해 바뀐 것을 확인했다</span></label></li>
-    <li><label class="step"><input type="checkbox"><span class="txt">터미널에서 gemini가 파일 목록을 대답했다</span></label></li>
-    <li><label class="step"><input type="checkbox"><span class="txt">(유료) claude가 실행됐다</span></label></li>
+  <h2>D. 완료 확인<span class="who">강사 또는 옆자리 완료자가 체크</span></h2>
+  <ul class="steps" data-key="D" id="final">
+    <li><label class="step"><input type="checkbox"><span class="txt">내 Pages 주소에서 예제 파일이 열린다</span></label></li>
+    <li><label class="step"><input type="checkbox"><span class="txt">수정→재배포로 바뀐 것을 확인했다</span></label></li>
   </ul>
-  <div class="note">완료한 분은 제출함 앱 8교시에 <b>GitHub Pages 주소</b>와 <b>터미널 캡처 1장</b>을 올린 뒤, 옆자리를 도와주세요. 세팅이 끝난 순서대로 2일차 준비가 끝난 겁니다.</div>
+  <div class="note">완료한 분은 제출함 8교시에 <b>GitHub Pages 주소</b>를 올린 뒤, 옆자리를 도와주세요.</div>
 </div>
 
-<div class="card submit">
-  <!-- 제출함 주소: 아래 href="" 안에 제출함 앱 주소를 넣으세요 -->
-  <a class="btn" id="submit-link" href="" target="_blank" rel="noopener">제출함 열기</a>
-  <div class="hint" id="submit-hint"></div>
+<div class="card">
+  <div class="actions">
+    <!-- 허브 상단 "과제 제출" 링크와 같은 주소. 바뀌면 허브와 함께 고칠 것 -->
+    <a class="btn" id="submit-link" href="https://service-704587947766.us-west1.run.app/" target="_blank" rel="noopener">제출함 열기</a>
+    <button type="button" class="btn ghost" id="save-json">결과 JSON 내려받기</button>
+  </div>
+  <div class="note"><b>제출함 열기</b>는 허브 상단 「과제 제출」과 같은 곳입니다. 제출함이 열리지 않으면 <b>결과 JSON 내려받기</b>로 파일을 저장해 강사에게 전달하세요 — 이름·소속·Pages 주소와 체크 상태가 파일 안에 담깁니다. (파일명 예: <span class="url">setup-checklist_20260906_1730.json</span>)</div>
 </div>
 
 </main>
@@ -256,7 +206,7 @@
         ls(function(){localStorage.setItem(k,i.checked?'1':'0')});
         paint();
       });
-      (key==='E'?finals:counted).push(i);
+      (key==='D'?finals:counted).push(i);
     });
   });
 
@@ -275,30 +225,6 @@
     banner.classList.toggle('on',!!all);
   }
 
-  /* ---- 명령 복사 ---- */
-  document.querySelectorAll('button.copy').forEach(function(b){
-    b.addEventListener('click',function(){
-      if(b.classList.contains('copied')) return;
-      var src=b.parentNode.querySelector('code'); if(!src) return;
-      var text=src.textContent, label=b.textContent;
-      function done(){
-        b.textContent='복사됨'; b.classList.add('copied');
-        setTimeout(function(){b.textContent=label;b.classList.remove('copied')},1200);
-      }
-      function fallback(){
-        var ta=document.createElement('textarea');
-        ta.value=text; ta.setAttribute('readonly','');
-        ta.style.position='fixed'; ta.style.left='-9999px';
-        document.body.appendChild(ta); ta.select();
-        try{document.execCommand('copy');done()}catch(e){}
-        document.body.removeChild(ta);
-      }
-      if(navigator.clipboard&&navigator.clipboard.writeText){
-        navigator.clipboard.writeText(text).then(done,fallback);
-      }else fallback();
-    });
-  });
-
   /* ---- 내 Pages 주소 열기 ---- */
   var pages=document.getElementById('f-pages'),hint=document.getElementById('pages-hint');
   document.getElementById('open-pages').addEventListener('click',function(){
@@ -310,15 +236,43 @@
   });
   pages.addEventListener('input',function(){hint.textContent=''});
 
-  /* ---- 제출함 ---- */
-  var sub=document.getElementById('submit-link'),subHint=document.getElementById('submit-hint');
-  if(!sub.getAttribute('href')){
-    sub.classList.add('unset');
-    sub.addEventListener('click',function(e){
-      e.preventDefault();
-      subHint.textContent='제출함 주소가 아직 입력되지 않았습니다. 강사 안내를 확인하세요.';
-    });
+  /* ---- 결과 JSON 내려받기 ---- */
+  function label(i){
+    var li=i.closest('li');
+    var no=li.querySelector('.no'), txt=li.querySelector('.txt');
+    return (no?no.textContent.trim()+' ':'')+(txt?txt.textContent.replace(/\s+/g,' ').trim():'');
   }
+  var saveBtn=document.getElementById('save-json');
+  saveBtn.addEventListener('click',function(){
+    var name=document.getElementById('f-name').value.trim();
+    var org=document.getElementById('f-org').value.trim();
+    var data={
+      과정:'생성형AI 활용 업무문서 자동화 심화과정',
+      단계:'1일차 8교시 개발 환경 세팅',
+      이름:name,
+      소속:org,
+      pages주소:pages.value.trim(),
+      진행률:prog.textContent,
+      단계별:counted.map(function(i){return{항목:label(i),완료:i.checked}}),
+      완료확인:finals.map(function(i){return{항목:label(i),완료:i.checked}}),
+      저장시각:new Date().toISOString()
+    };
+    /* 파일명은 ASCII로만 만든다 — 한글이 섞이면 브라우저가 이름을 통째로 버리고
+       확장자 없는 "download"로 저장해 버린다. 이름·소속은 파일 안에 들어 있다. */
+    var ascii=name.replace(/[^A-Za-z0-9._-]/g,'');
+    var d=new Date(), pad=function(n){return(n<10?'0':'')+n};
+    var stamp=d.getFullYear()+pad(d.getMonth()+1)+pad(d.getDate())+'_'+pad(d.getHours())+pad(d.getMinutes());
+    var fname='setup-checklist_'+(ascii?ascii+'_':'')+stamp+'.json';
+    var blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    var url=URL.createObjectURL(blob);
+    var a=document.createElement('a');
+    a.href=url; a.download=fname;
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(url)},1000);
+    var old=saveBtn.textContent;
+    saveBtn.textContent='저장됨'; saveBtn.classList.add('saved');
+    setTimeout(function(){saveBtn.textContent=old;saveBtn.classList.remove('saved')},1200);
+  });
 
   paint();
 })();
