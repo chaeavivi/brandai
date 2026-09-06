@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>5교시 회의록 자가 채점</title>
+<style>
+  :root{--navy:#1F3A5F;--blue:#2B6CB0;--bg:#F6F8FB;--yellow:#FFF9DB;--green:#1B7F3B;--amber:#B7791F;--red:#9B2C2C;--line:#D9DEE7;}
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);font-family:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo",sans-serif;font-size:16px;color:#1a1a1a;line-height:1.55}
+  header{background:var(--navy);color:#fff;padding:18px 24px}
+  header h1{margin:0;font-size:22px;font-weight:700}
+  header p{margin:6px 0 0;font-size:15px;opacity:.9}
+  main{max-width:1100px;margin:0 auto;padding:20px 16px 90px}
+  .card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:18px 20px;margin-bottom:16px}
+  .card h2{margin:0 0 10px;font-size:19px;color:var(--navy)}
+  .hint{font-size:15px;color:#4a5568;margin:0 0 10px}
+  textarea{width:100%;min-height:260px;padding:12px;font:inherit;font-size:15px;border:1px solid var(--line);border-radius:8px;background:var(--yellow);resize:vertical}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center;margin-top:12px}
+  button{font:inherit;font-size:16px;padding:10px 18px;border-radius:8px;border:1px solid var(--blue);background:var(--blue);color:#fff;cursor:pointer}
+  button.sec{background:#fff;color:var(--blue)}
+  button:disabled{opacity:.45;cursor:not-allowed}
+  input[type=text]{font:inherit;font-size:15px;padding:8px 10px;border:1px solid var(--line);border-radius:8px;background:var(--yellow);width:160px}
+  table{width:100%;border-collapse:collapse;font-size:15px}
+  th,td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+  th{background:#EDF2F7;color:var(--navy);white-space:nowrap}
+  .st{display:inline-block;min-width:64px;text-align:center;padding:3px 10px;border-radius:999px;color:#fff;font-weight:700;font-size:14px}
+  .ok{background:var(--green)} .warn{background:var(--amber)} .bad{background:var(--red)} .none{background:#A0AEC0}
+  .why{color:#4a5568;font-size:14px}
+  .name-bad{background:#FFF5F5;border:1px solid #FEB2B2;border-radius:8px;padding:12px 14px;color:var(--red);font-weight:700}
+  .check label{display:block;padding:8px 0;border-bottom:1px dashed var(--line);font-size:16px;cursor:pointer}
+  .check input{transform:scale(1.25);margin-right:10px}
+  .result{font-size:24px;font-weight:700;padding:16px 18px;border-radius:10px;text-align:center}
+  .result.pass{background:#E6F4EA;color:var(--green)} .result.fail{background:#FDECEC;color:var(--red)} .result.wait{background:#EDF2F7;color:#4a5568;font-size:18px;font-weight:400}
+  pre{white-space:pre-wrap;background:#F7FAFC;border:1px solid var(--line);border-radius:8px;padding:12px;font:inherit;font-size:15px}
+  details summary{cursor:pointer;font-weight:700;color:var(--navy);font-size:17px}
+  .answer table td{font-size:14px}
+  footer{position:fixed;left:0;right:0;bottom:0;background:var(--navy);color:#fff;font-size:14px;padding:10px 16px;text-align:center}
+  @media (max-width:700px){.result{font-size:20px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>5교시 회의록 자가 채점 — 「같이 걷자」 2차 준비회의</h1>
+  <p>AI가 만든 회의록을 붙여넣고 [채점]을 누르세요. 자동 검사 + 자가 체크 4개 → 결과를 복사해 제출함에 붙입니다. 이 페이지는 아무것도 전송하지 않습니다.</p>
+</header>
+<main>
+
+<section class="card">
+  <h2>1. 회의록 붙여넣기</h2>
+  <p class="hint">P5-2 프롬프트로 만든 회의록 전체(표 포함)를 그대로 붙여넣습니다. 고쳐 쓰지 마세요 — 고칠 곳은 채점 결과를 보고 AI에게 다시 시킵니다.</p>
+  <textarea id="src" placeholder="여기에 회의록을 붙여넣으세요"></textarea>
+  <div class="row">
+    <label>작성자 <input type="text" id="who" placeholder="예: 홍길동"></label>
+    <button id="btnGrade">채점</button>
+    <button class="sec" id="btnClear">비우기</button>
+    <span class="why" id="len"></span>
+  </div>
+</section>
+
+<section class="card" id="autoCard">
+  <h2>2. 자동 검사 <span class="why">(문자열 규칙만 — 숫자·날짜·핵심어가 회의록에 들어 있는지 봅니다)</span></h2>
+  <div id="nameBox" hidden></div>
+  <table id="autoTbl">
+    <thead><tr><th style="width:36%">항목</th><th style="width:12%">결과</th><th>근거</th></tr></thead>
+    <tbody><tr><td colspan="3" class="why">먼저 붙여넣고 [채점]을 누르세요.</td></tr></tbody>
+  </table>
+</section>
+
+<section class="card check">
+  <h2>3. 자가 체크 <span class="why">(눈으로 확인 — 자동 검사가 못 보는 것)</span></h2>
+  <label><input type="checkbox" class="man" data-k="m1">결정 5건마다 <b>담당</b>과 <b>기한</b>이 같은 줄(행)에 붙어 있다</label>
+  <label><input type="checkbox" class="man" data-k="m2">회의에서 <b>말하지 않은 내용</b>(지어낸 숫자·결정·이유)이 없다</label>
+  <label><input type="checkbox" class="man" data-k="m3">회의 순서가 아니라 <b>결정 → 미결 → 역할 → 향후 일정</b> 순으로 정리돼 있다</label>
+  <label><input type="checkbox" class="man" data-k="m4">참석자·담당은 <b>직책·역할</b>로만 적혀 있고 이름은 한 곳도 없다</label>
+</section>
+
+<section class="card">
+  <h2>4. 결과</h2>
+  <div id="result" class="result wait">채점 전입니다.</div>
+  <p class="hint" style="margin-top:12px">아래 문구를 복사해 제출함 5교시 칸에 회의록과 함께 붙입니다. 미통과 항목은 AI에게 "○○을 넣어서 다시"라고 시킨 뒤 다시 채점하세요.</p>
+  <pre id="report">—</pre>
+  <div class="row">
+    <button id="btnCopy" disabled>제출용 결과 복사</button>
+    <button class="sec" id="btnTxt" disabled>TXT 내려받기</button>
+  </div>
+</section>
+
+<section class="card answer">
+  <details id="ans">
+    <summary>5. 정답 요약 보기 (채점 후에 여세요)</summary>
+    <table style="margin-top:10px">
+      <thead><tr><th>결정</th><th>담당</th><th>기한</th></tr></thead>
+      <tbody>
+        <tr><td>사전접수 정원 150→180, 현장접수 50→30(총원 200 유지) · 접수 페이지 문구 수정 · 단체 문의 3곳에 개별 접수 + 정원 확대 안내</td><td>총괄 담당</td><td>9/12 당일</td></tr>
+        <tr><td>건강보험공단 회신 기한 9/18(수) · 9/16(월) 재연락 · 미참여 시 그 자리는 포토존 확장</td><td>홍보·물품 담당</td><td>9/16 연락 · 9/18 기한</td></tr>
+        <tr><td>부스 설치비 100만 원 내 집행(외부 4~5곳 60~75만 원) · 예산 변경 없음</td><td>홍보·물품 담당</td><td>—</td></tr>
+        <tr><td>홍보물 92만/100만 집행 완료 · 캠페인 물품 400만 원 다음 주 발주 · 커피차 130만 원(10:00~13:00, 200잔) 9/13(금) 계약 · 총액 1,200만 원 변동 없음</td><td>홍보·물품 담당</td><td>9/13 계약 · 발주 다음 주</td></tr>
+        <tr><td>행사 전날 9/25(수) 15:00 자원봉사자 14명 교육 + 준비물 총점검</td><td>총괄 담당</td><td>9/25</td></tr>
+      </tbody>
+    </table>
+    <p><b>미결</b> 완주 메달 초콜릿(200개 40만 원) 유지·교체 — 견적 1건 추가 후 다음 회의 결정<br>
+    <b>당일 역할</b> 총괄 · 본부 운영(팀장·부센터장) · 부스 팀별 · 길잡이 자살위기지원팀 2명<br>
+    <b>향후 일정</b> 다음 회의 9/19(목) 14:00 — 공단 회신 · 초콜릿 견적 확인 후 최종 확정</p>
+  </details>
+</section>
+
+</main>
+<footer>© 2026 한국AI평생교육협회 · 채점 기준: 결정 5(담당·기한) + 미결 1 + 향후 일정 + 이름 없음</footer>
+
+<script>
+(function(){
+  const $=s=>document.querySelector(s);
+  const norm=t=>t.replace(/\s+/g,'').replace(/,/g,'');
+  const has=(n,arr)=>arr.some(k=>n.includes(norm(k)));
+
+  // 자동 검사 규칙 — 각 항목: 필수 그룹(모두 통과해야 초록), 그룹 안은 하나만 맞으면 됨
+  const RULES=[
+    {t:'결정 ① 접수 정원 변경',g:[['180'],['30명','현장30','현장접수30','50에서30','50→30','50→ 30','현장 30']],why:'사전 180 · 현장 30'},
+    {t:'결정 ② 공단 회신 기한',g:[['건강보험공단','공단'],['18일','9/18','9월18일','9.18']],why:'공단 · 9/18'},
+    {t:'결정 ③ 부스 설치비·예산 변경 없음',g:[['설치비','부스'],['변경없','변동없','100만']],why:'설치비 100만 원 안 · 변경 없음'},
+    {t:'결정 ④ 예산 집행(커피차 계약·총액)',g:[['커피차'],['130만'],['금요일','9/13','13일'],['1200만','1,200만','천이백']],why:'커피차 130만 · 금요일 계약 · 총액 1,200만'},
+    {t:'결정 ⑤ 전날 교육·총점검',g:[['25일','9/25','전날'],['3시','15:00','15시'],['총점검','점검']],why:'9/25 15:00 교육 + 총점검'},
+    {t:'미결 — 초콜릿',g:[['초콜릿','초콜렛'],['미결','보류','다음회의','추후']],why:'초콜릿이 미결로 남아 있어야 함'},
+    {t:'향후 일정 — 다음 회의',g:[['19일','9/19'],['다음회의','차기회의','최종확정']],why:'9/19 같은 시간'},
+    {t:'담당 표기',g:[['담당','총괄','홍보','물품']],why:'담당 칸 또는 역할 표기'},
+    {t:'기한 표기',g:[['기한','까지','당일','오늘중','일까지']],why:'기한 칸 또는 "~까지"'},
+  ];
+  const NAMES=['석상윤','KKC','가영','민정'];
+
+  let auto=null;
+
+  function grade(){
+    const raw=$('#src').value; const n=norm(raw);
+    if(!raw.trim()){alert('회의록을 먼저 붙여넣으세요.');return;}
+    const rows=[]; let pass=0;
+    RULES.forEach(r=>{
+      const okAll=r.g.every(gr=>has(n,gr));
+      const okAny=r.g.some(gr=>has(n,gr));
+      const st=okAll?'ok':(okAny?'warn':'bad'); if(okAll)pass++;
+      rows.push({t:r.t,st,why:r.why});
+    });
+    const found=NAMES.filter(x=>raw.includes(x));
+    auto={rows,found,pass};
+    render();
+    $('#ans').open=false;
+  }
+
+  function render(){
+    if(!auto)return;
+    const tb=$('#autoTbl tbody'); tb.innerHTML='';
+    auto.rows.forEach(r=>{
+      const tr=document.createElement('tr');
+      const lab={ok:'통과',warn:'일부',bad:'없음'}[r.st];
+      tr.innerHTML=`<td>${r.t}</td><td><span class="st ${r.st}">${lab}</span></td><td class="why">${r.why}</td>`;
+      tb.appendChild(tr);
+    });
+    const nb=$('#nameBox');
+    if(auto.found.length){nb.hidden=false;nb.className='name-bad';nb.textContent='개인정보 규칙 실패 — 이름이 남아 있습니다: '+auto.found.join(', ')+' → 직책·역할로 바꿔서 다시 만드세요.';}
+    else{nb.hidden=false;nb.className='';nb.innerHTML='<span class="st ok">통과</span> <span class="why">참석자 이름이 발견되지 않았습니다.</span>';}
+    summarize();
+  }
+
+  function summarize(){
+    if(!auto){return;}
+    const man=[...document.querySelectorAll('.man')];
+    const manOk=man.filter(c=>c.checked).length;
+    const autoBad=auto.rows.filter(r=>r.st!=='ok').map(r=>r.t);
+    const pass=auto.found.length===0 && autoBad.length===0 && manOk===man.length;
+    const r=$('#result');
+    r.className='result '+(pass?'pass':'fail');
+    r.textContent=pass?'통과 — 제출하세요':'미통과 — 아래 항목을 고친 뒤 다시 채점';
+    const who=$('#who').value.trim()||'(작성자)';
+    const d=new Date(); const ds=`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    let s=`[5교시 회의록 자가 채점] ${who} · ${ds}\n`;
+    s+=`결과: ${pass?'통과':'미통과'}\n`;
+    s+=`자동 검사: ${auto.pass}/${auto.rows.length} 통과${autoBad.length?' — 미흡: '+autoBad.join(', '):''}\n`;
+    s+=`개인정보: ${auto.found.length?'실패('+auto.found.join(', ')+')':'통과'}\n`;
+    s+=`자가 체크: ${manOk}/${man.length}`;
+    const unchecked=man.filter(c=>!c.checked).map(c=>c.nextSibling.textContent.trim());
+    if(unchecked.length) s+=' — 미확인: '+unchecked.join(' / ');
+    $('#report').textContent=s;
+    $('#btnCopy').disabled=false; $('#btnTxt').disabled=false;
+    save();
+  }
+
+  function copy(){
+    const t=$('#report').textContent;
+    if(navigator.clipboard&&navigator.clipboard.writeText){navigator.clipboard.writeText(t).then(()=>flash('복사됨'),()=>fallback(t));}
+    else fallback(t);
+  }
+  function fallback(t){const ta=document.createElement('textarea');ta.value=t;document.body.appendChild(ta);ta.select();try{document.execCommand('copy');flash('복사됨');}catch(e){alert('복사에 실패했습니다. 직접 드래그해 복사하세요.');}document.body.removeChild(ta);}
+  function flash(m){const b=$('#btnCopy');const o=b.textContent;b.textContent=m;setTimeout(()=>b.textContent=o,1200);}
+  function dl(){
+    const who=($('#who').value.trim()||'작성자').replace(/[\\/:*?"<>|]/g,'');
+    const blob=new Blob([$('#report').textContent+'\n\n----- 회의록 -----\n'+$('#src').value],{type:'text/plain;charset=utf-8'});
+    const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`회의록_자가채점_${who}.txt`;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),500);
+  }
+
+  function save(){try{localStorage.setItem('msc',JSON.stringify({src:$('#src').value,who:$('#who').value,man:[...document.querySelectorAll('.man')].map(c=>c.checked)}));}catch(e){}}
+  function load(){try{const d=JSON.parse(localStorage.getItem('msc')||'null');if(!d)return;$('#src').value=d.src||'';$('#who').value=d.who||'';[...document.querySelectorAll('.man')].forEach((c,i)=>c.checked=!!(d.man&&d.man[i]));}catch(e){}}
+
+  $('#btnGrade').addEventListener('click',grade);
+  $('#btnClear').addEventListener('click',()=>{if(confirm('붙여넣은 회의록과 체크를 모두 지울까요?')){$('#src').value='';document.querySelectorAll('.man').forEach(c=>c.checked=false);auto=null;$('#autoTbl tbody').innerHTML='<tr><td colspan="3" class="why">먼저 붙여넣고 [채점]을 누르세요.</td></tr>';$('#nameBox').hidden=true;$('#result').className='result wait';$('#result').textContent='채점 전입니다.';$('#report').textContent='—';$('#btnCopy').disabled=true;$('#btnTxt').disabled=true;try{localStorage.removeItem('msc');}catch(e){}}});
+  $('#btnCopy').addEventListener('click',copy);
+  $('#btnTxt').addEventListener('click',dl);
+  document.querySelectorAll('.man').forEach(c=>c.addEventListener('change',summarize));
+  $('#src').addEventListener('input',()=>{$('#len').textContent=$('#src').value.length?$('#src').value.length+'자':'';save();});
+  $('#who').addEventListener('input',save);
+  load(); $('#len').textContent=$('#src').value.length?$('#src').value.length+'자':'';
+})();
+</script>
+</body>
+</html>
