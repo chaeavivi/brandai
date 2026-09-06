@@ -1,0 +1,63 @@
+<!-- ================================================================================== -->
+<!-- WIDGET. 2교시 프롬프트 복사기 (Rule Block Copier) -->
+<!-- 이 부분을 복사해서 노션에 임베드하세요 -->
+<!-- ================================================================================== -->
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>2교시 프롬프트 복사기 — [센터 문서 규칙] 블록</title>
+<style>
+:root{--navy:#1F3A5F;--blue:#2B6CB0;--bg:#F6F8FB;--yel:#FFF9DB;--line:#C9D2DD;--gray:#5F6B7A}
+*{box-sizing:border-box}body{margin:0;font-family:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo",sans-serif;background:var(--bg);color:#1a1a1a;font-size:15px}
+header{background:var(--navy);color:#fff;padding:18px 22px}header h1{margin:0;font-size:20px}header p{margin:6px 0 0;font-size:13px;opacity:.85}
+.wrap{max-width:1100px;margin:0 auto;padding:18px 16px 60px}
+.rulebox{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:16px}
+.rulebox h2{margin:0 0 6px;font-size:16px;color:var(--navy)}.rulebox p{margin:0 0 8px;color:var(--gray);font-size:13px}
+textarea{width:100%;border:1px solid #E8D98A;background:var(--yel);border-radius:8px;padding:10px;font:13px/1.5 "Malgun Gothic",sans-serif;resize:vertical}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px}
+button{border:0;border-radius:8px;padding:9px 14px;font:600 14px "Malgun Gothic",sans-serif;cursor:pointer;background:var(--blue);color:#fff}
+button.ghost{background:#fff;color:var(--navy);border:1px solid var(--line)}button.big{font-size:15px;padding:11px 18px}
+.status{font-size:13px;color:var(--gray)}.status.ok{color:#1b7f3b;font-weight:700}
+.card{background:#fff;border:1px solid var(--line);border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.card h3{margin:0;font-size:16px;color:var(--navy)}.card .when{margin:4px 0 10px;font-size:13px;color:var(--gray)}
+pre{background:#F1F4F8;border:1px solid var(--line);border-radius:8px;padding:12px;max-height:260px;overflow:auto;font:12.5px/1.55 Consolas,"D2Coding",monospace;white-space:pre-wrap;margin:0}
+.tag{display:inline-block;font-size:11px;padding:2px 7px;border-radius:999px;background:#EEF2F7;color:var(--navy);margin-left:6px;vertical-align:middle}
+.tag.rule{background:var(--yel);color:#7a5c00}
+.foot{margin-top:24px;font-size:12px;color:var(--gray)}
+@media(max-width:640px){.card{padding:12px}pre{max-height:200px}}
+</style></head><body>
+<header><h1>2교시 프롬프트 복사기 — [센터 문서 규칙] 블록</h1><p>「문서 작성 방법」을 AI에 첨부하고 아래 프롬프트를 복사해 넣으세요. 나온 결과를 규칙 블록으로 저장하면 3~5교시 프롬프트 맨 위에 그대로 붙습니다.</p></header>
+<div class="wrap">
+<section class="rulebox"><h2>내 [센터 문서 규칙] 블록 <span class="tag rule">2교시 산출물</span></h2>
+<p>아래 P2-1 결과를 여기에 붙여넣고 저장하세요. 이 브라우저에만 저장되며(서버 없음), 3~5교시 프롬프트 복사기에서 자동으로 불러옵니다. 규칙이 잘 안 뽑히면 "기본 틀 불러오기"로 시작해 [ ] 안을 채우세요.</p>
+<textarea id="rule" rows="8" placeholder="[센터 문서 규칙 — 반드시 준수]&#10;■ 서식 …&#10;■ 표기 …&#10;■ 문체 …"></textarea>
+<div class="row"><button id="saveRule">규칙 블록 저장</button><button class="ghost" id="copyRule">규칙 블록 복사</button><button class="ghost" id="loadTpl">기본 틀 불러오기</button><button class="ghost" id="clearRule">비우기</button><span class="status" id="ruleStatus"></span></div>
+</section>
+<div id="cards"></div>
+<div class="foot">사용 순서: 「문서 작성 방법」 PDF 첨부 → P2-1 복사·실행 → 결과를 위 칸에 붙여넣고 저장 → 새 대화에 붙여 "필요성 3문장" 테스트.<br>3~5교시 프롬프트는 <b>3~5교시 프롬프트 복사기</b>에서 이어서 씁니다. 이 페이지는 AI를 호출하지 않으며 입력 내용을 어디에도 보내지 않습니다. 공용 PC에서는 "비우기"로 규칙 블록을 지우세요. © 2026 한국AI평생교육협회</div>
+</div>
+<script>
+const P = [{"id": "P2-1", "title": "규칙 블록 정리 (파일 첨부)", "body": "첨부한 「문서 작성 방법」 파일의 규칙을 [센터 문서 규칙] 블록으로 정리하세요.\n순서: ■ 서식(글꼴·크기·줄간격·항목번호와 들여쓰기·표·붙임 표기) → ■ 표기(날짜·시간·금액·인원·라벨) → ■ 문체(종결형·금지 표현)\n- 파일에 있는 것만 쓴다. 없는 항목은 \"[파일에 없음 — 직접 정할 것]\"으로 남긴다\n- 한 줄에 규칙 하나, 예시는 파일의 표현 그대로\n- 맨 위에 \"[센터 문서 규칙 — 반드시 준수]\" 한 줄", "when": "2교시 · 「문서 작성 방법」 PDF를 AI에 첨부한 뒤 이 프롬프트를 넣는다. 결과를 위 \"내 규칙 블록\"에 저장", "attach": "「문서 작성 방법」 PDF"}];
+const RULE_TPL = "[센터 문서 규칙 — 반드시 준수]\n■ 서식\n- 글꼴 맑은 고딕, 제목 15pt, 본문 11pt, 줄간격 160%\n- 항목번호와 들여쓰기: 1.(0칸) → 가.(2칸) → 1)(4칸) → 가)(6칸) → (1)(8칸) → (가)(10칸)\n- 붙임 표기: \"붙임  1. ○○ 1부.  2. ○○ 1부.  끝.\"\n■ 표기\n- 날짜 2024년 10월 26일 토요일 / 시간 10:00~13:00 / 금액 1,000,000 · 단위(원) / 인원 200명 내외\n- 라벨은 \"가. 대   상 : \" 형식(글자 사이 띄움)\n■ 문체\n- 본문 종결형: [파일에 없음 — 직접 정할 것]\n- 표·항목 종결형: 명사형\n- 금지: 구어체, 감탄·이모지, 근거 없는 수치";
+const $ = s => document.querySelector(s);
+function getRule(){ try{ return localStorage.getItem('pc_rule')||''; }catch(e){ return ''; } }
+function setStatus(t,ok){ const s=$('#ruleStatus'); s.textContent=t; s.className='status'+(ok?' ok':''); setTimeout(()=>{s.textContent='';},2500); }
+async function copyText(t, btn){ try{ await navigator.clipboard.writeText(t); }catch(e){ const x=document.createElement('textarea'); x.value=t; document.body.appendChild(x); x.select(); document.execCommand('copy'); x.remove(); } const o=btn.textContent; btn.textContent='복사됨 ✓'; setTimeout(()=>btn.textContent=o,1500); }
+$('#rule').value = getRule();
+$('#saveRule').onclick = ()=>{ try{ localStorage.setItem('pc_rule',$('#rule').value); }catch(e){} setStatus('저장됨 — 3~5교시 프롬프트에 자동 삽입',true); };
+$('#copyRule').onclick = e=>copyText($('#rule').value, e.target);
+$('#loadTpl').onclick = ()=>{ $('#rule').value = RULE_TPL; setStatus('기본 틀 불러옴 — [ ] 안을 채우고 저장하세요'); };
+$('#clearRule').onclick = ()=>{ $('#rule').value=''; try{localStorage.removeItem('pc_rule');}catch(e){} setStatus('비움'); };
+function render(){
+  const box=$('#cards'); box.innerHTML='';
+  P.forEach(p=>{
+    const c=document.createElement('div'); c.className='card';
+    c.innerHTML = `<h3>${p.id}. ${p.title}</h3><div class="when">${p.when}</div>
+      ${p.attach?`<div class="when" style="color:#7a5c00">먼저 첨부: ${p.attach}</div>`:''}<pre id="pre-${p.id}"></pre>
+      <div class="row"><button class="big" data-copy="${p.id}">프롬프트 복사</button></div>`;
+    box.appendChild(c);
+    c.querySelector('pre').textContent = p.body;
+    c.querySelector('[data-copy]').onclick=e=>copyText(p.body,e.target);
+  });
+}
+render();
+</script></body></html>
