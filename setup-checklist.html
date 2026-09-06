@@ -1,0 +1,327 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1일차 8교시 · 개발 환경 세팅 체크리스트</title>
+<style>
+  :root{--navy:#1f3a5f;--ink:#1d2430;--mute:#5f6b7a;--line:#d9e0e8;--bg:#f6f8fb;--card:#fff;--soft:#eef2f7;--ok:#e8f4ea;--okline:#9fc9a8;--okink:#1f6b35;--accent:#2b6cb0}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Malgun Gothic","맑은 고딕",Pretendard,-apple-system,system-ui,sans-serif;font-size:15px;color:var(--ink);background:var(--bg);line-height:1.6}
+  header{background:var(--navy);color:#fff;padding:22px 20px}
+  header .wrap{max-width:920px;margin:0 auto}
+  header h1{margin:0;font-size:22px;letter-spacing:-.2px}
+  header p{margin:6px 0 0;font-size:13px;opacity:.85}
+  main{max-width:920px;margin:0 auto;padding:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:0 0 14px}
+  .card h2{margin:0 0 6px;font-size:18px;color:var(--navy)}
+  .card h2 .who{font-size:12px;font-weight:normal;color:var(--mute);margin-left:8px;white-space:nowrap}
+  .goal{background:var(--soft);border-radius:8px;padding:10px 12px;font-size:14px;margin:8px 0}
+  .meta{font-size:13px;color:var(--mute)}
+
+  /* 상단 정보 입력 + 진행률 */
+  .me{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .me label{display:block;font-size:13px;color:var(--mute);margin-bottom:4px}
+  input[type=text],input[type=url]{font:inherit;font-size:15px;width:100%;min-height:42px;padding:8px 11px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+  input[type=text]:focus,input[type=url]:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+  .progwrap{margin-top:14px}
+  .progline{display:flex;align-items:baseline;justify-content:space-between;gap:10px;font-size:14px}
+  .progline b{color:var(--navy);font-size:16px}
+  .bar{height:8px;border-radius:999px;background:var(--soft);margin-top:6px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--navy);transition:width .2s ease}
+
+  /* 완료 배너 */
+  .banner{display:none;background:var(--ok);border:1px solid var(--okline);color:var(--okink);border-radius:12px;padding:14px 18px;margin:0 0 14px;font-size:15px;font-weight:bold}
+  .banner.on{display:block}
+
+  /* 단계 */
+  .steps{list-style:none;margin:6px 0 0;padding:0}
+  .steps>li{border-top:1px solid var(--line);padding:12px 0}
+  .steps>li:first-child{border-top:0}
+  .step{display:flex;align-items:flex-start;gap:10px;cursor:pointer}
+  .step input{flex:none;margin:4px 0 0;width:19px;height:19px;cursor:pointer}
+  .no{flex:none;display:inline-block;min-width:34px;font-weight:bold;color:var(--navy);font-size:14px;padding-top:1px}
+  .txt{flex:1;min-width:0;font-size:15px}
+  .steps>li.done .txt{color:var(--mute)}
+  .steps>li.done .no{color:var(--okink)}
+
+  /* 명령 박스 */
+  .cmd{display:flex;align-items:center;gap:10px;background:#f3f5f8;border:1px solid var(--line);border-radius:8px;padding:8px 10px 8px 12px;margin:8px 0 0 44px}
+  .cmd code{flex:1;min-width:0;font-family:Consolas,"D2Coding",monospace;font-size:14px;color:var(--ink);background:none;padding:0;overflow-x:auto;white-space:pre}
+  button.copy{flex:none;font:inherit;font-size:13px;min-height:40px;padding:0 14px;color:var(--accent);background:#fff;border:1px solid var(--line);border-radius:8px;cursor:pointer}
+  button.copy:hover{border-color:var(--accent)}
+  button.copy.copied{color:var(--okink);border-color:var(--okline);background:var(--ok)}
+
+  /* 내 주소 입력 */
+  .addr{margin:10px 0 0 44px;padding:12px;background:var(--soft);border-radius:8px}
+  .addr label{display:block;font-size:13px;color:var(--mute);margin-bottom:6px}
+  .addr .row{display:flex;gap:8px}
+  .addr .row input{flex:1;min-width:0}
+  .btn{font:inherit;font-size:14px;min-height:42px;padding:0 18px;border-radius:8px;border:1px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+  .btn:hover{background:#17304f}
+  .btn.ghost{background:#fff;color:var(--accent);border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--accent)}
+  .btn.unset{opacity:.55}
+
+  table{width:100%;border-collapse:collapse;font-size:14px;margin:8px 0}
+  th,td{border:1px solid var(--line);padding:9px 10px;text-align:left;vertical-align:top}
+  th{background:var(--soft);color:var(--navy);white-space:nowrap}
+  td:first-child{width:38%}
+  .subnote{font-size:13px;color:var(--mute);margin:6px 0 0 44px}
+  .note{background:var(--soft);border-radius:8px;padding:10px 12px;font-size:14px;margin:10px 0 0}
+  .submit{text-align:center;padding:20px}
+  .submit .btn{min-width:200px}
+  .hint{font-size:13px;color:#a33;margin-top:8px;min-height:1.2em}
+  footer{max-width:920px;margin:6px auto 40px;padding:0 20px;font-size:12px;color:var(--mute)}
+
+  @media(max-width:720px){
+    main{padding:14px}
+    .card{padding:16px 14px}
+    .me{grid-template-columns:1fr}
+    .cmd{flex-wrap:wrap;margin-left:0}
+    .cmd code{flex-basis:100%;white-space:pre-wrap;word-break:break-all}
+    .subnote{margin-left:0}
+    .addr{margin-left:0}
+    .addr .row{flex-direction:column}
+    .btn,button.copy{width:100%}
+    table,thead,tbody,tr,th,td{display:block}
+    thead{display:none}
+    tr{border:1px solid var(--line);border-radius:8px;margin-bottom:8px;overflow:hidden}
+    td{border:0;border-top:1px solid var(--line)}
+    td:first-child{width:auto;border-top:0;background:var(--soft);font-weight:bold;color:var(--navy)}
+  }
+  @media(prefers-reduced-motion:reduce){.bar i{transition:none}}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>8교시 · 개발 환경 세팅 체크리스트</h1>
+  <p>생성형AI 활용 업무문서 자동화 심화과정 · 1일차 8교시 · 위에서부터 순서대로 진행합니다</p>
+</div></header>
+
+<main>
+
+<div class="banner" id="banner">세팅 완료 — 제출함 8교시에 주소와 캡처를 올리세요</div>
+
+<div class="card">
+  <div class="me">
+    <div>
+      <label for="f-name">이름</label>
+      <input type="text" id="f-name" data-save="setup.name" autocomplete="name" placeholder="이름">
+    </div>
+    <div>
+      <label for="f-org">소속</label>
+      <input type="text" id="f-org" data-save="setup.org" autocomplete="organization" placeholder="소속">
+    </div>
+  </div>
+  <div class="progwrap">
+    <div class="progline"><span>진행률</span><b id="prog">0 / 14 완료</b></div>
+    <div class="bar"><i id="bar"></i></div>
+  </div>
+  <div class="note">
+    체크하며 진행하고, 막히면 손을 드세요 — 옆자리 완료자가 도와줍니다.<br>
+    오늘 세팅이 끝나야 2일차가 시작됩니다. <b>A·B는 전원 필수, C는 유료 계정이 있는 분만.</b><br>
+    완료 기준: 내 GitHub Pages 링크가 열리고, 터미널에서 Gemini CLI가 대답하면 끝.
+  </div>
+</div>
+
+<!-- ================= A ================= -->
+<div class="card">
+  <h2>A. GitHub — 파일 올리고 웹 주소 만들기<span class="who">전원 · 15분</span></h2>
+  <ul class="steps" data-key="A">
+    <li><label class="step"><input type="checkbox"><span class="no">A1</span><span class="txt">github.com 접속 → Sign up → 이메일·비밀번호·사용자이름(영문) → 이메일 인증 코드 입력</span></label></li>
+    <li><label class="step"><input type="checkbox"><span class="no">A2</span><span class="txt">로그인 후 오른쪽 위 <b>+</b> → New repository → Repository name: <b>my-tools</b> → Public 선택 → Add a README file 체크 → Create repository</span></label></li>
+    <li><label class="step"><input type="checkbox"><span class="no">A3</span><span class="txt">저장소 화면에서 Add file → Upload files → 허브에서 받은 <b>예제1_예산산출계산기.html</b> 끌어다 놓기 → 아래 Commit changes</span></label></li>
+    <li><label class="step"><input type="checkbox"><span class="no">A4</span><span class="txt">저장소 상단 Settings → 왼쪽 Pages → Branch를 None → <b>main</b>으로 → Save</span></label></li>
+    <li>
+      <label class="step"><input type="checkbox"><span class="no">A5</span><span class="txt">1~2분 기다린 뒤 같은 화면 위에 뜨는 주소 확인: <b>https://사용자이름.github.io/my-tools/</b> → 뒤에 <b>예제1_예산산출계산기.html</b> 붙여서 열기</span></label>
+      <div class="addr">
+        <label for="f-pages">내 GitHub Pages 주소</label>
+        <div class="row">
+          <input type="url" id="f-pages" data-save="setup.pages" inputmode="url" placeholder="https://사용자이름.github.io/my-tools/">
+          <button type="button" class="btn" id="open-pages">열기</button>
+        </div>
+        <div class="hint" id="pages-hint"></div>
+      </div>
+    </li>
+    <li><label class="step"><input type="checkbox"><span class="no">A6</span><span class="txt">저장소에서 파일 클릭 → 연필(Edit) → 제목 한 글자 바꾸기 → Commit → 1분 뒤 새로고침해서 바뀌었는지 확인 &nbsp;← "고치면 바로 반영된다" 체험</span></label></li>
+  </ul>
+</div>
+
+<!-- ================= B ================= -->
+<div class="card">
+  <h2>B. Gemini CLI — 터미널에서 AI에게 일 시키기<span class="who">전원 · 15분</span></h2>
+  <ul class="steps" data-key="B">
+    <li><label class="step"><input type="checkbox"><span class="no">B1</span><span class="txt">Node.js 설치: nodejs.org → LTS 버튼 → 내려받은 파일 실행 → 계속 Next → 설치 완료 후 PC 재시작 없이 <b>새 터미널</b></span></label></li>
+    <li>
+      <label class="step"><input type="checkbox"><span class="no">B2</span><span class="txt">터미널 열기: 시작 메뉴에 <b>cmd</b> 또는 <b>PowerShell</b> 검색 → 열기. 아래 입력 후 Enter (버전 숫자가 나오면 성공)</span></label>
+      <div class="cmd"><code>node -v</code><button type="button" class="copy">복사</button></div>
+    </li>
+    <li>
+      <label class="step"><input type="checkbox"><span class="no">B3</span><span class="txt">Gemini CLI 설치 (1~2분 걸림. 빨간 글자가 나와도 마지막에 프롬프트가 돌아오면 됨)</span></label>
+      <div class="cmd"><code>npm install -g @google/gemini-cli</code><button type="button" class="copy">복사</button></div>
+    </li>
+    <li>
+      <label class="step"><input type="checkbox"><span class="no">B4</span><span class="txt">실행 → 처음에 로그인 방식 묻는 화면에서 <b>Login with Google</b> → 브라우저가 열리면 구글 계정으로 로그인 → 터미널로 돌아옴</span></label>
+      <div class="cmd"><code>gemini</code><button type="button" class="copy">복사</button></div>
+    </li>
+    <li>
+      <label class="step"><input type="checkbox"><span class="no">B5</span><span class="txt">동작 확인. 아래 한 줄을 그대로 쳐서 파일 목록을 대답하면 성공. <b>/quit</b> 으로 나가기</span></label>
+      <div class="cmd"><code>이 폴더에 있는 파일 목록을 알려줘</code><button type="button" class="copy">복사</button></div>
+    </li>
+    <li>
+      <label class="step"><input type="checkbox"><span class="no">B6</span><span class="txt">예제 파일이 있는 폴더로 이동해서 다시 실행 → "예산 계산기 제목을 우리 팀 이름으로 바꿔줘" → 바뀐 파일을 브라우저로 열어 확인</span></label>
+      <div class="cmd"><code>cd 다운로드</code><button type="button" class="copy">복사</button></div>
+      <p class="subnote">※ <b>다운로드</b> 자리에 파일을 둔 폴더 이름을 넣습니다.</p>
+    </li>
+  </ul>
+</div>
+
+<!-- ================= C ================= -->
+<div class="card">
+  <h2>C. Claude Code — 유료 계정 보유자만<span class="who">10분 · 나머지는 강사 화면</span></h2>
+  <ul class="steps" data-key="C">
+    <li>
+      <label class="step"><input type="checkbox"><span class="no">C1</span><span class="txt">B1까지 끝난 상태에서 터미널에 입력</span></label>
+      <div class="cmd"><code>npm install -g @anthropic-ai/claude-code</code><button type="button" class="copy">복사</button></div>
+    </li>
+    <li>
+      <label class="step"><input type="checkbox"><span class="no">C2</span><span class="txt">실행 → 브라우저 로그인 (Pro/Max 계정) → 터미널로 돌아와 "이 폴더 파일 목록 보여줘"</span></label>
+      <div class="cmd"><code>claude</code><button type="button" class="copy">복사</button></div>
+    </li>
+  </ul>
+  <div class="note">무료 계정은 실행이 되지 않습니다. 2일차 실습은 Gemini CLI로 동일하게 진행하니 걱정 없이 B까지만 끝내면 됩니다.</div>
+</div>
+
+<!-- ================= D ================= -->
+<div class="card">
+  <h2>D. 막힐 때 — 이 표부터</h2>
+  <table>
+    <thead><tr><th>증상</th><th>해결</th></tr></thead>
+    <tbody>
+      <tr><td>npm install에서 "EACCES" / "권한" 오류</td><td>터미널을 닫고 시작 메뉴에서 cmd 오른쪽 클릭 → "관리자 권한으로 실행" 후 다시. 그래도 안 되면 손 들기(폴리텍 담당자 권한 필요)</td></tr>
+      <tr><td>npm install이 멈춰 있음 / "ETIMEDOUT"</td><td>강의실 망 프록시 문제. 휴대폰 핫스팟으로 잠시 바꿔서 설치만 한 뒤 다시 강의실 와이파이로</td></tr>
+      <tr><td>"node은(는) 내부 또는 외부 명령이 아닙니다"</td><td>Node 설치 후 터미널을 새로 열지 않음. 터미널 전부 닫고 다시 열기</td></tr>
+      <tr><td>gemini 실행 시 로그인 창이 안 뜸</td><td>터미널에 표시된 주소를 복사해 브라우저에 직접 붙여넣기</td></tr>
+      <tr><td>GitHub Pages 주소가 404</td><td>켠 지 1~3분 기다리기. 파일명 대소문자·한글 정확히. Settings → Pages에 초록색 "Your site is live"가 떠야 함</td></tr>
+      <tr><td>GitHub 이메일 인증 메일이 안 옴</td><td>스팸함 확인. 그래도 없으면 다른 이메일로 재가입</td></tr>
+      <tr><td>한글 파일명이 주소에서 깨짐</td><td>정상. 브라우저가 알아서 변환함. 안 열리면 파일명을 영문으로 바꿔 다시 올리기</td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ================= E ================= -->
+<div class="card">
+  <h2>E. 완료 확인<span class="who">강사 또는 옆자리 완료자가 체크</span></h2>
+  <ul class="steps" data-key="E" id="final">
+    <li><label class="step"><input type="checkbox"><span class="txt">내 GitHub Pages 주소에서 예제 파일이 열린다</span></label></li>
+    <li><label class="step"><input type="checkbox"><span class="txt">파일을 고치고 재배포해 바뀐 것을 확인했다</span></label></li>
+    <li><label class="step"><input type="checkbox"><span class="txt">터미널에서 gemini가 파일 목록을 대답했다</span></label></li>
+    <li><label class="step"><input type="checkbox"><span class="txt">(유료) claude가 실행됐다</span></label></li>
+  </ul>
+  <div class="note">완료한 분은 제출함 앱 8교시에 <b>GitHub Pages 주소</b>와 <b>터미널 캡처 1장</b>을 올린 뒤, 옆자리를 도와주세요. 세팅이 끝난 순서대로 2일차 준비가 끝난 겁니다.</div>
+</div>
+
+<div class="card submit">
+  <!-- 제출함 주소: 아래 href="" 안에 제출함 앱 주소를 넣으세요 -->
+  <a class="btn" id="submit-link" href="" target="_blank" rel="noopener">제출함 열기</a>
+  <div class="hint" id="submit-hint"></div>
+</div>
+
+</main>
+<footer>입력값과 체크 표시는 이 브라우저에만 저장됩니다. 한국폴리텍대학 원주캠퍼스 「생성형AI 활용 업무 워크플로우 실무」 심화과정.</footer>
+
+<script>
+(function(){
+  function ls(fn){try{return fn()}catch(e){return null}}
+
+  /* ---- 이름·소속·주소 입력 저장 ---- */
+  document.querySelectorAll('[data-save]').forEach(function(el){
+    var k=el.dataset.save;
+    var v=ls(function(){return localStorage.getItem(k)});
+    if(v!==null) el.value=v;
+    el.addEventListener('input',function(){ls(function(){localStorage.setItem(k,el.value)})});
+  });
+
+  /* ---- 체크박스 저장 + 진행률 ---- */
+  var groups=Array.prototype.slice.call(document.querySelectorAll('.steps'));
+  var counted=[],finals=[];
+  groups.forEach(function(g){
+    var key=g.dataset.key;
+    var ins=Array.prototype.slice.call(g.querySelectorAll('input[type=checkbox]'));
+    ins.forEach(function(i,idx){
+      var k='setup.'+key+'.'+idx;
+      i.checked=ls(function(){return localStorage.getItem(k)})==='1';
+      i.addEventListener('change',function(){
+        ls(function(){localStorage.setItem(k,i.checked?'1':'0')});
+        paint();
+      });
+      (key==='E'?finals:counted).push(i);
+    });
+  });
+
+  var prog=document.getElementById('prog'),bar=document.getElementById('bar'),banner=document.getElementById('banner');
+  function paint(){
+    var done=0;
+    counted.forEach(function(i){if(i.checked)done++});
+    prog.textContent=done+' / '+counted.length+' 완료';
+    bar.style.width=(counted.length?Math.round(done/counted.length*100):0)+'%';
+    groups.forEach(function(g){
+      g.querySelectorAll('input[type=checkbox]').forEach(function(i){
+        i.closest('li').classList.toggle('done',i.checked);
+      });
+    });
+    var all=finals.length&&finals.every(function(i){return i.checked});
+    banner.classList.toggle('on',!!all);
+  }
+
+  /* ---- 명령 복사 ---- */
+  document.querySelectorAll('button.copy').forEach(function(b){
+    b.addEventListener('click',function(){
+      if(b.classList.contains('copied')) return;
+      var src=b.parentNode.querySelector('code'); if(!src) return;
+      var text=src.textContent, label=b.textContent;
+      function done(){
+        b.textContent='복사됨'; b.classList.add('copied');
+        setTimeout(function(){b.textContent=label;b.classList.remove('copied')},1200);
+      }
+      function fallback(){
+        var ta=document.createElement('textarea');
+        ta.value=text; ta.setAttribute('readonly','');
+        ta.style.position='fixed'; ta.style.left='-9999px';
+        document.body.appendChild(ta); ta.select();
+        try{document.execCommand('copy');done()}catch(e){}
+        document.body.removeChild(ta);
+      }
+      if(navigator.clipboard&&navigator.clipboard.writeText){
+        navigator.clipboard.writeText(text).then(done,fallback);
+      }else fallback();
+    });
+  });
+
+  /* ---- 내 Pages 주소 열기 ---- */
+  var pages=document.getElementById('f-pages'),hint=document.getElementById('pages-hint');
+  document.getElementById('open-pages').addEventListener('click',function(){
+    var v=pages.value.trim();
+    if(!v){hint.textContent='주소를 먼저 입력하세요.';pages.focus();return}
+    if(!/^https?:\/\//i.test(v)) v='https://'+v;
+    hint.textContent='';
+    window.open(v,'_blank','noopener');
+  });
+  pages.addEventListener('input',function(){hint.textContent=''});
+
+  /* ---- 제출함 ---- */
+  var sub=document.getElementById('submit-link'),subHint=document.getElementById('submit-hint');
+  if(!sub.getAttribute('href')){
+    sub.classList.add('unset');
+    sub.addEventListener('click',function(e){
+      e.preventDefault();
+      subHint.textContent='제출함 주소가 아직 입력되지 않았습니다. 강사 안내를 확인하세요.';
+    });
+  }
+
+  paint();
+})();
+</script>
+</body>
+</html>
