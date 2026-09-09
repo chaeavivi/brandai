@@ -48,7 +48,9 @@
   .lock{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:10px}
   .lock input{font:inherit;font-size:15px;letter-spacing:.4em;width:8em;padding:8px 10px;border:1px solid var(--line);border-radius:8px;text-align:center}
   .lock button{font:inherit;font-size:14px;color:#fff;background:var(--navy);border:1px solid var(--navy);border-radius:8px;padding:9px 16px;cursor:pointer}
+  .lock input.wide{letter-spacing:.06em;width:11em;text-align:left}
   .lock-msg{font-size:13px;color:#a33}
+  nav .lockmark{font-size:12px}
   @media(prefers-reduced-motion:reduce){.card[data-lesson]>h2::before{transition:none}}
   footer{max-width:1040px;margin:10px auto 40px;padding:0 20px;font-size:12px;color:var(--mute)}
   .progress{font-size:12px;color:var(--mute);margin-left:auto;align-self:center;white-space:nowrap}
@@ -62,7 +64,7 @@
 <nav><div class="wrap">
   <button data-tab="prep" class="on">시작 전 준비</button>
   <button data-tab="d1">1일차 · 문서</button>
-  <button data-tab="d2">2일차 · 도구</button>
+  <button data-tab="d2">2일차 · 도구 <span class="lockmark" id="d2-lockmark">🔒</span></button>
   <button data-tab="files">자료·범위 안내</button>
   <button data-tab="plus">플러스 🔒</button>
   <a class="navlink" href="https://service-704587947766.us-west1.run.app/" target="_blank" rel="noopener">과제 제출 ↗</a>
@@ -239,6 +241,18 @@
 
 <!-- ================= 2일차 ================= -->
 <section class="tab" id="tab-d2">
+  <div class="card" id="d2-gate">
+    <h2>2일차 준비 중</h2>
+    <div class="goal">2일차 내용은 담당 강사가 정리하는 중입니다. <b>9월 11일(금) 오전 8시 30분</b>에 자동으로 열립니다. 그 전에 확인해야 하면 코드를 넣으세요.</div>
+    <form class="lock" id="d2-form">
+      <label for="d2-code" class="meta" style="margin:0">코드</label>
+      <input id="d2-code" class="wide" type="text" autocomplete="off" placeholder="코드 입력">
+      <button type="submit">열기</button>
+      <span class="lock-msg" id="d2-msg" role="status"></span>
+    </form>
+  </div>
+
+  <div id="d2-body" hidden>
   <div class="card">
     <h2>2일차 — 업무도구 제작 및 콘텐츠 시각화 <span class="tag">정경</span></h2>
     <div class="goal">1일차 기획서를 요구사항으로 삼아 문서생성기를 만들고, 배포하고, 시각화한다.</div>
@@ -319,6 +333,7 @@
     <ol><li>개인별 제작물 시연 (2분) + 상호 피드백</li><li>부서 확산 방안, 도구 유지·수정 방법 정리</li><li>현업 적용 계획서: 어느 문서부터, 누가, 언제</li></ol>
     <div class="files"><a href="files/적용계획서_양식.docx" download>현업 적용 계획서 양식.docx ⤓</a></div>
     <div class="check" data-key="d2-8"><label><input type="checkbox">시연 완료</label><label><input type="checkbox">적용 계획서 제출</label></div>
+  </div>
   </div>
 </section>
 
@@ -523,6 +538,8 @@
 <script>
 (function(){
   var BONUS_CODE='1224';
+  var DAY2_CODE='260911ai';
+  var DAY2_OPEN=new Date('2026-09-11T08:30:00+09:00').getTime();  // 한국 시간, 이후로는 코드 없이 열림
   function ls(fn){try{return fn()}catch(e){return null}}
 
   /* ---- 탭 ---- */
@@ -561,7 +578,7 @@
     return 'hub.'+g+'.'+idx;
   }
   function counted(){
-    return boxes.filter(function(i){return !i.closest('#plus-body[hidden]')});
+    return boxes.filter(function(i){return !i.closest('[hidden]')});
   }
   function paint(){
     var list=counted(),done=0;
@@ -581,23 +598,31 @@
     });
   });
 
-  /* ---- 플러스 탭 코드 잠금 ---- */
-  var gate=document.getElementById('plus-gate'),
-      body=document.getElementById('plus-body'),
-      form=document.getElementById('plus-form'),
-      code=document.getElementById('plus-code'),
-      msg=document.getElementById('plus-msg');
-  function unlock(save){
-    body.hidden=false; gate.hidden=true;
-    if(save) ls(function(){localStorage.setItem('hub.plus','1')});
-    paint();
+  /* ---- 탭 코드 잠금 (플러스 · 2일차 공용) ---- */
+  function gateTab(id,code,key,openAt){
+    var gate=document.getElementById(id+'-gate'),
+        body=document.getElementById(id+'-body'),
+        form=document.getElementById(id+'-form'),
+        inp=document.getElementById(id+'-code'),
+        msg=document.getElementById(id+'-msg'),
+        mark=document.getElementById(id+'-lockmark');
+    if(!gate||!body||!form) return;
+    function unlock(save){
+      body.hidden=false; gate.hidden=true;
+      if(mark) mark.hidden=true;
+      if(save) ls(function(){localStorage.setItem(key,'1')});
+      paint();
+    }
+    if(openAt && Date.now()>=openAt) unlock(false);              // 공개 시각이 지나면 코드 없이
+    else if(ls(function(){return localStorage.getItem(key)})==='1') unlock(false);
+    form.addEventListener('submit',function(e){
+      e.preventDefault();
+      if(inp.value.trim()===code){msg.textContent='';unlock(true)}
+      else{msg.textContent='코드가 맞지 않습니다.';inp.select()}
+    });
   }
-  if(ls(function(){return localStorage.getItem('hub.plus')})==='1') unlock(false);
-  form.addEventListener('submit',function(e){
-    e.preventDefault();
-    if(code.value.trim()===BONUS_CODE){msg.textContent='';unlock(true)}
-    else{msg.textContent='코드가 맞지 않습니다.';code.select()}
-  });
+  gateTab('plus',BONUS_CODE,'hub.plus');
+  gateTab('d2',DAY2_CODE,'hub.d2',DAY2_OPEN);
 
   /* ---- 프롬프트 복사 ---- */
   document.querySelectorAll('button.copy').forEach(function(b){
