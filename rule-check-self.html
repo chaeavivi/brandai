@@ -1,0 +1,299 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>6교시 규칙 위반 찾기 · 검증과 자가 채점</title>
+<style>
+  :root{--navy:#1f3a5f;--ink:#1d2430;--mute:#5f6b7a;--line:#d9e0e8;--bg:#f6f8fb;--card:#fff;--soft:#eef2f7;--ok:#e8f4ea;--okline:#9fc9a8;--okink:#1f6b35;--warn:#fff4e5;--warnline:#e6c48a;--warnink:#8a4b00;--accent:#2b6cb0}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Malgun Gothic","맑은 고딕",Pretendard,-apple-system,system-ui,sans-serif;font-size:15px;color:var(--ink);background:var(--bg);line-height:1.6}
+  header{background:var(--navy);color:#fff;padding:22px 20px}
+  header .wrap{max-width:940px;margin:0 auto}
+  header h1{margin:0;font-size:22px;letter-spacing:-.2px}
+  header p{margin:6px 0 0;font-size:13px;opacity:.85}
+  main{max-width:940px;margin:0 auto;padding:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:0 0 14px}
+  .card h2{margin:0 0 4px;font-size:18px;color:var(--navy)}
+  .card h2 .n{color:var(--accent);margin-right:6px}
+  .lead{font-size:14px;color:var(--mute);margin:0 0 10px}
+  ol,ul{margin:6px 0 6px 20px;padding:0}li{margin:4px 0}
+  .flow{background:var(--soft);border-radius:8px;padding:12px 14px;font-size:14px;margin:8px 0}
+  .flow b{color:var(--navy)}
+  .prompt{background:#f3f5f8;border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:10px 0;font-family:Consolas,"D2Coding",monospace;font-size:13px;line-height:1.65;white-space:pre-wrap;overflow-x:auto;max-height:380px;overflow-y:auto}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-top:4px}
+  .btn{font:inherit;font-size:14px;min-height:44px;padding:0 18px;border-radius:8px;border:1px solid var(--line);background:#fff;color:var(--accent);cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+  .btn:hover{border-color:var(--accent)}
+  .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+  .btn.primary:hover{background:#215891}
+  .btn.navy{background:var(--navy);color:#fff;border-color:var(--navy)}
+  .btn.navy:hover{background:#17304f}
+  .btn.done{background:var(--ok);color:var(--okink);border-color:var(--okline)}
+  .count{display:flex;gap:16px;flex-wrap:wrap;margin-top:8px}
+  .count label{display:block;font-size:13px;color:var(--mute);margin-bottom:4px}
+  .count input{font:inherit;font-size:16px;width:6.5em;padding:8px 10px;border:1px solid var(--line);border-radius:8px;text-align:center;font-variant-numeric:tabular-nums}
+  .count input:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+  table{width:100%;border-collapse:collapse;font-size:13.5px;margin:8px 0}
+  th,td{border:1px solid var(--line);padding:8px 9px;text-align:left;vertical-align:top}
+  th{background:var(--soft);color:var(--navy);white-space:nowrap}
+  td.c{text-align:center;white-space:nowrap}
+  td.loc{white-space:nowrap;color:var(--mute)}
+  tr.got{background:var(--ok)}
+  .must{display:inline-block;font-size:11px;font-weight:bold;padding:1px 7px;border-radius:999px;background:var(--warn);color:var(--warnink);margin-left:6px}
+  .wrap-x{overflow-x:auto}
+  .verdict{display:inline-block;font-size:14px;font-weight:bold;padding:6px 14px;border-radius:999px;border:1px solid var(--line);background:var(--soft);color:var(--mute)}
+  .verdict.ok{background:var(--ok);border-color:var(--okline);color:var(--okink)}
+  .verdict.warn{background:var(--warn);border-color:var(--warnline);color:var(--warnink)}
+  .scoreline{display:flex;align-items:baseline;justify-content:space-between;gap:12px;flex-wrap:wrap}
+  .scoreline .num{font-size:15px;color:var(--mute)}
+  .scoreline .num b{font-size:24px;color:var(--navy);font-variant-numeric:tabular-nums}
+  .note{font-size:13.5px;color:var(--mute);margin-top:10px}
+  .why{background:var(--warn);border:1px solid var(--warnline);border-radius:8px;padding:12px 14px;margin-top:12px;font-size:14px}
+  .why b{color:var(--warnink)}
+  .meta{font-size:13px;color:var(--mute)}
+  footer{max-width:940px;margin:6px auto 40px;padding:0 20px;font-size:12px;color:var(--mute)}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>규칙 위반 찾기 · 검증과 자가 채점</h1>
+  <p>1일차 6교시 · 사람이 먼저 찾고, AI로 대조하고, 정답과 맞춰 봅니다</p>
+</div></header>
+<main>
+
+  <div class="card">
+    <h2><span class="n">1.</span>진행 순서</h2>
+    <div class="flow">
+      <b>① 사람이 먼저 (5분)</b> — 계획안 A·B를 눈으로 읽고 위반을 찾아 종이나 메모장에 적기<br>
+      <b>② AI로 대조 (3분)</b> — 아래 검증 프롬프트를 복사해 문서 전문과 함께 보내기<br>
+      <b>③ 정답 공개</b> — 강사 안내 후 아래 3번에서 정답을 열고 채점<br>
+      <b>④ 확인</b> — 내가 찾았는데 AI가 못 찾은 것 / AI는 찾았는데 내가 놓친 것에 동그라미
+    </div>
+    <p class="meta">※ 2교시의 자동 점검 프롬프트는 <b>형식만</b> 봅니다. 6교시는 검산과 근거까지 보는 아래 프롬프트를 따로 씁니다.</p>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">2.</span>검증 프롬프트 (P6-1)</h2>
+    <p class="lead">맨 위 <b>[센터 문서 규칙]</b> 자리에 2교시에서 만든 규칙 블록을, 맨 아래에 계획안 A 또는 B 전문을 붙여 넣으세요.</p>
+    <div class="prompt" id="p61">[센터 문서 규칙]
+
+[역할] 계획안 결재 전 검토자.
+[할 일] 아래 [점검 대상 문서]를 위 규칙과 아래 4가지 추가 기준으로 검사한다. 내용의 좋고 나쁨은 판단하지 않는다. 문서를 고쳐 쓰지 말고 위반만 찾는다.
+
+[추가 기준]
+1. 번호 연속성: 1.→가.→1)→가)→(1) 순서. 건너뛴 단계, 같은 번호 반복, 빠진 번호
+2. 검산: 예산표 각 행의 산출내역(단가×수량×횟수)과 금액이 맞는지, 합계가 각 행의 합과 같은지 직접 더해서 확인
+3. 근거: 필요성에 나오는 통계·추세 문장에 수치·연도·출처가 있는지. 없으면 위반
+4. 마무리: 붙임 표기 형식과 마지막 "끝." 유무
+
+[출력 형식]
+표 1개. 열: 번호 | 위치(항목번호) | 원문 그대로 | 위반한 규칙 | 수정안
+- 위반 하나에 한 행. 같은 종류가 여러 곳이면 각각 적는다
+- 표 아래에 "합계 검산: (식) = (결과) → 일치/불일치" 한 줄
+- 마지막에 "찾은 위반 N개" 한 줄. 판정이나 총평은 쓰지 않는다
+
+[점검 대상 문서]
+(규칙위반찾기_계획안A 또는 B 전문 붙여넣기)</div>
+    <div class="bar">
+      <button type="button" class="btn primary" id="copyP61">프롬프트 복사</button>
+      <a class="btn" href="files/규칙위반찾기_계획안A.pdf" download>계획안 A ⤓</a>
+      <a class="btn" href="files/규칙위반찾기_계획안B.pdf" download>계획안 B ⤓</a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="n">3.</span>내가 찾은 개수</h2>
+    <p class="lead">정답을 열기 <b>전에</b> 먼저 적어 두세요. 나중에 "정답을 보니 다 알던 것 같다"는 착각을 막아 줍니다.</p>
+    <div class="count">
+      <div><label for="myA">계획안 A에서 찾은 개수</label><input type="number" id="myA" min="0" max="30" placeholder="0"></div>
+      <div><label for="myB">계획안 B에서 찾은 개수</label><input type="number" id="myB" min="0" max="30" placeholder="0"></div>
+    </div>
+    <div class="bar" style="margin-top:14px">
+      <button type="button" class="btn navy" id="reveal">정답 공개하고 채점 시작</button>
+    </div>
+    <p class="meta" style="margin-top:8px">강사 안내가 있은 뒤에 누르세요.</p>
+  </div>
+
+  <div id="answers" hidden>
+    <div class="card">
+      <h2><span class="n">4.</span>계획안 A · 정답 12개 <span class="meta">(쉬움)</span></h2>
+      <p class="lead">내가 찾았던 것에 체크하세요.</p>
+      <div class="wrap-x">
+      <table id="tblA">
+        <tr><th>찾음</th><th>#</th><th>위치</th><th>위반</th><th>맞는 형태</th></tr>
+      </table>
+      </div>
+      <p class="meta">검산: 300,000 + 450,000 + 500,000 = 1,250,000 → <b>일치</b> (A에는 합계 함정이 없습니다)</p>
+    </div>
+
+    <div class="card">
+      <h2><span class="n">5.</span>계획안 B · 정답 6개 <span class="meta">(어려움 · 겉보기엔 멀쩡)</span></h2>
+      <p class="lead">개수는 적지만 훨씬 어렵습니다. <b>필수</b> 표시는 꼭 잡아야 하는 항목입니다.</p>
+      <div class="wrap-x">
+      <table id="tblB">
+        <tr><th>찾음</th><th>#</th><th>위치</th><th>위반</th><th>맞는 형태</th></tr>
+      </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2><span class="n">6.</span>결과</h2>
+      <div class="scoreline">
+        <div class="num">A <b id="cntA">0</b> / 12 &nbsp;·&nbsp; B <b id="cntB">0</b> / 6</div>
+        <div class="verdict" id="verdict">채점 전</div>
+      </div>
+      <p class="note" id="note"></p>
+      <div class="why" id="why" hidden>
+        <b>오늘의 요점</b><br>
+        A는 AI가 보통 10~12개를 다 찾습니다 — <b>형식은 AI가 잘 봅니다.</b><br>
+        B의 합계 오류(1,800,000 ≠ 1,700,000)는 2교시의 형식 점검 프롬프트로는 잡히지 않습니다. P6-1에 <b>검산 기준을 넣었기 때문에</b> 잡힌 것입니다 — <b>숫자와 근거는 시켜야 봅니다. 시키지 않으면 안 봅니다.</b><br>
+        B-3(라벨 표기)은 정답이 하나가 아닙니다. 「문서 작성 방법」에 라벨 규칙이 있는지 확인하고, 없다면 2교시 규칙 블록에 추가해 두세요.
+      </div>
+      <div class="bar" style="margin-top:14px">
+        <button type="button" class="btn primary" id="copyReport">결과 복사</button>
+        <button type="button" class="btn" id="dlReport">제출용 파일 내려받기 ⤓</button>
+        <a class="btn" href="https://service-704587947766.us-west1.run.app/" target="_blank" rel="noopener">과제 제출함 열기 ↗</a>
+      </div>
+      <p class="meta" style="margin-top:10px">통과 기준: <b>A 8개 이상</b> + <b>B 합계 오류 발견</b></p>
+    </div>
+  </div>
+</main>
+<footer>체크와 개수는 이 브라우저에만 저장됩니다. 한국폴리텍대학 원주캠퍼스 「생성형AI 활용 업무문서 자동화」 심화과정 1일차 6교시.</footer>
+<script>
+(function(){
+  var KEY='rc.';
+  function ls(fn){try{return fn()}catch(e){return null}}
+
+  var A=[
+    ['1-가.','"가." 앞 들여쓰기 없음','가. 앞 2칸'],
+    ['1-가.','구어체 "~있어요", "~합니다!!"','~이다 / ~한다, 감탄부호 금지'],
+    ['1','가. 다음이 다. (나. 건너뜀)','가. → 나. → 다.'],
+    ['3','"사업내용" 붙여 씀','양식 항목명 "사업 내용"'],
+    ['3-가.','"약 100명정도" 중복·띄어쓰기','100명 내외'],
+    ['3-나.','"2025.5.17 (토) 오후 2시부터 4시"','2025년 5월 17일 토요일, 14:00~16:00'],
+    ['3-다. 1)','1) 아래 바로 (1) — 가) 건너뜀','1) → 가) → (1)'],
+    ['4 표','"300000원 / 45만원 / 500,000" 혼재','1,000,000 형식, 단위(원)는 머리글에'],
+    ['4 표','"전문의 1명" 산출근거 없음','단가 × 수량 × 횟수'],
+    ['5-가.','진행 절차가 화살표 문장','양식은 일정 표'],
+    ['6-가.','이모지 ✨','이모지 금지'],
+    ['붙임','"붙임 1. / 붙임 2." 반복, "끝." 없음','붙임  1. ○○ 1부.  2. ○○ 1부.  끝.']
+  ];
+  var B=[
+    ['1-가.','"증가하였으며" — 수치·연도·출처 없음','근거는 숫자와 출처 (평가지침 B.1.1 ①)',false],
+    ['3-라.','"2)"가 두 번, "3)" 없음','번호 연속',false],
+    ['3-다.','"장   소" 라벨 — 양식은 "행사장소"','라벨은 양식 그대로 (토론 유도용)',false],
+    ['4 표','"천막·테이블 대여" 산출근거 없음','모든 행 단가 × 수량',false],
+    ['4 표','500,000 + 900,000 + 400,000 = 1,800,000 ≠ 1,700,000','합계 수정',true],
+    ['붙임','마지막 "끝" 뒤 마침표 없음','"끝."',false]
+  ];
+
+  function fill(tblId,rows,tag){
+    var t=document.getElementById(tblId);
+    rows.forEach(function(r,i){
+      var tr=document.createElement('tr');
+      var must=r[3]?'<span class="must">필수</span>':'';
+      tr.innerHTML='<td class="c"><input type="checkbox" data-k="'+tag+i+'" style="width:18px;height:18px;cursor:pointer"></td>'+
+                   '<td class="c">'+(i+1)+'</td><td class="loc">'+r[0]+'</td><td>'+r[1]+must+'</td><td>'+r[2]+'</td>';
+      t.appendChild(tr);
+    });
+  }
+  fill('tblA',A,'a'); fill('tblB',B,'b');
+
+  var boxes=[].slice.call(document.querySelectorAll('#answers input[type=checkbox]'));
+  var myA=document.getElementById('myA'), myB=document.getElementById('myB');
+  var answers=document.getElementById('answers');
+
+  function paint(){
+    var a=0,b=0,gotMust=false;
+    boxes.forEach(function(i){
+      var tr=i.closest('tr'); tr.classList.toggle('got',i.checked);
+      if(!i.checked) return;
+      if(i.dataset.k.charAt(0)==='a') a++; else { b++; if(i.dataset.k==='b4') gotMust=true; }
+    });
+    document.getElementById('cntA').textContent=a;
+    document.getElementById('cntB').textContent=b;
+    var v=document.getElementById('verdict'), note=document.getElementById('note');
+    v.className='verdict';
+    if(a+b===0){ v.textContent='채점 전'; note.textContent=''; }
+    else if(a>=8 && gotMust){ v.textContent='통과'; v.classList.add('ok');
+      note.textContent='A 8개 이상, B 합계 오류까지 잡으셨습니다. 결재 전 검토를 맡길 수 있는 수준입니다.'; }
+    else{
+      v.textContent='한 번 더'; v.classList.add('warn');
+      var m=[];
+      if(a<8) m.push('A에서 '+(8-a)+'개 더 필요');
+      if(!gotMust) m.push('B의 합계 오류(1,800,000 ≠ 1,700,000)를 아직 못 찾음');
+      note.textContent=m.join(' · ')+'. 문서를 다시 보고 그 부분만 확인해 보세요.';
+    }
+    save();
+  }
+  function save(){
+    boxes.forEach(function(i){ls(function(){localStorage.setItem(KEY+i.dataset.k,i.checked?'1':'0')})});
+    ls(function(){localStorage.setItem(KEY+'myA',myA.value);localStorage.setItem(KEY+'myB',myB.value)});
+  }
+  boxes.forEach(function(i){
+    i.checked=ls(function(){return localStorage.getItem(KEY+i.dataset.k)})==='1';
+    i.addEventListener('change',paint);
+  });
+  [myA,myB].forEach(function(el){
+    var v=ls(function(){return localStorage.getItem(KEY+el.id)}); if(v) el.value=v;
+    el.addEventListener('input',save);
+  });
+
+  function open(){
+    answers.hidden=false;
+    document.getElementById('why').hidden=false;
+    ls(function(){localStorage.setItem(KEY+'open','1')});
+    paint();
+    answers.scrollIntoView({behavior:'smooth',block:'start'});
+  }
+  document.getElementById('reveal').addEventListener('click',open);
+  if(ls(function(){return localStorage.getItem(KEY+'open')})==='1'){ answers.hidden=false; document.getElementById('why').hidden=false; paint(); }
+
+  function report(){
+    var a=0,b=0,gotMust=false,missA=[],missB=[];
+    boxes.forEach(function(i){
+      var k=i.dataset.k, n=+k.slice(1);
+      if(i.checked){ if(k.charAt(0)==='a') a++; else { b++; if(k==='b4') gotMust=true; } }
+      else { (k.charAt(0)==='a'?missA:missB).push((n+1)+'. '+(k.charAt(0)==='a'?A:B)[n][1]); }
+    });
+    var d=new Date(), p=function(n){return (n<10?'0':'')+n};
+    var L=['6교시 규칙 위반 찾기 · 자가 채점',
+      '작성 '+d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()),'',
+      '정답 보기 전 내가 적은 개수: A '+(myA.value||'-')+'개, B '+(myB.value||'-')+'개',
+      '채점 결과: A '+a+'/12, B '+b+'/6',
+      '판정: '+((a>=8&&gotMust)?'통과':'한 번 더')+'  (기준: A 8개 이상 + B 합계 오류 발견)',''];
+    L.push('놓친 항목 — 계획안 A');
+    L.push(missA.length?missA.map(function(s){return '  - '+s}).join('\n'):'  없음');
+    L.push('');
+    L.push('놓친 항목 — 계획안 B');
+    L.push(missB.length?missB.map(function(s){return '  - '+s}).join('\n'):'  없음');
+    return L.join('\n');
+  }
+  function flash(btn,word){
+    var t=btn.textContent; btn.textContent=word; btn.classList.add('done');
+    setTimeout(function(){btn.textContent=t;btn.classList.remove('done')},1400);
+  }
+  document.getElementById('copyP61').addEventListener('click',function(){
+    var b=this, text=document.getElementById('p61').textContent;
+    function ok(){flash(b,'복사됨')}
+    function fb(){var ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok()}catch(e){}document.body.removeChild(ta)}
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok,fb); else fb();
+  });
+  document.getElementById('copyReport').addEventListener('click',function(){
+    var b=this, text=report();
+    function ok(){flash(b,'복사됨')}
+    function fb(){var ta=document.createElement('textarea');ta.value=text;ta.setAttribute('readonly','');ta.style.position='fixed';ta.style.left='-9999px';document.body.appendChild(ta);ta.select();try{document.execCommand('copy');ok()}catch(e){}document.body.removeChild(ta)}
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok,fb); else fb();
+  });
+  document.getElementById('dlReport').addEventListener('click',function(){
+    var blob=new Blob(['﻿'+report()],{type:'text/plain;charset=utf-8'});
+    var a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+    a.download='6교시_규칙위반찾기_자가채점.txt';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(a.href)},1000);
+    flash(this,'내려받는 중…');
+  });
+})();
+</script>
+</body>
+</html>
