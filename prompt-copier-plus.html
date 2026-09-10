@@ -25,7 +25,6 @@
   .btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
   .btn.primary:hover{background:#215891}
   .btn.done{background:var(--ok);color:var(--okink);border-color:var(--okline)}
-  .btn.off{color:var(--mute);border-style:dashed;cursor:not-allowed}
   .steps{background:var(--soft);border-radius:8px;padding:12px 14px;margin:10px 0;font-size:14px}
   .steps b{color:var(--navy)}
   .meta{font-size:13px;color:var(--mute)}
@@ -176,15 +175,14 @@ AI를 사용하는 시간보다 직접 하는 것이 더 빠른 업무는 그대
     <div class="steps">
       <b>순서</b>
       <ol>
-        <li>아래 링크에 <b>생년월일</b>을 입력하고, 나온 내용을 <b>복사</b></li>
+        <li>아래 <b>만세력 열기</b>에서 생년월일을 입력하고, 나온 내용을 <b>복사</b></li>
         <li>ChatGPT(또는 쓰시는 AI)에 붙여넣고, <b>일진 달력 이미지를 함께 업로드</b></li>
         <li>아래 프롬프트를 복사해 이어서 보내기</li>
         <li>성격적 강점·직업 커리어를 먼저 물어보고, 이어서 2026년 9월 금전운·건강운 등 궁금한 것을 질문</li>
       </ol>
     </div>
-    <!-- TODO: 사주 정보 입력 사이트 주소로 교체 -->
     <div class="bar">
-      <span class="btn off" id="sajuLink">▶ 사주 정보 입력하기 (주소 준비 중)</span>
+      <a class="btn primary" href="https://sky.told.me/" target="_blank" rel="noopener">▶ 만세력 열기 (생년월일 입력)</a>
       <a class="btn" href="files/일진달력_2026년9월.jpg" download>일진 달력 2026년 9월 ⤓</a>
     </div>
     <img class="thumb" src="files/일진달력_2026년9월.jpg" alt="2026년 9월 일진 달력">
