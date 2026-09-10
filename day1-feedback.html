@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>1일차 마무리 피드백</title>
+<style>
+  :root{--navy:#1f3a5f;--ink:#1d2430;--mute:#5f6b7a;--line:#d9e0e8;--bg:#f6f8fb;--card:#fff;--soft:#eef2f7;--ok:#e8f4ea;--okline:#9fc9a8;--okink:#1f6b35;--accent:#2b6cb0}
+  *{box-sizing:border-box}
+  body{margin:0;font-family:"Malgun Gothic","맑은 고딕",Pretendard,-apple-system,system-ui,sans-serif;font-size:15px;color:var(--ink);background:var(--bg);line-height:1.6}
+  header{background:var(--navy);color:#fff;padding:22px 20px}
+  header .wrap{max-width:820px;margin:0 auto}
+  header h1{margin:0;font-size:22px;letter-spacing:-.2px}
+  header p{margin:6px 0 0;font-size:13px;opacity:.85}
+  main{max-width:820px;margin:0 auto;padding:20px}
+  .card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px 20px;margin:0 0 14px}
+  .card h2{margin:0 0 4px;font-size:17px;color:var(--navy)}
+  .card h2 .q{display:inline-block;min-width:26px;color:var(--accent)}
+  .lead{font-size:14px;color:var(--mute);margin:0 0 10px}
+  .opts{list-style:none;margin:0;padding:0}
+  .opts li{border-top:1px solid var(--line)}
+  .opts li:first-child{border-top:0}
+  .opts label{display:flex;align-items:flex-start;gap:10px;padding:10px 0;cursor:pointer}
+  .opts input{flex:none;margin:3px 0 0;width:18px;height:18px;cursor:pointer}
+  .opts label:hover .t{color:var(--navy)}
+  textarea,input[type=text]{font:inherit;font-size:15px;width:100%;padding:9px 11px;border:1px solid var(--line);border-radius:8px;background:#fff;color:var(--ink)}
+  textarea{min-height:76px;resize:vertical;line-height:1.6}
+  textarea:focus,input[type=text]:focus{outline:2px solid var(--accent);outline-offset:1px;border-color:var(--accent)}
+  .sub{margin-top:10px}
+  .sub label{display:block;font-size:13px;color:var(--mute);margin-bottom:5px}
+  .etc{margin-top:8px;padding-left:28px}
+  .bar{display:flex;gap:8px;flex-wrap:wrap;margin-top:4px;align-items:center}
+  .btn{font:inherit;font-size:14px;min-height:44px;padding:0 18px;border-radius:8px;border:1px solid var(--navy);background:var(--navy);color:#fff;cursor:pointer;text-decoration:none;display:inline-flex;align-items:center;justify-content:center;white-space:nowrap}
+  .btn:hover{background:#17304f}
+  .btn.ghost{background:#fff;color:var(--accent);border-color:var(--line)}
+  .btn.ghost:hover{border-color:var(--accent)}
+  .btn.done{background:var(--ok);color:var(--okink);border-color:var(--okline)}
+  .steps{background:var(--soft);border-radius:8px;padding:12px 14px;margin-top:10px;font-size:14px}
+  .steps ol{margin:6px 0 0 18px;padding:0}
+  .steps li{margin:3px 0}
+  .meta{font-size:13px;color:var(--mute)}
+  footer{max-width:820px;margin:6px auto 40px;padding:0 20px;font-size:12px;color:var(--mute)}
+</style>
+</head>
+<body>
+<header><div class="wrap">
+  <h1>1일차 마무리 피드백</h1>
+  <p>2분이면 됩니다. 주신 답을 그대로 반영해 2일차 진행을 맞춥니다.</p>
+</div></header>
+<main>
+
+  <div class="card">
+    <h2><span class="q">1.</span>오늘 가장 도움이 된 교시는?</h2>
+    <p class="lead">하나만 고르세요.</p>
+    <ul class="opts" id="q1">
+      <li><label><input type="radio" name="q1" value="1교시 · 워밍업 · 지식베이스 · 마스터 시트"><span class="t">1교시 · 워밍업 · 지식베이스 · 마스터 시트</span></label></li>
+      <li><label><input type="radio" name="q1" value="2교시 · 규칙 확정 → 한글에 심기 → HWPX 시연"><span class="t">2교시 · 규칙 확정 → 한글에 심기 → HWPX 시연</span></label></li>
+      <li><label><input type="radio" name="q1" value="3교시 · 계획안 계열"><span class="t">3교시 · 계획안 계열 (가.~차., 예산 산출근거·검산)</span></label></li>
+      <li><label><input type="radio" name="q1" value="4교시 · 사업계획서 계열"><span class="t">4교시 · 사업계획서 계열 (PEST·SWOT → 전략체계 → 운영계획)</span></label></li>
+      <li><label><input type="radio" name="q1" value="5교시 · 결과보고서 · 회의록·공문 · 음성 회의록"><span class="t">5교시 · 결과보고서 · 회의록·공문 · 음성 회의록</span></label></li>
+      <li><label><input type="radio" name="q1" value="6교시 · 도구 비교 + 검증"><span class="t">6교시 · 도구 비교 + 검증</span></label></li>
+      <li><label><input type="radio" name="q1" value="7교시 · 업무도구 기획서"><span class="t">7교시 · 업무도구 기획서</span></label></li>
+      <li><label><input type="radio" name="q1" value="8교시 · GitHub Pages 배포 · 2일차 준비"><span class="t">8교시 · GitHub Pages 배포 · 2일차 준비</span></label></li>
+    </ul>
+    <div class="sub">
+      <label for="q1why">왜 그랬는지 한 줄 (선택)</label>
+      <input type="text" id="q1why" placeholder="예: 예산 산출근거를 손으로 안 고쳐도 돼서">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="q">2.</span>2일차에 더 다뤘으면 하는 것은?</h2>
+    <p class="lead">여러 개 고르셔도 됩니다.</p>
+    <ul class="opts" id="q2">
+      <li><label><input type="checkbox" name="q2" value="한글 서식 그대로 나오는 문서생성기(HWPX)"><span class="t">한글 서식 그대로 나오는 문서생성기 (HWPX)</span></label></li>
+      <li><label><input type="checkbox" name="q2" value="내 업무용 도구 직접 만들기를 더 천천히"><span class="t">내 업무용 도구 직접 만들기를 <b>더 천천히</b></span></label></li>
+      <li><label><input type="checkbox" name="q2" value="운영매뉴얼 검색 체계(노트북LM)"><span class="t">운영매뉴얼 검색 체계 (노트북LM)</span></label></li>
+      <li><label><input type="checkbox" name="q2" value="Canva AI 시각화·홍보물"><span class="t">Canva AI 시각화 · 홍보물</span></label></li>
+      <li><label><input type="checkbox" name="q2" value="엑셀 자동화·수식"><span class="t">엑셀 자동화 · 수식</span></label></li>
+      <li><label><input type="checkbox" name="q2" value="회의록·음성 자동화"><span class="t">회의록 · 음성 자동화</span></label></li>
+      <li><label><input type="checkbox" name="q2" value="공문·보고서 문투 교정"><span class="t">공문 · 보고서 문투 교정</span></label></li>
+      <li><label><input type="checkbox" name="q2" value="프롬프트 쓰는 법을 더 깊이"><span class="t">프롬프트 쓰는 법을 더 깊이</span></label></li>
+    </ul>
+    <div class="etc">
+      <input type="text" id="q2etc" placeholder="그 밖에 배우고 싶은 것 (직접 입력)">
+    </div>
+  </div>
+
+  <div class="card">
+    <h2><span class="q">3.</span>오늘 안 됐거나 막힌 것이 있나요?</h2>
+    <p class="lead">내일 1교시에 <b>먼저</b> 도와드립니다. 없으면 "특별히 없음"을 골라 주세요.</p>
+    <ul class="opts" id="q3">
+      <li><label><input type="checkbox" name="q3" value="GitHub 가입·저장소·Pages 배포"><span class="t">GitHub 가입 · 저장소 · Pages 배포</span></label></li>
+      <li><label><input type="checkbox" name="q3" value="AI 스튜디오"><span class="t">AI 스튜디오</span></label></li>
+      <li><label><input type="checkbox" name="q3" value="노트북LM 소스 올리기"><span class="t">노트북LM 소스 올리기</span></label></li>
+      <li><label><input type="checkbox" name="q3" value="한글 스타일·찾아바꾸기"><span class="t">한글 스타일 · 찾아바꾸기</span></label></li>
+      <li><label><input type="checkbox" name="q3" value="마스터 시트 입력"><span class="t">마스터 시트 입력</span></label></li>
+      <li><label><input type="checkbox" name="q3" value="AI 계정·사용 한도"><span class="t">AI 계정 · 사용 한도</span></label></li>
+      <li><label><input type="checkbox" name="q3" value="특별히 없음"><span class="t">특별히 없음</span></label></li>
+    </ul>
+    <div class="sub">
+      <label for="q3etc">어디서 어떻게 막혔는지 (선택)</label>
+      <textarea id="q3etc" placeholder="예: 회사 PC라 설치가 막힘 / Pages 링크를 열면 404가 뜸"></textarea>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>이름</h2>
+    <p class="lead">안 적으셔도 됩니다. 다만 <b>3번에서 도움이 필요하시면</b> 적어 주셔야 내일 아침에 찾아갑니다.</p>
+    <input type="text" id="name" placeholder="이름 (선택)">
+  </div>
+
+  <div class="card">
+    <h2>제출</h2>
+    <div class="bar">
+      <button class="btn" type="button" id="download">제출용 파일 내려받기 ⤓</button>
+      <button class="btn ghost" type="button" id="copy">내용 복사</button>
+      <a class="btn ghost" href="https://service-704587947766.us-west1.run.app/" target="_blank" rel="noopener">과제 제출함 열기 ↗</a>
+    </div>
+    <div class="steps">
+      <ol>
+        <li><b>제출용 파일 내려받기</b>를 누르면 txt 파일이 저장됩니다</li>
+        <li><b>과제 제출함 열기</b> → 1일차 피드백으로 그 파일을 첨부해 제출</li>
+      </ol>
+    </div>
+    <p class="meta" style="margin-top:10px">입력한 내용은 이 브라우저에 임시 저장되니, 실수로 창을 닫아도 다시 열면 남아 있습니다.</p>
+  </div>
+</main>
+<footer>한국폴리텍대학 원주캠퍼스 「생성형AI 활용 업무문서 자동화」 심화과정 1일차 마무리.</footer>
+<script>
+(function(){
+  var KEY='fb1.';
+  function ls(fn){try{return fn()}catch(e){return null}}
+  var texts=['q1why','q2etc','q3etc','name'].map(function(id){return document.getElementById(id)});
+  var boxes=[].slice.call(document.querySelectorAll('#q1 input,#q2 input,#q3 input'));
+
+  // 복원
+  boxes.forEach(function(i,n){ if(ls(function(){return localStorage.getItem(KEY+'b'+n)})==='1') i.checked=true; });
+  texts.forEach(function(t){ var v=ls(function(){return localStorage.getItem(KEY+t.id)}); if(v) t.value=v; });
+
+  function save(){
+    boxes.forEach(function(i,n){ ls(function(){localStorage.setItem(KEY+'b'+n,i.checked?'1':'0')}) });
+    texts.forEach(function(t){ ls(function(){localStorage.setItem(KEY+t.id,t.value)}) });
+  }
+  boxes.forEach(function(i){i.addEventListener('change',save)});
+  texts.forEach(function(t){t.addEventListener('input',save)});
+
+  function picked(sel){
+    return [].slice.call(document.querySelectorAll(sel)).filter(function(i){return i.checked})
+             .map(function(i){return i.value});
+  }
+  function build(){
+    var q1=picked('#q1 input')[0]||'(고르지 않음)';
+    var q2=picked('#q2 input'); if(document.getElementById('q2etc').value.trim()) q2.push(document.getElementById('q2etc').value.trim());
+    var q3=picked('#q3 input');
+    var name=document.getElementById('name').value.trim();
+    var why=document.getElementById('q1why').value.trim();
+    var detail=document.getElementById('q3etc').value.trim();
+    var d=new Date(), p=function(n){return (n<10?'0':'')+n};
+    var L=[];
+    L.push('1일차 마무리 피드백');
+    L.push('작성 ' + d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+' '+p(d.getHours())+':'+p(d.getMinutes()));
+    L.push('이름 ' + (name||'(미기재)'));
+    L.push('');
+    L.push('1. 가장 도움이 된 교시');
+    L.push('   ' + q1);
+    if(why) L.push('   이유: ' + why);
+    L.push('');
+    L.push('2. 2일차에 더 다뤘으면 하는 것');
+    L.push(q2.length ? q2.map(function(v){return '   - '+v}).join('\n') : '   (고르지 않음)');
+    L.push('');
+    L.push('3. 안 됐거나 막힌 것');
+    L.push(q3.length ? q3.map(function(v){return '   - '+v}).join('\n') : '   (고르지 않음)');
+    if(detail) L.push('   상황: ' + detail);
+    return L.join('\n');
+  }
+  function flash(btn,word){
+    var t=btn.textContent; btn.textContent=word; btn.classList.add('done');
+    setTimeout(function(){btn.textContent=t;btn.classList.remove('done')},1400);
+  }
+  document.getElementById('download').addEventListener('click',function(){
+    var name=document.getElementById('name').value.trim().replace(/[\\/:*?"<>|]/g,'');
+    var blob=new Blob(['﻿'+build()],{type:'text/plain;charset=utf-8'});
+    var a=document.createElement('a');
+    a.href=URL.createObjectURL(blob);
+    a.download='1일차_피드백'+(name?'_'+name:'')+'.txt';
+    document.body.appendChild(a); a.click(); document.body.removeChild(a);
+    setTimeout(function(){URL.revokeObjectURL(a.href)},1000);
+    flash(this,'내려받는 중…');
+  });
+  document.getElementById('copy').addEventListener('click',function(){
+    var b=this, text=build();
+    function ok(){flash(b,'복사됨')}
+    function fallback(){
+      var ta=document.createElement('textarea'); ta.value=text; ta.setAttribute('readonly','');
+      ta.style.position='fixed'; ta.style.left='-9999px';
+      document.body.appendChild(ta); ta.select();
+      try{document.execCommand('copy');ok()}catch(e){}
+      document.body.removeChild(ta);
+    }
+    if(navigator.clipboard&&navigator.clipboard.writeText) navigator.clipboard.writeText(text).then(ok,fallback);
+    else fallback();
+  });
+})();
+</script>
+</body>
+</html>
