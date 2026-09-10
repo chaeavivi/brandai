@@ -41,7 +41,7 @@
   .card[data-lesson].open>h2::before{transform:rotate(90deg)}
   .card[data-lesson]:not(.open)>:not(h2):not(.goal){display:none}
   .card[data-lesson]>h2:focus-visible{outline:2px solid var(--accent);outline-offset:4px;border-radius:6px}
-  .prompt{background:#f3f5f8;border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:8px 0;font-family:Consolas,"D2Coding",monospace;font-size:13px;line-height:1.65;white-space:pre-wrap;overflow-x:auto}
+  .prompt{background:#f3f5f8;border:1px solid var(--line);border-radius:8px;padding:12px 14px;margin:8px 0;font-family:Consolas,"D2Coding",monospace;font-size:13px;line-height:1.65;white-space:pre-wrap;overflow-x:auto;max-height:360px;overflow-y:auto}
   button.copy{font:inherit;font-size:13px;color:var(--accent);background:#fff;border:1px solid var(--line);border-radius:8px;padding:6px 12px;cursor:pointer}
   button.copy:hover{border-color:var(--accent)}
   button.copy.copied{color:#1f6b35;border-color:#9fc9a8;background:var(--ok)}
@@ -446,7 +446,6 @@
       <ol>
         <li>복사기에서 <b>1번</b> 프롬프트 복사 → 내 하루 업무를 적어 보내면 AI에 맡길 것·직접 할 것·자동화할 것으로 분류해 줍니다</li>
         <li>이어서 <b>2번</b> 프롬프트로 내 업무 전용 요청 템플릿 5개 받기 — 앞으로 계속 복사해 쓸 것</li>
-        <li>남는 시간에 <b>3번</b> AI 맞춤 사주로 쉬어가기 (정보 + 이미지 + 프롬프트를 함께 넣는 연습)</li>
       </ol>
       <div class="files"><a href="prompt-copier-plus.html" target="_blank" rel="noopener">▶ 프롬프트 복사기 열기</a></div>
       <div class="check" data-key="plus-9"><label><input type="checkbox">업무 분류표 1건</label><label><input type="checkbox">내 요청 템플릿 5개</label></div>
@@ -555,6 +554,86 @@
 - 전화번호·주소·날짜는 한 글자도 바꾸지 말 것.</div>
       <div class="files"><button type="button" class="copy" data-target="p-design">프롬프트 복사</button></div>
       <div class="check" data-key="plus-8"><label><input type="checkbox">카드뉴스 3장 + 비교 완료</label></div>
+    </div>
+
+    <div class="card" data-lesson="plus-10">
+      <h2>⑨ AI 맞춤 사주 보기 (쉬어가기·15분)</h2>
+      <div class="goal">정보 + 이미지 + 프롬프트를 한 번에 넣어 보는 연습. 오늘 배운 방식이 업무 밖에서도 그대로 통한다는 걸 확인합니다.</div>
+      <ol>
+        <li>아래 <b>만세력 열기</b>에서 생년월일을 넣고, 나온 내용을 복사</li>
+        <li>ChatGPT(또는 쓰시는 AI)에 붙여넣고 <b>일진 달력 이미지를 함께 업로드</b></li>
+        <li>아래 프롬프트를 복사해 이어서 보내기</li>
+        <li>성격·커리어를 먼저 물어보고, 이어서 2026년 9월 금전운·건강운 등 궁금한 것을 질문</li>
+      </ol>
+      <div class="files"><a href="https://sky.told.me/" target="_blank" rel="noopener">▶ 만세력 열기 (생년월일 입력)</a><a href="files/일진달력_2026년9월.jpg" download>일진 달력 2026년 9월 ⤓</a></div>
+      <div class="prompt" id="p-saju">당신은 사주명리의 기본 원리를 바탕으로 성향과 흐름을 해석하는 상담가입니다.
+붙여넣은 제 정보를 바탕으로 사주를 분석해주세요.
+
+먼저 전체적인 사주를 바탕으로 다음 내용을 정리해주세요.
+
+1. 나의 기본 성격과 기질
+- 평소 어떤 방식으로 생각하고 행동하는지
+- 사람들과 관계를 맺는 방식
+- 스트레스를 받을 때 나타나는 특징
+
+2. 나의 성격적 강점
+- 타고난 강점
+- 일을 할 때 잘 발휘되는 능력
+- 다른 사람과 비교했을 때 나만의 장점
+
+3. 주의하면 좋은 성향
+- 지나치게 강하게 나타날 수 있는 성향
+- 인간관계나 업무에서 주의할 점
+- 스트레스 관리 시 신경 쓰면 좋은 부분
+
+4. 직업과 커리어
+- 나와 잘 맞는 업무 방식
+- 잘 맞는 직업이나 분야
+- 조직생활 / 프리랜서 / 사업 중 어떤 환경에서 강점이 나타나는지
+- 커리어를 발전시킬 때 활용하면 좋은 강점
+- 돈을 버는 방식에서 나타나는 특징
+
+5. 인간관계와 소통
+- 사람을 대하는 방식
+- 잘 맞는 사람의 특징
+- 갈등이 생기기 쉬운 상황과 주의점
+
+분석할 때 단순히 "좋다, 나쁘다"라고 표현하지 말고, 왜 그렇게 해석하는지 쉽게 설명해주세요.
+전문적인 사주 용어를 사용할 경우에는 일반인이 이해할 수 있도록 함께 풀어서 설명해주세요.
+
+---
+
+그 다음 2026년 전체 흐름과 2026년 9월의 흐름을 분석해주세요.
+특히 다음 항목을 각각 정리해주세요.
+- 금전운
+- 직업·사업운
+- 새로운 기회나 변화
+- 인간관계운
+- 연애운
+- 건강과 컨디션 관리
+- 공부·자기계발운
+
+각 항목마다
+① 좋은 흐름
+② 조심하면 좋은 부분
+③ 적극적으로 해볼 만한 행동
+④ 피하거나 신중하게 판단하면 좋은 행동
+을 구분해서 설명해주세요.
+
+마지막에는 2026년 9월에 제가 특히 궁금해하면 좋을 질문 5개를 먼저 제안해주세요.
+예를 들면
+- 새로운 일을 시작해도 좋은 시기인가?
+- 이직이나 사업 확장을 고민해도 되는 시기인가?
+- 큰돈을 지출하거나 투자할 때 주의할 점은?
+- 인간관계에서 조심해야 할 부분은?
+- 컨디션 관리를 위해 신경 써야 할 생활 습관은?
+처럼 제가 추가로 질문할 수 있도록 만들어주세요.
+
+사주 해석은 미래를 확정적으로 단정하지 말고, 성향과 시기의 흐름을 참고하는 관점으로 설명해주세요.
+건강, 투자, 계약 등 중요한 결정은 사주만을 근거로 판단하지 않도록 구분해서 설명해주세요.</div>
+      <div class="files"><button type="button" class="copy" data-target="p-saju">프롬프트 복사</button></div>
+      <p class="meta">※ 생년월일은 개인정보입니다. 업무용 계정이 아닌 <b>본인 계정</b>에서, <b>본인 것만</b> 넣어 보세요.</p>
+      <div class="check" data-key="plus-10"><label><input type="checkbox">사주 해석 받아보기</label></div>
     </div>
   </div>
 </section>
