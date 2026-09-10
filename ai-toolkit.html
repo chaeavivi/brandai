@@ -8,8 +8,11 @@
   :root{--navy:#1f3a5f;--ink:#1d2430;--mute:#5f6b7a;--line:#d9e0e8;--bg:#f6f8fb;--card:#fff;--soft:#eef2f7;--ok:#e8f4ea;--accent:#2b6cb0}
   *{box-sizing:border-box}
   body{margin:0;font-family:"Malgun Gothic","맑은 고딕",Pretendard,-apple-system,system-ui,sans-serif;font-size:16px;color:var(--ink);background:var(--bg);line-height:1.6}
-  header{background:var(--navy);color:#fff;padding:24px 20px}
-  header .wrap{max-width:940px;margin:0 auto;display:flex;align-items:baseline;gap:14px;flex-wrap:wrap}
+  header{background:var(--navy);color:#fff;padding:20px 20px 22px}
+  header .wrap{max-width:940px;margin:0 auto}
+  header .brand{display:flex;align-items:center;gap:9px;font-size:12.5px;font-weight:bold;letter-spacing:.13em;color:#a9c8ea}
+  header .brand::before{content:"";width:20px;height:2px;background:#6fa4dd;border-radius:2px}
+  header .titles{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-top:11px;padding-top:11px;border-top:1px solid rgba(255,255,255,.14)}
   header h1{margin:0;font-size:23px;letter-spacing:-.2px}
   header p{margin:0;font-size:13px;opacity:.85}
   header .prog{margin-left:auto;font-size:13px;opacity:.85;white-space:nowrap}
@@ -39,9 +42,12 @@
 </head>
 <body>
 <header><div class="wrap">
-  <h1>AI 실습 9가지</h1>
-  <p>복사해서 바로 쓰는 프롬프트와 실습</p>
-  <span class="prog" id="prog"></span>
+  <div class="brand">한국AI평생교육협회</div>
+  <div class="titles">
+    <h1>AI 실습 9가지</h1>
+    <p>복사해서 바로 쓰는 프롬프트와 실습</p>
+    <span class="prog" id="prog"></span>
+  </div>
 </div></header>
 <main>
 
