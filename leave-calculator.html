@@ -1,0 +1,760 @@
+<!-- ================================================================================== -->
+<!-- WIDGET. 연차 관리 계산기 (Leave Calculator) — 회계연도 기준 "비례-15-15-16" 방식      -->
+<!-- 이 부분을 복사해서 노션에 임베드하세요                                                -->
+<!-- ================================================================================== -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>연차 관리 계산기</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { margin: 0; padding: 32px 16px 48px; font-family: 'Noto Sans KR', sans-serif; background-color: #0f172a; }
+        .card { background-color: #1e293b; border: 1px solid #334155; }
+        .field { background-color: #0f172a; border: 1px solid #475569; color: #f1f5f9; }
+        .field:focus { outline: none; border-color: #6366f1; }
+        .tab-btn.active { background-color: #6366f1; color: #fff; }
+        .formula { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 11px; color: #94a3b8; }
+        /* Tailwind CDN을 못 불러오는 환경(오프라인·사내망)에서도 탭 전환이 동작하도록 */
+        .hidden { display: none; }
+        table { border-collapse: collapse; }
+        th, td { border-bottom: 1px solid #334155; }
+        #toast { transition: opacity 0.3s, transform 0.3s; }
+    </style>
+</head>
+<body>
+<div class="max-w-4xl mx-auto text-white">
+
+    <!-- 자체 검증 실패 경고 (규칙이 깨지면 표시됨) -->
+    <div id="selftest" hidden class="mb-5 rounded-xl bg-red-900/60 border border-red-500 p-4 text-sm">
+        <b class="text-red-300"><i class="fa-solid fa-triangle-exclamation mr-1"></i> 계산 규칙 검증 실패</b>
+        <ul id="selftest-list" class="list-disc list-inside mt-2 text-red-200 space-y-1"></ul>
+    </div>
+
+    <!-- 헤더 -->
+    <div class="text-center mb-7">
+        <span class="text-indigo-400 font-bold tracking-widest text-xs">LEAVE CALCULATOR</span>
+        <h1 class="text-2xl md:text-3xl font-black mt-2 mb-2">연차 관리 계산기</h1>
+        <p class="text-gray-400 text-sm font-light leading-relaxed">
+            회계연도(1/1) 기준 <b class="text-gray-200">비례-15-15-16</b> 방식<br class="hidden sm:block">
+            입사일만 넣으면 발생일수 · 퇴직정산 · 촉진일정이 한 번에 나옵니다.
+        </p>
+    </div>
+
+    <!-- 공통 입력 -->
+    <div class="card rounded-xl p-5 mb-5">
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <label class="block">
+                <span class="text-xs text-gray-400 font-bold">입사일</span>
+                <input type="date" id="in-hire" value="2021-04-01" class="field mt-1 w-full rounded-lg px-3 py-2 text-sm">
+            </label>
+            <label class="block">
+                <span class="text-xs text-gray-400 font-bold">계산 기준연도</span>
+                <input type="number" id="in-year" value="2024" min="1980" max="2100" class="field mt-1 w-full rounded-lg px-3 py-2 text-sm">
+            </label>
+            <label class="block">
+                <span class="text-xs text-gray-400 font-bold">근무형태</span>
+                <select id="in-type" class="field mt-1 w-full rounded-lg px-3 py-2 text-sm">
+                    <option value="day">주간근로자 (반일 단위)</option>
+                    <option value="shift">교대·단축근로자 (시간 단위)</option>
+                </select>
+            </label>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-3">
+            <i class="fa-solid fa-lock mr-1"></i> 이름 등 개인정보는 입력하지 않습니다. 모든 계산은 브라우저 안에서만 이루어지며 서버로 전송되지 않습니다.
+        </p>
+    </div>
+
+    <!-- 탭 -->
+    <div class="grid grid-cols-2 sm:grid-cols-4 gap-2 mb-5">
+        <button data-tab="accrual"   class="tab-btn active rounded-lg py-2.5 text-xs font-bold bg-slate-800 text-gray-300"><i class="fa-solid fa-calendar-plus mr-1"></i> 연차 부여</button>
+        <button data-tab="severance" class="tab-btn rounded-lg py-2.5 text-xs font-bold bg-slate-800 text-gray-300"><i class="fa-solid fa-right-from-bracket mr-1"></i> 퇴직 정산</button>
+        <button data-tab="promotion" class="tab-btn rounded-lg py-2.5 text-xs font-bold bg-slate-800 text-gray-300"><i class="fa-solid fa-bullhorn mr-1"></i> 촉진 일정</button>
+        <button data-tab="ratio"     class="tab-btn rounded-lg py-2.5 text-xs font-bold bg-slate-800 text-gray-300"><i class="fa-solid fa-percent mr-1"></i> 출근율·단축</button>
+    </div>
+
+    <!-- 1. 연차 부여 -->
+    <section data-panel="accrual" class="card rounded-xl p-5 mb-5">
+        <h2 class="font-bold mb-1">연도별 연차 발생 내역</h2>
+        <p class="text-xs text-gray-400 mb-4">입사 첫해는 근속년수에 포함하지 않으며, 첫 1월 1일에 비례연차를 부여합니다.</p>
+        <div class="overflow-x-auto">
+            <table class="w-full min-w-[600px] text-sm">
+                <thead class="text-xs text-gray-400">
+                    <tr>
+                        <th class="text-left py-2 pr-3">근무년차</th>
+                        <th class="text-left py-2 pr-3">휴가 발생일자</th>
+                        <th class="text-right py-2 pr-3">발생일수</th>
+                        <th class="text-right py-2 pr-3" id="accrual-col4">부여(반일 올림)</th>
+                        <th class="text-left py-2">산식</th>
+                    </tr>
+                </thead>
+                <tbody id="accrual-body"></tbody>
+                <tfoot>
+                    <tr class="font-bold text-indigo-300">
+                        <td class="py-3" colspan="2">총계</td>
+                        <td class="py-3 text-right" id="accrual-total">-</td>
+                        <td class="py-3 text-right" id="accrual-total-r">-</td>
+                        <td></td>
+                    </tr>
+                </tfoot>
+            </table>
+        </div>
+        <div class="mt-4 rounded-lg bg-amber-900/30 border border-amber-700/60 p-3 text-xs text-amber-200 leading-relaxed">
+            <b><i class="fa-solid fa-circle-info mr-1"></i> 그룹웨어 주의</b><br>
+            그룹웨어는 <b>입사 다다음월</b>부터 월차가 발생하지만, 법상 1개월 만근 시 월차가 발생합니다.
+            따라서 입사 1년 미만자는 첫해에 <b>부여된 월차보다 1일을 초과</b>하여 연차를 상신할 수 있습니다(잔여일수 −1일 표시).
+            이월된 월차는 다음 해에 회계연도 기준 연차와 합산 부여하고, 메모기능으로 월차/연차를 구분하세요.
+        </div>
+    </section>
+
+    <!-- 2. 퇴직 정산 -->
+    <section data-panel="severance" class="card rounded-xl p-5 mb-5 hidden">
+        <h2 class="font-bold mb-1">퇴사자 연차 정산</h2>
+        <p class="text-xs text-gray-400 mb-4">회계연도 기준으로 부여한 연차를 <b>입사일 기준</b>과 비교해 조정합니다.</p>
+
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-4">
+            <label class="block">
+                <span class="text-xs text-gray-400 font-bold">퇴사일</span>
+                <input type="date" id="sv-quit" class="field mt-1 w-full rounded-lg px-3 py-2 text-sm">
+            </label>
+            <label class="block">
+                <span class="text-xs text-gray-400 font-bold">회계연도 기준 발생</span>
+                <input type="number" id="sv-fiscal" step="0.25" class="field mt-1 w-full rounded-lg px-3 py-2 text-sm">
+            </label>
+            <label class="block">
+                <span class="text-xs text-gray-400 font-bold">입사일 기준 발생</span>
+                <input type="number" id="sv-hire" step="0.25" class="field mt-1 w-full rounded-lg px-3 py-2 text-sm">
+            </label>
+            <label class="block">
+                <span class="text-xs text-gray-400 font-bold">당해 부여 / 사용</span>
+                <div class="flex gap-1 mt-1">
+                    <input type="number" id="sv-granted" step="0.5" value="15" class="field w-1/2 rounded-lg px-2 py-2 text-sm">
+                    <input type="number" id="sv-used" step="0.5" value="11" class="field w-1/2 rounded-lg px-2 py-2 text-sm">
+                </div>
+            </label>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mb-4">
+            <button id="sv-recalc" class="text-xs bg-slate-700 hover:bg-slate-600 rounded-full px-3 py-1.5"><i class="fa-solid fa-rotate mr-1"></i> 입사일로 자동 계산</button>
+            <button data-preset="1" class="sv-preset text-xs bg-slate-700 hover:bg-slate-600 rounded-full px-3 py-1.5">매뉴얼 예시1 (31/26, 15부여, 11사용)</button>
+            <button data-preset="2" class="sv-preset text-xs bg-slate-700 hover:bg-slate-600 rounded-full px-3 py-1.5">매뉴얼 예시2 (31/35, 15부여, 10사용)</button>
+        </div>
+
+        <div id="sv-result" class="space-y-2 text-sm"></div>
+
+        <div class="mt-4 rounded-lg bg-slate-900/60 border border-slate-700 p-3 text-xs text-gray-400 leading-relaxed">
+            퇴사자는 <b>1개월 전</b> 행정 및 회계에 통보합니다. 행정은 입사일 기준으로 연차를 재계산해 그룹웨어 당해연도 연차수를 변경 부여한 뒤
+            남은 연차 사용을 안내하고, 퇴사 처리 전 휴무내역을 출력해 근무상황부에 보관합니다.
+            회계는 사용한 연차가 부여된 연차보다 많으면 1할 계산하여 처리합니다.
+        </div>
+    </section>
+
+    <!-- 3. 촉진 일정 -->
+    <section data-panel="promotion" class="card rounded-xl p-5 mb-5 hidden">
+        <h2 class="font-bold mb-1">연차 사용 촉진 일정</h2>
+        <p class="text-xs text-gray-400 mb-4">근로기준법 제61조에 따른 서면 촉구 · 계획서 제출 · 서면 통보 시기입니다.</p>
+        <div id="pr-result" class="space-y-4"></div>
+        <div class="mt-4 rounded-lg bg-slate-900/60 border border-slate-700 p-3 text-xs text-gray-400 leading-relaxed">
+            <b class="text-gray-300">양식</b><br>
+            · 서면촉구: 관리자 &gt; 근태관리 &gt; 휴무관리 &gt; 연차사용촉진<br>
+            · 1차 결재양식: [10.연차사용계획서] &nbsp;·&nbsp; 2차: [8.잔여연차사용신청서]<br><br>
+            <b class="text-gray-300">예외</b> — 대체인력처럼 퇴직일이 정해진 1년 이상 단기계약자는 회계연도 기준 산정 시 연차 활용이 어렵습니다.
+            이듬해 1월 1일 회계연도 기준으로 반영한 뒤, 입사 1년이 지난 다음 월에 입사일 기준으로 계산해 나머지 연차를 그룹웨어에 부여하고 연차사용계획서를 받으세요.
+        </div>
+    </section>
+
+    <!-- 4. 출근율·단축근로 -->
+    <section data-panel="ratio" class="card rounded-xl p-5 mb-5 hidden">
+        <h2 class="font-bold mb-1">출근율 · 단축근로 비례 계산</h2>
+        <p class="text-xs text-gray-400 mb-4">출산휴가 · 육아휴직 · 육아기/임신기 단축근로는 근로시간으로 간주해 계산합니다.</p>
+
+        <div class="grid grid-cols-2 sm:grid-cols-5 gap-3 mb-4">
+            <label class="block"><span class="text-xs text-gray-400 font-bold">소정근로일</span>
+                <input type="number" id="rt-work" value="247" class="field mt-1 w-full rounded-lg px-3 py-2 text-sm"></label>
+            <label class="block"><span class="text-xs text-gray-400 font-bold">결근일수</span>
+                <input type="number" id="rt-absent" value="0" class="field mt-1 w-full rounded-lg px-3 py-2 text-sm"></label>
+            <label class="block"><span class="text-xs text-gray-400 font-bold">기준 연차(일)</span>
+                <input type="number" id="rt-base" value="15" step="0.5" class="field mt-1 w-full rounded-lg px-3 py-2 text-sm"></label>
+            <label class="block"><span class="text-xs text-gray-400 font-bold">단축근로 일수</span>
+                <input type="number" id="rt-short" value="0" class="field mt-1 w-full rounded-lg px-3 py-2 text-sm"></label>
+            <label class="block"><span class="text-xs text-gray-400 font-bold">단축 시 일 근로시간</span>
+                <input type="number" id="rt-hours" value="6" step="0.5" class="field mt-1 w-full rounded-lg px-3 py-2 text-sm"></label>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mb-4">
+            <button data-rt="1" class="rt-preset text-xs bg-slate-700 hover:bg-slate-600 rounded-full px-3 py-1.5">상황1 · 2월 입사자 비례</button>
+            <button data-rt="2" class="rt-preset text-xs bg-slate-700 hover:bg-slate-600 rounded-full px-3 py-1.5">상황2 · 30일 단축(6시간)</button>
+            <button data-rt="3" class="rt-preset text-xs bg-slate-700 hover:bg-slate-600 rounded-full px-3 py-1.5">상황3 · 60일 단축(6시간)</button>
+        </div>
+
+        <div id="rt-result" class="space-y-2 text-sm"></div>
+    </section>
+
+    <!-- 내보내기 -->
+    <div class="flex flex-wrap gap-2 justify-center mb-8">
+        <button id="btn-xlsx" class="bg-indigo-500 hover:bg-indigo-400 rounded-full px-5 py-2.5 text-sm font-bold">
+            <i class="fa-solid fa-file-excel mr-1"></i> 엑셀(.xlsx)로 내보내기
+        </button>
+        <button id="btn-copy" class="bg-slate-700 hover:bg-slate-600 rounded-full px-5 py-2.5 text-sm font-bold">
+            <i class="fa-solid fa-copy mr-1"></i> 발생내역 복사
+        </button>
+    </div>
+
+    <!-- 근거 -->
+    <div class="card rounded-xl p-5 text-xs text-gray-400 leading-relaxed">
+        <b class="text-gray-300">계산 근거</b><br>
+        · 근속년수 기산: 비례-15-15-16 (입사 첫해를 근속년수에 포함하지 않는 센터 적용 계산식)<br>
+        · 소수점 처리: 주간근로자는 반일 단위 올림 / 교대근무자·단축근로는 시간 단위<br>
+        · 연 80% 이상 근로: 1년간 소정근로일 중 출근율 80% 이상 (2024년 소정근로일 247일, 20%는 49일)<br>
+        · 근로기준법 제60조(연차 유급휴가) · 제61조(연차 유급휴가의 사용 촉진), 센터 운영정관<br><br>
+        <span class="text-gray-500">이 계산기는 센터 내부 규칙 기준이며 법정 최소 기준과 다를 수 있습니다. 최종 확인은 담당자 판단에 따릅니다.</span>
+    </div>
+</div>
+
+<div id="toast" class="fixed left-1/2 bottom-6 -translate-x-1/2 translate-y-4 opacity-0 pointer-events-none
+            bg-indigo-500 text-white text-sm font-bold px-5 py-3 rounded-full shadow-lg z-50">
+    <i class="fa-solid fa-check mr-1"></i> <span id="toast-msg">완료!</span>
+</div>
+
+<script>
+// ==================== CORE START ====================
+// 연차 계산 순수 함수 모음. UI와 분리되어 있으며 node로도 그대로 실행/검증됩니다.
+
+var MAX_MONTHLY = 11;   // 최초 1년간 월차 상한
+var BASE_DAYS = 15;     // 3년차 기본 연차
+var MAX_DAYS = 25;      // 연차 상한
+var FULL_HOURS = 8;     // 1일 소정근로시간
+
+function ymd(y, m, d) { return new Date(y, m - 1, d); }
+function lastDayOfMonth(y, m) { return new Date(y, m, 0).getDate(); }
+
+/** 개월 가감 (말일은 대상 월의 말일로 보정) */
+function addMonths(date, n) {
+    var y = date.getFullYear(), m = date.getMonth() + 1 + n, d = date.getDate();
+    var ny = y + Math.floor((m - 1) / 12);
+    var nm = ((m - 1) % 12 + 12) % 12 + 1;
+    return ymd(ny, nm, Math.min(d, lastDayOfMonth(ny, nm)));
+}
+function addDays(date, n) {
+    var t = new Date(date.getTime());
+    t.setDate(t.getDate() + n);
+    return t;
+}
+function addYears(date, n) { return addMonths(date, n * 12); }
+function fmt(date) {
+    var m = date.getMonth() + 1, d = date.getDate();
+    return date.getFullYear() + '-' + (m < 10 ? '0' + m : m) + '-' + (d < 10 ? '0' + d : d);
+}
+function parseDate(s) {
+    var p = String(s).split('-');
+    return ymd(+p[0], +p[1], +p[2]);
+}
+/** 소수점 정리 (부동소수 오차 제거) */
+function num(v) { return Math.round(v * 10000) / 10000; }
+
+/** 반일(0.5) 단위 올림 — 주간근로자 소수점 처리 */
+function roundHalfUp(days) { return Math.ceil(num(days) * 2) / 2; }
+
+/** 최초 1년간 월차 발생일 목록 (매월 만근 시 1일, 최대 11개) */
+function monthlyAccrualDates(hire) {
+    var out = [];
+    for (var k = 1; k <= MAX_MONTHLY; k++) out.push(addMonths(hire, k));
+    return out;
+}
+
+/** 입사 첫해 재직 개월수 = 13 − 입사월 (2월 입사 → 11개월) */
+function firstYearMonths(hire) { return 13 - (hire.getMonth() + 1); }
+
+/** 첫 1월 1일에 부여하는 비례연차 = 15 × (재직개월 / 12) */
+function proratedFirstYear(hire) { return num(BASE_DAYS * firstYearMonths(hire) / 12); }
+
+/** 근무년차 n(첫 1/1을 2년차로 셈)의 연차일수 = 15 + floor((n−3)/2), 상한 25 */
+function annualLeaveByYear(nthYear) {
+    if (nthYear < 3) return 0;
+    return Math.min(BASE_DAYS + Math.floor((nthYear - 3) / 2), MAX_DAYS);
+}
+
+/**
+ * 회계연도(1/1) 기준 연도별 발생 내역.
+ * @returns {rows:[{label,when,days,rounded,formula}], total, totalRounded}
+ */
+function accrualTable(hire, targetYear) {
+    var hireYear = hire.getFullYear();
+    var rows = [];
+    var monthly = monthlyAccrualDates(hire);
+
+    var firstYearMonthly = monthly.filter(function (d) { return d.getFullYear() === hireYear; });
+    if (firstYearMonthly.length > 0 && hireYear <= targetYear) {
+        rows.push({
+            label: '1년차 미만(월차)', when: '매월 만근시 1일',
+            days: firstYearMonthly.length,
+            formula: fmt(firstYearMonthly[0]) + ' ~ ' + fmt(firstYearMonthly[firstYearMonthly.length - 1]) + ' 매월 1일'
+        });
+    }
+
+    for (var y = hireYear + 1; y <= targetYear; y++) {
+        var nth = y - hireYear + 1;   // 입사 첫해를 근속년수에 포함하지 않음
+        if (nth === 2) {
+            rows.push({
+                label: '2년차', when: fmt(ymd(y, 1, 1)),
+                days: proratedFirstYear(hire),
+                formula: '15 × (' + firstYearMonths(hire) + '/12) = ' + proratedFirstYear(hire)
+            });
+        } else {
+            rows.push({
+                label: nth + '년차', when: fmt(ymd(y, 1, 1)),
+                days: annualLeaveByYear(nth),
+                formula: '15 + floor((' + nth + '−3)/2) = ' + annualLeaveByYear(nth)
+            });
+        }
+        var yearMonthly = monthly.filter(function (d) { return d.getFullYear() === y; });
+        if (yearMonthly.length > 0) {
+            rows.push({
+                label: nth + '년차(월차)', when: '매월 1일',
+                days: yearMonthly.length,
+                formula: '최초 1년 도달 전 잔여 월차 ' + yearMonthly.length + '일 (누적 상한 ' + MAX_MONTHLY + '일)'
+            });
+        }
+    }
+
+    var total = 0;
+    rows.forEach(function (r) { r.rounded = roundHalfUp(r.days); total += r.days; });
+    return { rows: rows, total: num(total), totalRounded: roundHalfUp(total) };
+}
+
+/** 입사일(응당일) 기준 누적 발생일수 — 퇴직 정산 비교용 */
+function byHireDateAccrual(hire, until) {
+    var total = 0, rows = [];
+    monthlyAccrualDates(hire).forEach(function (d) {
+        if (d <= until) { total += 1; rows.push({ label: '월차', when: fmt(d), days: 1 }); }
+    });
+    for (var k = 1; ; k++) {
+        var anniv = addYears(hire, k);
+        if (anniv > until) break;
+        var days = Math.min(BASE_DAYS + Math.floor((k - 1) / 2), MAX_DAYS);
+        total += days;
+        rows.push({ label: k + '년 근속', when: fmt(anniv), days: days });
+    }
+    return { rows: rows, total: num(total) };
+}
+
+/**
+ * 퇴직 정산 — 회계연도 기준으로 더(덜) 부여한 만큼 당해 부여일수를 조정.
+ * diff > 0 : 회계연도 기준이 더 많이 부여됨 → 당해 부여 축소
+ */
+function severanceSettlement(fiscalTotal, hireTotal, grantedThisYear, usedThisYear) {
+    var diff = num(fiscalTotal - hireTotal);
+    var adjustedGrant = num(grantedThisYear - diff);
+    var remaining = num(adjustedGrant - usedThisYear);
+    return {
+        diff: diff,
+        adjustedGrant: adjustedGrant,
+        remaining: remaining,
+        clawback: remaining < 0 ? num(-remaining) : 0,
+        usable: remaining > 0 ? remaining : 0
+    };
+}
+
+/** 촉진 1건 (1차 촉구 → 계획서 제출 → 2차 서면통보) */
+function promotionStep(expiry, firstOffsetMonths, windowDays, secondDeadline) {
+    var firstStart = addDays(addMonths(expiry, -firstOffsetMonths), 1);
+    var firstEnd = addDays(firstStart, windowDays - 1);
+    return {
+        expiry: fmt(expiry),
+        firstStart: fmt(firstStart), firstEnd: fmt(firstEnd),
+        planDeadline: fmt(addDays(firstEnd, 10)),
+        secondStart: fmt(addDays(firstEnd, 1)),
+        secondDeadline: fmt(secondDeadline)
+    };
+}
+
+/**
+ * 연차 사용 촉진 일정 3종.
+ *  over1y  : 1년 이상 근로자 (회계연도 기준, 만료 12/31)
+ *  under9  : 1년 미만 · 1차 촉구 시점까지 발생한 월차분
+ *  under2  : 1년 미만 · 1차 촉구 후 발생하는 잔여 월차분
+ */
+function promotionSchedule(hire, year) {
+    var firstYearEnd = addDays(addYears(hire, 1), -1);   // 최초 1년의 근로가 끝나는 날
+    // 매뉴얼 기준: "끝나기 3개월 전"(= 1차 촉구 시작일)까지 발생한 월차가 1차 촉진 대상
+    var cut = addDays(addMonths(firstYearEnd, -3), 1);
+    var early = monthlyAccrualDates(hire).filter(function (d) { return d <= cut; }).length;
+
+    return {
+        over1y: Object.assign(
+            promotionStep(ymd(year, 12, 31), 6, 10, addMonths(ymd(year, 12, 31), -2)),
+            { title: '1년 이상 근로자 (' + year + '년분)', days: null }),
+        under9: Object.assign(
+            promotionStep(firstYearEnd, 3, 10, addMonths(firstYearEnd, -1)),
+            { title: '1년 미만 · 1차 촉구 시점까지 발생분', days: early }),
+        under2: Object.assign(
+            promotionStep(firstYearEnd, 1, 5, addDays(firstYearEnd, -10)),
+            { title: '1년 미만 · 1차 촉구 후 발생분', days: MAX_MONTHLY - early }),
+        firstYearEnd: fmt(firstYearEnd)
+    };
+}
+
+/**
+ * 출근율 판정 + 단축근로 비례 계산.
+ * 단축근로 일수가 소정근로일의 20%를 넘으면 시간 단위로 비례 산정한다.
+ *   {N×(단축일/소정근로일)×단축시간} + {N×(잔여일/소정근로일)×8}
+ */
+function proratedByHours(workDays, absentDays, baseDays, shortDays, shortHours) {
+    var attended = workDays - absentDays;
+    var rate = workDays > 0 ? num(attended / workDays) : 0;
+    var shortRatio = workDays > 0 ? num(shortDays / workDays) : 0;
+    var over20 = shortRatio > 0.2;
+    var hours = null, daysFromHours = null;
+
+    if (shortDays > 0 && over20) {
+        hours = num(baseDays * (shortDays / workDays) * shortHours
+                  + baseDays * ((workDays - shortDays) / workDays) * FULL_HOURS);
+        daysFromHours = num(hours / FULL_HOURS);
+    }
+    return {
+        attendanceRate: rate,
+        meets80: rate >= 0.8,
+        shortRatio: shortRatio,
+        over20: over20,
+        grantedDays: over20 ? daysFromHours : baseDays,
+        grantedHours: hours,
+        formula: over20
+            ? '{' + baseDays + '×(' + shortDays + '/' + workDays + ')×' + shortHours + '} + {'
+              + baseDays + '×(' + (workDays - shortDays) + '/' + workDays + ')×' + FULL_HOURS + '} = ' + hours + '시간'
+            : '단축근로 비중 ' + (shortRatio * 100).toFixed(1) + '% ≤ 20% → 연차 ' + baseDays + '일 전부 제공'
+    };
+}
+
+/** 매뉴얼 수치와 대조하는 자체 검증 */
+function runSelfTest() {
+    var fails = [];
+    function eq(name, actual, expected) {
+        if (num(actual) !== num(expected)) fails.push(name + ': 기대 ' + expected + ', 실제 ' + actual);
+    }
+
+    // 매뉴얼 표: 2021-04-01 입사 → 8 + 11.25 + 3 + 15 + 15 = 52.25
+    var t = accrualTable(parseDate('2021-04-01'), 2024);
+    eq('발생내역 행 수', t.rows.length, 5);
+    eq('첫해 월차', t.rows[0].days, 8);
+    eq('2년차 비례연차', t.rows[1].days, 11.25);
+    eq('2년차 월차', t.rows[2].days, 3);
+    eq('3년차', t.rows[3].days, 15);
+    eq('4년차', t.rows[4].days, 15);
+    eq('총계', t.total, 52.25);
+
+    // 상황1: 2월 입사자 → 15 × (11/12)
+    eq('2월 입사 비례', proratedFirstYear(parseDate('2024-02-15')), 13.75);
+
+    // 비례-15-15-16 패턴
+    eq('3년차 일수', annualLeaveByYear(3), 15);
+    eq('4년차 일수', annualLeaveByYear(4), 15);
+    eq('5년차 일수', annualLeaveByYear(5), 16);
+    eq('상한', annualLeaveByYear(99), 25);
+
+    // 반일 단위 올림
+    eq('반일 올림 11.25', roundHalfUp(11.25), 11.5);
+    eq('반일 올림 15', roundHalfUp(15), 15);
+
+    // 퇴직 정산 예시1: 31/26, 15부여 11사용 → 10일 부여, 1일 환수
+    var s1 = severanceSettlement(31, 26, 15, 11);
+    eq('예시1 조정 부여', s1.adjustedGrant, 10);
+    eq('예시1 환수', s1.clawback, 1);
+    // 예시2: 31/35, 15부여 10사용 → 19일 부여, 9일 사용 가능
+    var s2 = severanceSettlement(31, 35, 15, 10);
+    eq('예시2 조정 부여', s2.adjustedGrant, 19);
+    eq('예시2 잔여', s2.usable, 9);
+
+    // 촉진 일정: 1/1 입사자 기준 매뉴얼 날짜
+    var p = promotionSchedule(parseDate('2025-01-01'), 2025);
+    if (p.over1y.firstStart !== '2025-07-01') fails.push('1년이상 1차 시작: 기대 2025-07-01, 실제 ' + p.over1y.firstStart);
+    if (p.over1y.firstEnd !== '2025-07-10') fails.push('1년이상 1차 종료: 기대 2025-07-10, 실제 ' + p.over1y.firstEnd);
+    if (p.over1y.planDeadline !== '2025-07-20') fails.push('1년이상 계획서: 기대 2025-07-20, 실제 ' + p.over1y.planDeadline);
+    if (p.over1y.secondDeadline !== '2025-10-31') fails.push('1년이상 2차: 기대 2025-10-31, 실제 ' + p.over1y.secondDeadline);
+    if (p.under9.firstStart !== '2025-10-01') fails.push('1년미만 1차 시작: 기대 2025-10-01, 실제 ' + p.under9.firstStart);
+    if (p.under9.firstEnd !== '2025-10-10') fails.push('1년미만 1차 종료: 기대 2025-10-10, 실제 ' + p.under9.firstEnd);
+    if (p.under9.planDeadline !== '2025-10-20') fails.push('1년미만 계획서: 기대 2025-10-20, 실제 ' + p.under9.planDeadline);
+    if (p.under2.firstStart !== '2025-12-01') fails.push('잔여분 1차 시작: 기대 2025-12-01, 실제 ' + p.under2.firstStart);
+    if (p.under2.firstEnd !== '2025-12-05') fails.push('잔여분 1차 종료: 기대 2025-12-05, 실제 ' + p.under2.firstEnd);
+    if (p.under2.planDeadline !== '2025-12-15') fails.push('잔여분 계획서: 기대 2025-12-15, 실제 ' + p.under2.planDeadline);
+    eq('1년미만 9일분', p.under9.days, 9);
+    eq('1년미만 2일분', p.under2.days, 2);
+
+    // 상황2: 30일 단축 → 20% 이내이므로 15일 전부
+    eq('상황2 부여일수', proratedByHours(247, 0, 15, 30, 6).grantedDays, 15);
+    // 상황3: 60일 단축 → 20% 초과이므로 시간 비례
+    var r3 = proratedByHours(247, 0, 15, 60, 6);
+    eq('상황3 시간', r3.grantedHours, num(15 * (60 / 247) * 6 + 15 * (187 / 247) * 8));
+
+    return fails;
+}
+// ==================== CORE END ====================
+
+// ==================== UI ====================
+if (typeof document !== 'undefined') (function () {
+    var $ = function (id) { return document.getElementById(id); };
+    var state = {};
+
+    function fnum(v) {
+        var n = num(v);
+        return (Math.round(n * 100) / 100).toString();
+    }
+
+    function toast(msg) {
+        $('toast-msg').textContent = msg;
+        var t = $('toast');
+        t.style.opacity = '1'; t.style.transform = 'translate(-50%, 0)';
+        setTimeout(function () { t.style.opacity = '0'; t.style.transform = 'translate(-50%, 1rem)'; }, 1600);
+    }
+
+    // ----- 탭 -----
+    document.querySelectorAll('.tab-btn').forEach(function (btn) {
+        btn.addEventListener('click', function () {
+            document.querySelectorAll('.tab-btn').forEach(function (b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            document.querySelectorAll('[data-panel]').forEach(function (p) {
+                p.classList.toggle('hidden', p.dataset.panel !== btn.dataset.tab);
+            });
+        });
+    });
+
+    // ----- 1. 연차 부여 -----
+    /** 주간근로자는 반일 단위 올림, 교대·단축근로자는 시간 단위로 부여값을 표시 */
+    function grantOf(row) {
+        return state.type === 'shift'
+            ? { value: num(row.days * FULL_HOURS), unit: '시간' }
+            : { value: row.rounded, unit: '일' };
+    }
+
+    function renderAccrual() {
+        var body = $('accrual-body');
+        body.innerHTML = '';
+        $('accrual-col4').textContent = state.type === 'shift' ? '부여(시간 단위)' : '부여(반일 올림)';
+
+        state.accrual.rows.forEach(function (r) {
+            var g = grantOf(r);
+            var tr = document.createElement('tr');
+            tr.innerHTML =
+                '<td class="py-2 pr-3">' + r.label + '</td>' +
+                '<td class="py-2 pr-3 text-gray-300">' + r.when + '</td>' +
+                '<td class="py-2 pr-3 text-right font-bold">' + fnum(r.days) + '</td>' +
+                '<td class="py-2 pr-3 text-right text-indigo-300">' + fnum(g.value) + '</td>' +
+                '<td class="py-2 formula">' + r.formula + '</td>';
+            body.appendChild(tr);
+        });
+
+        var total = grantOf({ days: state.accrual.total, rounded: state.accrual.totalRounded });
+        $('accrual-total').textContent = fnum(state.accrual.total) + '일';
+        $('accrual-total-r').textContent = fnum(total.value) + total.unit;
+    }
+
+    // ----- 2. 퇴직 정산 -----
+    function autoFillSeverance() {
+        var quit = $('sv-quit').value ? parseDate($('sv-quit').value) : null;
+        if (!quit) return;
+        $('sv-fiscal').value = fnum(accrualTable(state.hire, quit.getFullYear()).total);
+        $('sv-hire').value = fnum(byHireDateAccrual(state.hire, quit).total);
+    }
+
+    function renderSeverance() {
+        var s = severanceSettlement(
+            +$('sv-fiscal').value || 0, +$('sv-hire').value || 0,
+            +$('sv-granted').value || 0, +$('sv-used').value || 0);
+        state.severance = s;
+
+        var diffText = s.diff > 0
+            ? '입사일 기준보다 <b class="text-amber-300">' + fnum(s.diff) + '일 더</b> 부여됨'
+            : (s.diff < 0 ? '입사일 기준보다 <b class="text-emerald-300">' + fnum(-s.diff) + '일 덜</b> 부여됨'
+                          : '두 기준의 발생일수가 동일함');
+
+        var verdict = s.clawback > 0
+            ? '<div class="rounded-lg bg-red-900/40 border border-red-600 p-3"><b class="text-red-300"><i class="fa-solid fa-arrow-rotate-left mr-1"></i> ' +
+              fnum(s.clawback) + '일 급여 환수</b><br><span class="text-xs text-red-200">사용한 연차가 조정 부여일수보다 ' +
+              fnum(s.clawback) + '일 많습니다. 회계에서 1할 계산하여 처리하세요.</span></div>'
+            : '<div class="rounded-lg bg-emerald-900/40 border border-emerald-600 p-3"><b class="text-emerald-300"><i class="fa-solid fa-check mr-1"></i> ' +
+              fnum(s.usable) + '일 사용 가능</b><br><span class="text-xs text-emerald-200">남은 ' +
+              fnum(s.usable) + '일을 사용하고 퇴사하면 됩니다.</span></div>';
+
+        $('sv-result').innerHTML =
+            '<div class="rounded-lg bg-slate-900/60 border border-slate-700 p-3">' + diffText +
+            '<br><span class="formula">회계연도 ' + fnum(+$('sv-fiscal').value) + ' − 입사일 ' + fnum(+$('sv-hire').value) + ' = ' + fnum(s.diff) + '</span></div>' +
+            '<div class="rounded-lg bg-slate-900/60 border border-slate-700 p-3">올해 부여해야 할 연차 <b class="text-indigo-300">' +
+            fnum(s.adjustedGrant) + '일</b><br><span class="formula">당해 부여 ' + fnum(+$('sv-granted').value) + ' − 차이 ' + fnum(s.diff) + ' = ' + fnum(s.adjustedGrant) + '</span></div>' +
+            verdict;
+    }
+
+    // ----- 3. 촉진 일정 -----
+    function renderPromotion() {
+        var p = state.promotion;
+        function block(o, color) {
+            return '<div class="rounded-lg bg-slate-900/60 border border-slate-700 p-4">' +
+                '<div class="flex items-baseline justify-between mb-2 gap-2 flex-wrap">' +
+                '<b class="text-' + color + '-300 text-sm">' + o.title + '</b>' +
+                (o.days !== null ? '<span class="text-xs text-gray-400">대상 ' + o.days + '일 · 만료 ' + o.expiry + '</span>'
+                                 : '<span class="text-xs text-gray-400">만료 ' + o.expiry + '</span>') +
+                '</div>' +
+                '<table class="w-full text-xs"><tbody>' +
+                '<tr><td class="py-1.5 text-gray-400">① 1차 서면촉구 <span class="text-gray-600">(사용자→근로자)</span></td><td class="py-1.5 text-right font-bold">' + o.firstStart + ' ~ ' + o.firstEnd + '</td></tr>' +
+                '<tr><td class="py-1.5 text-gray-400">② 연차휴가사용계획서 제출 <span class="text-gray-600">(근로자→사용자)</span></td><td class="py-1.5 text-right font-bold">~ ' + o.planDeadline + '</td></tr>' +
+                '<tr><td class="py-1.5 text-gray-400">③ 2차 서면통보 <span class="text-gray-600">(사용자→근로자)</span></td><td class="py-1.5 text-right font-bold">' + o.secondStart + ' ~ ' + o.secondDeadline + '</td></tr>' +
+                '</tbody></table></div>';
+        }
+        $('pr-result').innerHTML =
+            block(p.over1y, 'indigo') + block(p.under9, 'sky') + block(p.under2, 'sky') +
+            '<p class="text-xs text-gray-500">최초 1년의 근로가 끝나는 날: <b class="text-gray-300">' + p.firstYearEnd + '</b></p>';
+    }
+
+    // ----- 4. 출근율·단축근로 -----
+    function renderRatio() {
+        var r = proratedByHours(
+            +$('rt-work').value || 0, +$('rt-absent').value || 0,
+            +$('rt-base').value || 0, +$('rt-short').value || 0, +$('rt-hours').value || 0);
+        state.ratio = r;
+
+        var att = r.meets80
+            ? '<div class="rounded-lg bg-emerald-900/40 border border-emerald-600 p-3"><b class="text-emerald-300">출근율 ' +
+              (r.attendanceRate * 100).toFixed(1) + '% — 80% 이상 충족</b><br><span class="text-xs text-emerald-200">연차가 정상 발생합니다.</span></div>'
+            : '<div class="rounded-lg bg-amber-900/40 border border-amber-600 p-3"><b class="text-amber-300">출근율 ' +
+              (r.attendanceRate * 100).toFixed(1) + '% — 80% 미만</b><br><span class="text-xs text-amber-200">1개월 개근 시 1일 방식으로 산정해야 합니다. 출산휴가·육아휴직·육아기/임신기 단축근로는 근로시간으로 간주하니 결근일수에서 제외하세요.</span></div>';
+
+        var short = '<div class="rounded-lg bg-slate-900/60 border border-slate-700 p-3">' +
+            '부여 연차 <b class="text-indigo-300">' + fnum(r.grantedDays) + '일</b>' +
+            (r.grantedHours !== null ? ' <span class="text-gray-400">(' + fnum(r.grantedHours) + '시간)</span>' : '') +
+            '<br><span class="formula">' + r.formula + '</span></div>';
+
+        $('rt-result').innerHTML = att + short;
+    }
+
+    // ----- 전체 재계산 -----
+    function recalc() {
+        state.hire = parseDate($('in-hire').value || '2021-04-01');
+        state.year = +$('in-year').value || new Date().getFullYear();
+        state.type = $('in-type').value;
+        state.accrual = accrualTable(state.hire, state.year);
+        state.promotion = promotionSchedule(state.hire, state.year);
+        renderAccrual();
+        renderPromotion();
+        renderSeverance();
+        renderRatio();
+    }
+
+    // ----- 내보내기 -----
+    function accrualAoa() {
+        var head = state.type === 'shift' ? '부여(시간 단위)' : '부여(반일 올림)';
+        var aoa = [['근무년차', '휴가 발생일자', '발생일수', head, '산식']];
+        state.accrual.rows.forEach(function (r) { aoa.push([r.label, r.when, r.days, grantOf(r).value, r.formula]); });
+        aoa.push(['총계', '', state.accrual.total,
+                  grantOf({ days: state.accrual.total, rounded: state.accrual.totalRounded }).value, '']);
+        return aoa;
+    }
+
+    $('btn-xlsx').addEventListener('click', function () {
+        if (typeof XLSX === 'undefined') {
+            toast('엑셀 라이브러리를 불러오지 못했습니다. 대신 「발생내역 복사」를 사용하세요');
+            return;
+        }
+        var wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(accrualAoa()), '연차발생내역');
+
+        var s = state.severance;
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet([
+            ['항목', '값'],
+            ['입사일', fmt(state.hire)],
+            ['퇴사일', $('sv-quit').value || '-'],
+            ['회계연도 기준 발생', +$('sv-fiscal').value || 0],
+            ['입사일 기준 발생', +$('sv-hire').value || 0],
+            ['차이', s.diff],
+            ['당해 부여', +$('sv-granted').value || 0],
+            ['당해 사용', +$('sv-used').value || 0],
+            ['조정 후 부여해야 할 일수', s.adjustedGrant],
+            ['환수 일수', s.clawback],
+            ['잔여 사용 가능 일수', s.usable]
+        ]), '퇴직정산');
+
+        var p = state.promotion;
+        var prAoa = [['구분', '대상일수', '만료일', '1차 서면촉구', '계획서 제출 마감', '2차 서면통보']];
+        [p.over1y, p.under9, p.under2].forEach(function (o) {
+            prAoa.push([o.title, o.days === null ? '-' : o.days, o.expiry,
+                        o.firstStart + ' ~ ' + o.firstEnd, o.planDeadline, o.secondStart + ' ~ ' + o.secondDeadline]);
+        });
+        XLSX.utils.book_append_sheet(wb, XLSX.utils.aoa_to_sheet(prAoa), '촉진일정');
+
+        // 파일명은 ASCII로 유지 — 한글 파일명은 브라우저가 download 속성을 무시해
+        // 확장자 없는 'download' 파일로 저장되는 경우가 있음 (시트명은 한글 그대로 사용)
+        XLSX.writeFile(wb, 'leave_' + fmt(state.hire) + '_' + state.year + '.xlsx');
+        toast('엑셀 파일을 내려받았습니다');
+    });
+
+    $('btn-copy').addEventListener('click', function () {
+        var text = accrualAoa().map(function (row) { return row.join('\t'); }).join('\n');
+        navigator.clipboard.writeText(text).then(function () { toast('발생내역을 복사했습니다'); });
+    });
+
+    // ----- 이벤트 -----
+    ['in-hire', 'in-year', 'in-type'].forEach(function (id) {
+        $(id).addEventListener('change', function () {
+            recalc();
+            autoFillSeverance();
+            renderSeverance();
+        });
+    });
+    ['sv-fiscal', 'sv-hire', 'sv-granted', 'sv-used'].forEach(function (id) {
+        $(id).addEventListener('input', renderSeverance);
+    });
+    $('sv-quit').addEventListener('change', function () { autoFillSeverance(); renderSeverance(); });
+    $('sv-recalc').addEventListener('click', function () { autoFillSeverance(); renderSeverance(); });
+    document.querySelectorAll('.sv-preset').forEach(function (b) {
+        b.addEventListener('click', function () {
+            var one = b.dataset.preset === '1';
+            $('sv-fiscal').value = 31;
+            $('sv-hire').value = one ? 26 : 35;
+            $('sv-granted').value = 15;
+            $('sv-used').value = one ? 11 : 10;
+            renderSeverance();
+        });
+    });
+    ['rt-work', 'rt-absent', 'rt-base', 'rt-short', 'rt-hours'].forEach(function (id) {
+        $(id).addEventListener('input', renderRatio);
+    });
+    document.querySelectorAll('.rt-preset').forEach(function (b) {
+        b.addEventListener('click', function () {
+            var k = b.dataset.rt;
+            $('rt-work').value = 247; $('rt-absent').value = 0; $('rt-hours').value = 6;
+            if (k === '1') { $('rt-base').value = fnum(BASE_DAYS * 11 / 12); $('rt-short').value = 0; }
+            if (k === '2') { $('rt-base').value = 15; $('rt-short').value = 30; }
+            if (k === '3') { $('rt-base').value = 15; $('rt-short').value = 60; }
+            renderRatio();
+        });
+    });
+
+    // ----- 초기화 -----
+    $('sv-quit').value = fmt(new Date());
+    recalc();
+    autoFillSeverance();
+    renderSeverance();
+
+    var fails = runSelfTest();
+    if (fails.length) {
+        $('selftest').hidden = false;
+        $('selftest-list').innerHTML = fails.map(function (f) { return '<li>' + f + '</li>'; }).join('');
+    }
+    window.__selfTestFailures = fails;
+})();
+
+if (typeof module !== 'undefined' && module.exports) {
+    module.exports = {
+        addMonths: addMonths, addDays: addDays, addYears: addYears, fmt: fmt, parseDate: parseDate,
+        roundHalfUp: roundHalfUp, monthlyAccrualDates: monthlyAccrualDates,
+        firstYearMonths: firstYearMonths, proratedFirstYear: proratedFirstYear,
+        annualLeaveByYear: annualLeaveByYear, accrualTable: accrualTable,
+        byHireDateAccrual: byHireDateAccrual, severanceSettlement: severanceSettlement,
+        promotionSchedule: promotionSchedule, proratedByHours: proratedByHours,
+        runSelfTest: runSelfTest
+    };
+}
+</script>
+</body>
+</html>
