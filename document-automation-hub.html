@@ -267,85 +267,111 @@
   <div id="d2-body" hidden>
   <div class="card">
     <h2>2일차 — 업무도구 제작 및 콘텐츠 시각화 <span class="tag">정경</span></h2>
-    <div class="goal">1일차 기획서를 요구사항으로 삼아 문서생성기를 만들고, 배포하고, 시각화한다.</div>
+    <div class="goal">어제 만든 규칙을 클로드에 심는다. 채팅 → 챗봇 → 스킬 → 코워크 → 코드, 한 단계씩 내가 할 일을 줄인다.</div>
     <table><tr><th>교시</th><th>내용</th><th>산출물</th></tr>
-      <tr><td>1</td><td>복습·점검 — 1일차 템플릿으로 문서 1건 재생성, 환경 점검, 기획서 재검토(입력값·출력값·규칙 구체화)</td><td>확정 요구사항서</td></tr>
-      <tr><td>2</td><td>AI 스튜디오 기초 — 예제 파일 수정하며 작업 흐름, 지시 방법, 오류 대처</td><td>수정된 예제 파일</td></tr>
-      <tr><td>3</td><td>제작① 입력 화면 — 사업명·기간·대상·장소·예산 입력폼, 필수값 확인</td><td>입력 화면</td></tr>
-      <tr><td>4</td><td>제작② 규칙 구현 — 계산식·판단 기준, 서식·문체 규칙 반영, 항목번호 자동</td><td>동작하는 생성 로직</td></tr>
-      <tr><td>5</td><td>제작③ 출력 — 계획안 형식 출력, 내려받기, (시연) HWPX 직접 생성</td><td>문서생성기 완성본</td></tr>
-      <tr><td>6</td><td>배포·검색 체계 — GitHub Pages 배포, 운영매뉴얼 24개 자료 검색 체계 설계(노트북LM)</td><td>배포 주소 / 검색 체계도</td></tr>
-      <tr><td>7</td><td>Canva AI 시각화 — 전략체계도 도식화, 사업계획서 인포그래픽, 홍보물</td><td>인포그래픽·홍보물</td></tr>
-      <tr><td>8</td><td>공유·적용 계획 — 개인별 시연, 부서 확산 방안, 유지·수정 방법</td><td>현업 적용 계획서</td></tr>
+      <tr><td>1</td><td>5단계 비교(채팅·챗봇·스킬·코워크·코드) · 프로젝트 만들기 — 지식베이스를 넣은 '센터 문서방'</td><td>프로젝트 캡처</td></tr>
+      <tr><td>2</td><td>스킬 — 규칙 블록을 매뉴얼로. 스킬 만들기 · Claude와 함께 창작 · 스킬 업로드(hwpx)</td><td>center-minutes 스킬 · 회의록 hwpx</td></tr>
+      <tr><td>3</td><td>코워크 — 운영계획 위임. 파일 정리 · hwpx 생성 · 예약 작업 · 커넥터 · 브라우저 · 폴더 통째</td><td>코워크 결과 파일</td></tr>
+      <tr><td>4</td><td>코워크 — 사업성과 · 서식 이식</td><td>성과 집계 · 이식 결과</td></tr>
+      <tr><td>5</td><td>Claude Design — 성과 시각화. 템플릿 12종 · 캔바와의 차이</td><td>시안 1종</td></tr>
+      <tr><td>6</td><td>기획서 → 빌드 프롬프트</td><td>확정 요구사항서 MD</td></tr>
+      <tr><td>7</td><td>코드 탭 — 자동화 앱 만들기. GitHub Pages 배포 · 영상 만들기</td><td>배포 주소</td></tr>
     </table>
   </div>
 
   <div class="card" data-lesson="d2-1">
-    <h2>1교시 · 복습·점검</h2>
-    <ol><li>1일차 규칙 블록 + 입력폼으로 계획안 1건 재생성 (손 풀기)</li><li>GitHub Pages 링크 · AI 스튜디오 · (보유자) Claude Code 동작 재확인, 미완료자 조치</li><li>기획서 입력값·출력값·규칙 3칸 다시 읽고 구체화 → 요구사항서 확정</li></ol>
+    <h2>1교시 · 5단계 비교 · 프로젝트 만들기</h2>
+    <div class="goal">다섯 단계가 각각 <b>무엇을 기억하는지</b> 보고, 오늘 하루 쓸 '센터 문서방'을 만든다.</div>
+    <ol>
+      <li>5단계 비교 — 채팅(기억 안 함) → 챗봇·프로젝트(자료를 기억) → 스킬(방법을 기억) → 코워크(내 컴퓨터에서 실행) → 코드(결과물을 배포)</li>
+      <li>프로젝트 만들기 → 이름 <code>센터 문서방</code></li>
+      <li>지식베이스 올리기: 사업안내 · 평가지침 · 문서 작성 방법</li>
+      <li>어제 만든 규칙 블록으로 질문해 보기 — 매번 붙여넣지 않아도 되는지 확인</li>
+    </ol>
     <div class="files"><a href="https://ai-edu-02-01.ai.studio/" target="_blank" rel="noopener">▶ 복습·점검 앱 열기</a></div>
-    <div class="check" data-key="d2-1"><label><input type="checkbox">환경 동작 확인</label><label><input type="checkbox">요구사항서 확정</label></div>
+    <div class="check" data-key="d2-1"><label><input type="checkbox">프로젝트 생성</label><label><input type="checkbox">지식베이스 업로드</label></div>
   </div>
+
   <div class="card" data-lesson="d2-2">
-    <h2>2교시 · AI 스튜디오 기초</h2>
-    <ol><li>예제 파일(예산 계산기)에 항목 하나 추가하기 — 지시 → 확인 → 되돌리기</li><li>자주 쓰는 지시 패턴 5개 정리 (파일 읽기, 수정, 테스트, 되돌리기, 설명 요청)</li><li>오류 메시지를 그대로 붙여넣어 해결하기</li></ol>
-    <div class="goal">실습 지시 한 줄: "재원 선택 목록에 세 항목을 추가해줘: 자살예방사업 / 통합정신건강증진사업 / 중독관리사업" → 브라우저에서 확인 → 되돌리기. 원본과 수정본을 나란히 열어 두면 무엇이 바뀌었는지 바로 보입니다.</div>
-    <div class="prompt" id="p-jisi">① 읽기 &nbsp; 예제1_예산산출계산기.html 파일을 읽고 무엇을 하는 파일인지 세 줄로 설명해줘
-
-② 고치기 &nbsp; 재원 선택 목록 부분만 아래처럼 고쳐줘, 다른 곳은 건드리지 마
-        자살예방사업 / 통합정신건강증진사업 / 중독관리사업
-
-③ 확인 &nbsp; 브라우저에서 확인할게, 어떤 걸 눌러 보면 되는지 알려줘
-
-④ 되돌리기 &nbsp; 방금 바꾼 것 되돌려줘
-
-⑤ 설명 &nbsp; 왜 그렇게 했는지, 다른 방법은 뭐가 있는지 설명해줘</div>
-    <div class="files"><a href="files/예제1_예산산출계산기.html" target="_blank" rel="noopener">▶ 예제① 원본 열기</a><a href="files/예제1_예산산출계산기_수정본.html" target="_blank" rel="noopener">▶ 예제① 수정본(재원 3종) 열기</a></div>
-    <div class="files"><button type="button" class="copy" data-target="p-jisi">지시 패턴 5개 복사</button><a href="files/예제1_예산산출계산기.html" download>예제① 원본 ⤓</a><a href="files/예제1_예산산출계산기_수정본.html" download>예제① 수정본 ⤓</a></div>
-    <div class="check" data-key="d2-2"><label><input type="checkbox">예제 수정 1회</label><label><input type="checkbox">되돌리기 1회</label></div>
+    <h2>2교시 · 스킬 — 규칙 블록을 매뉴얼로</h2>
+    <div class="goal">어제 만든 [센터 문서 규칙]을 매번 붙여넣는 대신, 클로드가 기억하는 <b>매뉴얼</b>로 만든다.</div>
+    <ol>
+      <li>준비: 설정 → 사용자 지정 → 스킬. <b>기능</b>에서 "코드 실행 및 파일 생성"이 켜져 있어야 합니다</li>
+      <li>만드는 길 세 가지: <b>스킬 만들기</b>(메인) · <b>Claude와 함께 창작하기</b> · <b>스킬 업로드</b></li>
+      <li>실습① <code>center-minutes</code> 직접 만들기 — 이름·설명 + 지침 다섯 줄 + 회의록 양식 첨부</li>
+      <li>실습② hwpx 스킬 업로드 — zip을 <b>압축 풀지 말고 그대로</b></li>
+      <li>실습③ Claude와 함께 창작하기로 <code>center-check</code> 만들기</li>
+    </ol>
+    <div class="files"><span>녹취 텍스트.txt (강의 중 배포)</span><span>hwpx.zip (강의 중 배포)</span><span>회의록 양식.hwpx (강의 중 배포)</span></div>
+    <div class="check" data-key="d2-2"><label><input type="checkbox">center-minutes 동작</label><label><input type="checkbox">hwpx 파일 생성</label><label><input type="checkbox">center-check 생성</label></div>
   </div>
+
+  <div class="card" data-lesson="d2-skills">
+    <h2>참고 · 스킬 모아보기</h2>
+    <div class="goal">2교시에서 쓰는 스킬과, 가져다 쓸 수 있는 스킬 목록.</div>
+    <ul>
+      <li><b>앤트로픽 기본</b> — skill-creator · doc-coauthoring · theme-factory · canvas-design</li>
+      <li><b>가져다 쓰기</b> — gongmunseo · powerpoint-keynote-presentation · web-content-designer · hwpx</li>
+    </ul>
+    <p class="meta">※ 스킬은 <b>내 계정에만</b> 저장됩니다. 팀 계정이라도 각자 만들어야 하고, 동료와 나누려면 zip 파일이나 지침 텍스트로 전달하세요.</p>
+  </div>
+
   <div class="card" data-lesson="d2-3">
-    <h2>3~5교시 · 제작 (입력 → 규칙 → 출력)</h2>
-    <ol><li>입력 화면: 기획서 입력값을 그대로 폼으로. 필수값 비면 경고</li><li>규칙: 계산식(예산 = 단가×수량×횟수, 합계), 판단(필수항목 누락 검사), 서식(항목번호·공백 들여쓰기)</li><li>출력: 계획안 텍스트 → 복사 / 다운로드. 강사 시연: 같은 JSON으로 HWPX 직접 생성</li></ol>
-    <div class="goal">강사 샘플은 같은 파일을 세 번 키운 것입니다. 3교시 입력 → 4교시 규칙 → 5교시 출력. 단계마다 복사본으로 저장해 두면 어디서 막혔는지 되짚기 쉽습니다.</div>
-    <div class="files"><a href="files/예제3_계획안입력폼.html" target="_blank" rel="noopener">▶ 3교시 예제③ 계획안 입력폼 열기</a><a href="files/예제4_계획안규칙.html" target="_blank" rel="noopener">▶ 4교시 예제④ 계획안 규칙 열기</a><a href="files/예제5_계획안생성기.html" target="_blank" rel="noopener">▶ 5교시 예제⑤ 계획안 생성기 열기</a></div>
-    <div class="files"><a href="files/예제3_계획안입력폼.html" download>예제③ ⤓</a><a href="files/예제4_계획안규칙.html" download>예제④ ⤓</a><a href="files/예제5_계획안생성기.html" download>예제⑤ ⤓</a></div>
-    <div class="check" data-key="d2-3"><label><input type="checkbox">입력 화면</label><label><input type="checkbox">규칙 동작</label><label><input type="checkbox">출력·다운로드</label></div>
+    <h2>3교시 · 코워크 — 운영계획 위임</h2>
+    <div class="goal">채팅창이 아니라 <b>내 컴퓨터의 폴더</b>를 맡긴다.</div>
+    <ol>
+      <li>코워크가 채팅과 다른 점 8가지 — 파일 정리 · 진짜 파일 생성 · 스스로 계획 · 예약 실행 · 스킬과 커넥터 · 승인 · 브라우저 · 여러 파일 한 번에</li>
+      <li>시연① 중복 파일 정리</li>
+      <li>시연② 시행계획서 hwpx 6단계</li>
+      <li>시연③ 예약 작업 3개</li>
+      <li>시연④ 운영매뉴얼 31개 → 관리대장</li>
+    </ol>
+    <div class="check" data-key="d2-3"><label><input type="checkbox">코워크 폴더 연결</label><label><input type="checkbox">결과 파일 1개</label></div>
   </div>
+
+  <div class="card" data-lesson="d2-4">
+    <h2>4교시 · 코워크 — 사업성과 · 서식 이식</h2>
+    <div class="goal">흩어진 실적을 모아 성과로, 남의 서식을 우리 서식으로.</div>
+    <ol>
+      <li>사업성과 집계 — 여러 파일에 흩어진 실적을 한 표로</li>
+      <li>서식 이식 — 다른 기관 서식에 우리 내용을 그대로 옮기기</li>
+    </ol>
+    <div class="check" data-key="d2-4"><label><input type="checkbox">성과 집계</label><label><input type="checkbox">서식 이식 결과</label></div>
+  </div>
+
+  <div class="card" data-lesson="d2-5">
+    <h2>5교시 · Claude Design — 성과 시각화</h2>
+    <div class="goal">성과를 보여줄 시안을 만든다. <b>초안은 디자인, 마무리는 캔바.</b></div>
+    <ol>
+      <li>템플릿 12종 훑어보기</li>
+      <li>우리 성과로 시안 1종 만들기</li>
+      <li>캔바와의 차이 — 어디까지 디자인으로 하고 어디부터 캔바로 넘길지</li>
+    </ol>
+    <div class="check" data-key="d2-5"><label><input type="checkbox">시안 1종</label></div>
+  </div>
+
   <div class="card" data-lesson="d2-6">
-    <h2>6교시 · 배포 · 운영매뉴얼 검색 체계</h2>
-    <ol><li>GitHub 저장소에 올리고 Pages 배포 → 링크 공유 → 수정 후 재배포</li><li>운영매뉴얼 24개 자료: 노트북LM에 올리고 "찾는 상황" 기준 목차 설계 → 질문–근거·출처 응답 구조</li><li>8단계 제작 로드맵(자료분석→분류→목차→표준양식→초안→검토→확정→개정관리) 확인</li></ol>
-    <div class="files"><a href="files/검색체계도_양식.xlsx" download>검색 체계도 양식.xlsx ⤓</a><a href="files/예제5_계획안생성기.html" target="_blank" rel="noopener">▶ 배포할 파일(예제⑤) 열기</a></div>
-    <div class="check" data-key="d2-6"><label><input type="checkbox">배포 주소 확보</label><label><input type="checkbox">검색 체계도 1장</label></div>
+    <h2>6교시 · 기획서 → 빌드 프롬프트</h2>
+    <div class="goal">어제 쓴 기획서를 7교시에 바로 넣을 수 있는 <b>빌드 프롬프트</b>로 바꾼다.</div>
+    <ol>
+      <li>변환기에 어제 기획서 옮겨 적기</li>
+      <li>빌드 프롬프트 MD 내려받기</li>
+      <li>검사: 입력값·출력값·규칙 세 칸이 남이 읽어도 이해되는지</li>
+    </ol>
+    <div class="files"><a href="https://ai-edu-07.ai.studio/" target="_blank" rel="noopener">▶ 기획서 변환기 열기</a><span>연습용 입력 예시(당번 배정기) (강의 중 배포)</span><span>예시 빌드프롬프트 MD (강의 중 배포)</span></div>
+    <div class="check" data-key="d2-6"><label><input type="checkbox">확정 요구사항서 MD</label></div>
   </div>
+
   <div class="card" data-lesson="d2-7">
-    <h2>7교시 · Canva AI 시각화</h2>
-    <ol><li>마스터 시트 4번 전략체계 → 전략체계도 도식화</li><li>5번 KPI → 성과 요약 카드뉴스 1장</li><li>사업계획서 내용 기반 인포그래픽·홍보물</li></ol>
-    <div class="prompt" id="p-canva-strategy">마스터 시트 4번 전략체계 표(아래 붙여넣기)를 도식화해 줘.
-
-- 층: 상단 비전 → 전략목표 3 → 전략과제 6 → 실행과제
-- 파랑·초록 두 계열, 강조는 한 색만
-- 사진 없이 도형과 글자만, 글자는 나중에 고칠 수 있는 텍스트로
-- 표에 적힌 내용만 쓸 것 (없는 내용을 새로 지어내지 말 것)
-
-[전략체계 표]
-</div>
-    <div class="prompt" id="p-canva-kpi">시트 5번 KPI 3개(아래 붙여넣기)를 1080×1080 카드 1장으로 만들어 줘.
-
-- 지표명 · 목표 · 측정산식만 크게, 세 개를 같은 규칙으로
-- 전략체계도와 같은 색 규칙
-- 적힌 내용만 쓸 것
-
-[KPI 3개]
-</div>
-    <div class="files"><button type="button" class="copy" data-target="p-canva-strategy">전략체계도 프롬프트 복사</button><button type="button" class="copy" data-target="p-canva-kpi">KPI 카드 프롬프트 복사</button></div>
-    <div class="check" data-key="d2-7"><label><input type="checkbox">전략체계도</label><label><input type="checkbox">홍보물 1종</label></div>
-  </div>
-  <div class="card" data-lesson="d2-8">
-    <h2>8교시 · 공유·적용 계획</h2>
-    <ol><li>개인별 제작물 시연 (2분) + 상호 피드백</li><li>부서 확산 방안, 도구 유지·수정 방법 정리</li><li>현업 적용 계획서: 어느 문서부터, 누가, 언제</li></ol>
-    <div class="files"><a href="files/적용계획서_양식.docx" download>현업 적용 계획서 양식.docx ⤓</a></div>
-    <div class="check" data-key="d2-8"><label><input type="checkbox">시연 완료</label><label><input type="checkbox">적용 계획서 제출</label></div>
+    <h2>7교시 · 코드 탭 — 자동화 앱 만들기</h2>
+    <div class="goal">터미널 없이, 저장소를 고르고 한 줄 쓰면 앱이 만들어진다.</div>
+    <ol>
+      <li>코드 탭 <code>&lt;/&gt;</code> — 저장소 고르고 빌드 프롬프트 붙여넣기</li>
+      <li>GitHub 4단계: 영어 파일명·index.html → 저장소 만들기 → 업로드 → Pages 켜기</li>
+      <li>영상 만들기: 재료 폴더 → 폴더 열어주기 → 프롬프트 4요소(재료·형식·움직임·마무리)</li>
+      <li>마무리: 오늘 만든 것 공유하고, 다음에 이어서 할 것 한 줄 적기</li>
+    </ol>
+    <div class="check" data-key="d2-7"><label><input type="checkbox">배포 주소</label><label><input type="checkbox">영상 또는 앱 1개</label></div>
   </div>
   </div>
 </section>
