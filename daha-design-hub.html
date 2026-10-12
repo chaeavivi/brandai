@@ -1,0 +1,192 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>다하 디자인 실습 허브</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;800&display=swap">
+<style>
+/* 레이아웃: 한 단 작업대. 위에서 행사 정보를 넣으면 아래 제작물 탭의 프롬프트가 채워진다. */
+:root{
+  --navy:#1E3A64; --mint:#1FA890; --mint-soft:#DDF7F1; --lav:#6B4FD8; --lav-soft:#ECE7FB;
+  --bg:#FBFCFE; --surface:#FFFFFF; --panel:#F3F5FB; --line:#D8DEEA;
+  --fg:#16233F; --muted:#5C6B85; --title:#1E3A64; --on-navy:#FFFFFF; --ok:#12725F;
+  --sans:'Noto Sans KR','Apple SD Gothic Neo','Malgun Gothic',sans-serif;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --navy:#2B4F86; --mint:#4FD8BE; --mint-soft:#143B38; --lav:#B8A6F2; --lav-soft:#2A2550;
+  --bg:#0F1A30; --surface:#16233F; --panel:#1B2B4D; --line:#33466F;
+  --fg:#EEF2FA; --muted:#A9B8D4; --title:#DCE7FA; --on-navy:#FFFFFF; --ok:#7BE3CF; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --navy:#2B4F86; --mint:#4FD8BE; --mint-soft:#143B38; --lav:#B8A6F2; --lav-soft:#2A2550;
+  --bg:#0F1A30; --surface:#16233F; --panel:#1B2B4D; --line:#33466F;
+  --fg:#EEF2FA; --muted:#A9B8D4; --title:#DCE7FA; --on-navy:#FFFFFF; --ok:#7BE3CF; color-scheme:dark }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--fg);font-family:var(--sans);font-size:17px;line-height:1.6;padding-inline:16px;padding-block:0 64px}
+.wrap{max-width:920px;margin-inline:auto;display:flex;flex-direction:column;gap:28px}
+header.top{background:var(--navy);color:var(--on-navy);border-radius:0 0 20px 20px;padding:28px 24px;display:flex;flex-direction:column;gap:6px}
+header.top .eyebrow{font-size:15px;font-weight:500;opacity:.85}
+header.top h1{font-size:clamp(26px,5vw,38px);font-weight:800;line-height:1.25;text-wrap:balance;margin:0}
+header.top p{margin:0;font-size:16px;opacity:.9}
+h2{font-size:24px;font-weight:800;color:var(--title);margin:0;text-wrap:balance}
+.step{display:flex;flex-direction:column;gap:14px}
+.steplabel{font-size:14px;font-weight:700;color:var(--lav);letter-spacing:.04em}
+.hint{color:var(--muted);font-size:15px;margin:0}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px 16px;background:var(--panel);border:1px solid var(--line);border-radius:16px;padding:20px}
+.form .wide{grid-column:1/-1}
+label{display:flex;flex-direction:column;gap:4px;font-size:14px;font-weight:700;color:var(--muted);min-width:0}
+input,select,textarea{font:inherit;font-size:17px;color:var(--fg);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;min-width:0}
+textarea{resize:vertical;min-height:64px}
+input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible{outline:3px solid var(--mint);outline-offset:2px}
+.notice{background:var(--lav-soft);border-radius:12px;padding:12px 16px;font-size:15px;font-weight:500;margin:0}
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tabs button{font:inherit;font-size:17px;font-weight:700;padding:10px 18px;border-radius:999px;border:1px solid var(--line);background:var(--surface);color:var(--fg);cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--navy);color:var(--on-navy);border-color:var(--navy)}
+.spec{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.spec div{background:var(--mint-soft);border-radius:12px;padding:12px 14px;min-width:0}
+.spec dt{font-size:13px;font-weight:700;color:var(--muted)}
+.spec dd{margin:0;font-size:17px;font-weight:700;overflow-wrap:anywhere}
+dl{margin:0}
+.cards{display:flex;flex-direction:column;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:18px 20px;display:flex;flex-direction:column;gap:10px;min-width:0}
+.cardhead{display:flex;gap:12px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+.cardhead h3{margin:0;font-size:19px;font-weight:800;color:var(--title)}
+.where{font-size:13px;font-weight:700;color:var(--muted);background:var(--panel);border-radius:999px;padding:3px 10px}
+.titlegroup{display:flex;gap:10px;align-items:center;flex-wrap:wrap;min-width:0}
+pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--sans);font-size:17px;line-height:1.65;background:var(--panel);border-radius:12px;padding:14px 16px}
+.copy{font:inherit;font-size:15px;font-weight:700;padding:8px 16px;border-radius:10px;border:0;background:var(--navy);color:var(--on-navy);cursor:pointer;flex:none}
+.copy.done{background:var(--ok);color:var(--bg)}
+ul.check{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+footer{color:var(--muted);font-size:14px;text-align:right}
+@media (max-width:560px){ .form{grid-template-columns:1fr} .spec{grid-template-columns:1fr} }
+@media (prefers-reduced-motion:no-preference){ .copy{transition:background .15s} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <span class="eyebrow">사회복지법인 다하 · Canva + AI 디자인 실무</span>
+    <h1>디자인 실습 허브</h1>
+    <p>행사 정보를 넣고, 만들 것을 고르고, 프롬프트를 복사해 ChatGPT나 Claude에 붙여 넣으세요.</p>
+  </header>
+
+  <section class="step" aria-labelledby="s1">
+    <span class="steplabel">1단계</span>
+    <h2 id="s1">행사 정보 넣기</h2>
+    <p class="hint">아래 칸은 예시로 채워져 있습니다. 내 행사 내용으로 바꾸면 아래 프롬프트가 바로 바뀝니다.</p>
+    <form class="form" id="info" autocomplete="off">
+      <label>기관명<input id="f-org" value="사회복지법인 다하"></label>
+      <label>행사·사업명<input id="f-event" value="행복나눔 바자회 (예시)"></label>
+      <label>일시<input id="f-date" value="○월 ○일(토) 10:00~16:00"></label>
+      <label>장소<input id="f-place" value="○○ 앞마당"></label>
+      <label>대상<input id="f-target" value="지역 주민 누구나"></label>
+      <label>신청·문의<input id="f-contact" value="전화 000-000-0000"></label>
+      <label class="wide">내용<textarea id="f-detail">후원 물품 판매, 먹거리 부스, 체험 부스. 수익금은 이용인 지원에 사용</textarea></label>
+      <label>분위기<select id="f-tone"><option>따뜻하고 친근한</option><option>차분하고 믿음직한</option><option>밝고 활기찬</option></select></label>
+      <label>주 색상<input id="f-color" value="네이비와 민트"></label>
+    </form>
+    <p class="notice">이용인 실명, 연락처, 얼굴 사진, 상담·사례 기록은 넣지 않습니다. 입력한 내용은 이 브라우저에만 남습니다.</p>
+  </section>
+
+  <section class="step" aria-labelledby="s2">
+    <span class="steplabel">2단계</span>
+    <h2 id="s2">만들 것 고르기</h2>
+    <div class="tabs" role="tablist" id="tabs"></div>
+    <dl class="spec" id="spec"></dl>
+  </section>
+
+  <section class="step" aria-labelledby="s3">
+    <span class="steplabel">3단계</span>
+    <h2 id="s3">프롬프트 복사해서 붙여 넣기</h2>
+    <p class="hint">위에서부터 순서대로 씁니다. 시안이 나오면 날짜·장소·전화번호를 원본과 꼭 대조하세요.</p>
+    <div class="cards" id="cards"></div>
+  </section>
+
+  <footer>© 2026 한국AI평생교육협회</footer>
+</div>
+
+<script>
+(function(){
+  var IDS=['org','event','date','place','target','contact','detail','tone','color'];
+  var KEY='daha-hub-v1';
+  function $(id){return document.getElementById(id)}
+  function vals(){var o={};IDS.forEach(function(k){o[k]=($('f-'+k).value||'').trim()||'[ ]'});return o}
+  function info(f){return '기관: '+f.org+'\n행사·사업명: '+f.event+'\n일시: '+f.date+'\n장소: '+f.place+'\n대상: '+f.target+'\n내용: '+f.detail+'\n신청·문의: '+f.contact}
+  var REFINE='제목을 더 크게 하고 배경을 더 밝게 바꿔 줘.\n어려운 말은 쉬운 말로 바꾸고, 한 문장에 정보 하나만 넣어 줘.';
+  var REUSE='같은 디자인을 유지하고 내용만 [다음 행사 정보]로 바꿔서 한 벌 더 만들어 줘.';
+  var T={
+    poster:{name:'포스터',spec:['A4 · A3 세로','포스터','인쇄용 PDF'],
+      plan:function(f){return info(f)+'\n\n위 행사를 알리는 포스터 문구를 써 줘.\n- 제목 3가지 (각 15자 이내)\n- 한 줄 소개 (30자 이내)\n- 일시·장소·신청 방법을 짧게 정리\n쉬운 말로, '+f.tone+' 느낌으로.'},
+      make:function(f){return '위 문구로 Canva에서 A4 세로 포스터를 만들어 줘.\n- 제목은 크게, 일시와 장소는 한눈에 보이게\n- 주 색상은 '+f.color+', '+f.tone+' 분위기\n- 아래쪽에 기관 로고 자리와 문의처'},
+      ai:function(f){return f.event+' 포스터, A4 세로, '+f.tone+' 분위기, 제목은 크게, 일시·장소 강조'},
+      check:['일시·장소·문의처가 원본과 같은가','제목이 3m 거리에서도 읽히는가','기관 로고가 원본 파일인가']},
+    cardnews:{name:'카드뉴스',spec:['1080×1350px, 4~6장','카드뉴스 · 인스타그램 게시물','PNG'],
+      plan:function(f){return info(f)+'\n\n위 내용을 '+f.target+'에게 알리는 인스타그램 카드뉴스 4장을 기획해 줘.\n1장 시선을 끄는 표지, 2장 일시와 장소, 3장 내용, 4장 신청·문의 안내.\n장마다 제목(15자 이내)과 본문(40자 이내)을 표로 정리해 줘.'},
+      make:function(f){return '위 구성으로 Canva에서 인스타그램 게시물(1080×1350) 4장을 만들어 줘.\n- 모든 장의 제목 위치, 글꼴, 색을 통일\n- 주 색상은 '+f.color+', 글자는 크고 굵게\n- 장마다 사진이나 아이콘 자리 하나, 아래쪽에 로고 자리와 쪽 번호'},
+      ai:function(f){return f.event+' 카드뉴스 4장, 인스타그램 세로형, '+f.tone+' 분위기, 제목은 크게, 장마다 아이콘 하나'},
+      check:['한 장에 메시지가 하나인가','마지막 장에 신청·문의가 있는가','사진 속 얼굴은 게시 동의를 받았는가']},
+    ppt:{name:'PPT',spec:['16:9','프레젠테이션','PPTX · PDF'],
+      plan:function(f){return info(f)+'\n\n위 행사를 내부에 보고하는 PPT 5장을 구성해 줘.\n1장 표지, 2장 추진 배경, 3장 행사 개요, 4장 일정과 역할, 5장 협조 요청.\n장마다 제목과 핵심 문장 3개 이내로.'},
+      make:function(f){return '이 구성으로 Canva에서 프레젠테이션(16:9)을 만들어 줘.\n- '+f.tone+' 분위기, 주 색상은 '+f.color+'\n- 글자는 크게, 한 장에 문장 3개 이내\n- 숫자는 크게 강조'},
+      ai:function(f){return f.event+' 내부 보고 프레젠테이션 5장, '+f.tone+' 분위기, 글자 크게'},
+      check:['숫자가 원본 자료와 같은가','한 장에 문장이 3개 이내인가','담당자 이름 표기가 맞는가'],
+      extra:{title:'결과보고 PPT 줄이기 (3부 시연)',where:'Claude · ChatGPT',text:function(){return '첨부한 PPT는 작년 사업 결과보고야.\n직원 공유용 8장으로 줄여서 Canva 프레젠테이션으로 만들어 줘.\n장마다 핵심 문장 3개 이내, 점수는 크게. 담당자 이름은 빼 줘.'}}},
+    banner:{name:'현수막',spec:['게시대 규격 먼저 확인','현수막 · 배너','인쇄용 PDF'],
+      plan:function(f){return info(f)+'\n\n위 행사 현수막 문구를 3가지 안으로 써 줘.\n- 행사명은 크게 한 줄\n- 일시와 장소는 한 줄\n- 주최 기관명\n멀리서 읽히도록 전체 30자 안팎으로.'},
+      make:function(f){return '위 문구로 Canva에서 가로형 현수막을 만들어 줘.\n- 가로로 긴 비율(가로 500 : 세로 90)\n- 행사명은 아주 크게, 일시와 장소는 그 아래\n- 배경은 단색, 주 색상은 '+f.color+'\n- 양쪽 끝에 여백, 오른쪽에 기관 로고 자리'},
+      ai:function(f){return f.event+' 가로형 현수막, 행사명 크게, 단색 배경, '+f.tone+' 분위기'},
+      check:['인쇄소에 규격과 파일 형식을 확인했는가','글자가 가장자리에 붙지 않았는가','행사명·일시·장소만 남겼는가']},
+    invite:{name:'초대장',spec:['모바일 세로 또는 인쇄 카드','초대장','PNG · PDF'],
+      plan:function(f){return info(f)+'\n\n위 행사 초대장 문구를 써 줘.\n- 정중한 인사말 두 문장\n- 일시와 장소\n- 회신 방법과 기한\n받는 분은 후원자와 지역 기관 관계자야.'},
+      make:function(f){return '위 문구로 Canva에서 모바일 초대장(세로)을 만들어 줘.\n- '+f.tone+' 분위기, 주 색상은 '+f.color+'\n- 인사말, 일시·장소, 회신 방법 순서\n- 아래쪽에 기관 로고 자리'},
+      ai:function(f){return f.event+' 모바일 초대장, 세로형, 정중하고 '+f.tone+' 분위기'},
+      check:['받는 분 호칭이 맞는가','회신 방법과 기한이 있는가','일시·장소가 원본과 같은가']},
+    brochure:{name:'브로슈어',spec:['A4 3단 접지, 양면','브로슈어 · 리플렛','인쇄용 PDF'],
+      plan:function(f){return '기관: '+f.org+'\n\n우리 기관을 소개하는 A4 3단 브로슈어 6면을 구성해 줘.\n표지, 기관 소개, 주요 사업, 이용 안내, 후원·봉사 안내, 연락처 순서.\n면마다 제목과 본문 60자 이내. 모르는 정보는 지어내지 말고 [ ]로 비워 줘.'},
+      make:function(f){return '이 구성으로 Canva에서 A4 3단 접지 브로슈어(양면)를 만들어 줘.\n- '+f.tone+' 분위기, 주 색상은 '+f.color+'\n- 면마다 사진 자리 하나\n- 접히는 선에 글자가 걸리지 않게'},
+      ai:function(f){return f.org+' 소개 브로슈어, A4 3단, '+f.tone+' 분위기, 사진 자리 포함'},
+      check:['시설 이름과 연락처가 정식 표기인가','접히는 선에 글자가 걸리지 않는가','[ ]로 남은 빈칸이 없는가']}
+  };
+  var ORDER=['poster','cardnews','ppt','banner','invite','brochure'];
+  var current='poster';
+  function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
+  function card(title,where,text){
+    var c=el('article','card'),h=el('div','cardhead'),g=el('div','titlegroup');
+    g.appendChild(el('h3',null,title));g.appendChild(el('span','where',where));
+    var b=el('button','copy','복사');b.type='button';
+    var p=el('pre',null,text);
+    b.addEventListener('click',function(){
+      var done=function(){b.textContent='복사됨';b.classList.add('done');setTimeout(function(){b.textContent='복사';b.classList.remove('done')},1600)};
+      var fallback=function(){var r=document.createRange();r.selectNodeContents(p);var s=window.getSelection();s.removeAllRanges();s.addRange(r);b.textContent='선택됨 · Ctrl+C'};
+      try{navigator.clipboard.writeText(text).then(done,fallback)}catch(e){fallback()}
+    });
+    h.appendChild(g);h.appendChild(b);c.appendChild(h);c.appendChild(p);return c;
+  }
+  function render(){
+    var f=vals(),t=T[current],cards=$('cards'),spec=$('spec');
+    spec.textContent='';
+    [['규격',t.spec[0]],['Canva 검색어',t.spec[1]],['내보내기',t.spec[2]]].forEach(function(r){var d=el('div');d.appendChild(el('dt',null,r[0]));d.appendChild(el('dd',null,r[1]));spec.appendChild(d)});
+    cards.textContent='';
+    cards.appendChild(card('① 문구와 구성 받기','ChatGPT · Claude',t.plan(f)));
+    cards.appendChild(card('② Canva 시안 만들기','Canva를 연결한 ChatGPT · Claude',t.make(f)));
+    cards.appendChild(card('③ 다듬기','같은 대화에서 이어서',REFINE));
+    cards.appendChild(card('④ 다음에 다시 쓰기','같은 대화에서 이어서',REUSE));
+    cards.appendChild(card('Canva 안에서 바로 만들 때','Canva AI',t.ai(f)));
+    if(t.extra)cards.appendChild(card(t.extra.title,t.extra.where,t.extra.text(f)));
+    var c=el('article','card');c.appendChild(el('h3',null,'내보내기 전 확인'));
+    c.querySelector('h3').style.margin='0';
+    var ul=el('ul','check');t.check.forEach(function(x){ul.appendChild(el('li',null,x))});c.appendChild(ul);cards.appendChild(c);
+    Array.prototype.forEach.call($('tabs').children,function(b){b.setAttribute('aria-selected',b.dataset.k===current?'true':'false')});
+  }
+  function save(){try{var o={tab:current};IDS.forEach(function(k){o[k]=$('f-'+k).value});localStorage.setItem(KEY,JSON.stringify(o))}catch(e){}}
+  function load(){try{var o=JSON.parse(localStorage.getItem(KEY)||'null');if(!o)return;IDS.forEach(function(k){if(typeof o[k]==='string')$('f-'+k).value=o[k]});if(T[o.tab])current=o.tab}catch(e){}}
+  ORDER.forEach(function(k){var b=el('button',null,T[k].name);b.type='button';b.setAttribute('role','tab');b.dataset.k=k;b.addEventListener('click',function(){current=k;render();save()});$('tabs').appendChild(b)});
+  load();
+  var h=(location.hash||'').slice(1);if(T[h])current=h;
+  $('info').addEventListener('input',function(){render();save()});
+  $('info').addEventListener('submit',function(e){e.preventDefault()});
+  render();
+})();
+</script>
+</body>
+</html>
