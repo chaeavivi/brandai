@@ -57,6 +57,9 @@ pre{margin:0;white-space:pre-wrap;overflow-wrap:anywhere;font-family:var(--sans)
 .copy{font:inherit;font-size:15px;font-weight:700;padding:8px 16px;border-radius:10px;border:0;background:var(--navy);color:var(--on-navy);cursor:pointer;flex:none}
 .copy.done{background:var(--ok);color:var(--bg)}
 ul.check{margin:0;padding-left:1.2em;display:flex;flex-direction:column;gap:4px}
+.files{display:flex;flex-wrap:wrap;gap:8px}
+.files a{display:inline-block;font-size:15px;font-weight:700;color:var(--navy);background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 14px;text-decoration:none;overflow-wrap:anywhere}
+.files a:hover{border-color:var(--navy)}
 footer{color:var(--muted);font-size:14px;text-align:right}
 @media (max-width:560px){ .form{grid-template-columns:1fr} .spec{grid-template-columns:1fr} }
 @media (prefers-reduced-motion:no-preference){ .copy{transition:background .15s} }
@@ -102,6 +105,13 @@ footer{color:var(--muted);font-size:14px;text-align:right}
     <div class="cards" id="cards"></div>
   </section>
 
+  <section class="step" aria-labelledby="s4">
+    <span class="steplabel">참고 자료</span>
+    <h2 id="s4">실습에 쓰는 파일</h2>
+    <p class="hint">PPT 탭의 "결과보고 PPT 줄이기" 실습에서 첨부할 원본입니다. 내려받아 ChatGPT나 Claude에 올리세요.</p>
+    <div class="files"><a href="files/2025_성장확장위원회_사업결과보고.pptx" download>2025 성장확장위원회 사업 결과보고 PPT ⤓</a></div>
+  </section>
+
   <footer>© 2026 한국AI평생교육협회</footer>
 </div>
 
@@ -130,12 +140,12 @@ footer{color:var(--muted);font-size:14px;text-align:right}
       make:function(f){return '이 구성으로 Canva에서 프레젠테이션(16:9)을 만들어 줘.\n- '+f.tone+' 분위기, 주 색상은 '+f.color+'\n- 글자는 크게, 한 장에 문장 3개 이내\n- 숫자는 크게 강조'},
       ai:function(f){return f.event+' 내부 보고 프레젠테이션 5장, '+f.tone+' 분위기, 글자 크게'},
       check:['숫자가 원본 자료와 같은가','한 장에 문장이 3개 이내인가','담당자 이름 표기가 맞는가'],
-      extra:{title:'결과보고 PPT 줄이기 (3부 시연)',where:'Claude · ChatGPT',text:function(){return '첨부한 PPT는 작년 사업 결과보고야.\n직원 공유용 8장으로 줄여서 Canva 프레젠테이션으로 만들어 줘.\n장마다 핵심 문장 3개 이내, 점수는 크게. 담당자 이름은 빼 줘.'}}},
-    banner:{name:'현수막',spec:['게시대 규격 먼저 확인','현수막 · 배너','인쇄용 PDF'],
+      extra:{title:'결과보고 PPT 줄이기 (3부 시연)',where:'Claude · ChatGPT',text:function(){return '첨부한 PPT는 작년 사업 결과보고야.\n직원 공유용 8장으로 줄여서 Canva 프레젠테이션으로 만들어 줘.\n장마다 핵심 문장 3개 이내, 점수는 크게. 담당자 이름은 빼 줘.'},file:{href:'files/2025_성장확장위원회_사업결과보고.pptx',label:'참고용 원본 · 2025 성장확장위원회 사업 결과보고 PPT ⤓'}}},
+    banner:{name:'현수막',spec:['500cm × 90cm (가로형)','현수막 · 배너','인쇄용 PDF'],
       plan:function(f){return info(f)+'\n\n위 행사 현수막 문구를 3가지 안으로 써 줘.\n- 행사명은 크게 한 줄\n- 일시와 장소는 한 줄\n- 주최 기관명\n멀리서 읽히도록 전체 30자 안팎으로.'},
-      make:function(f){return '위 문구로 Canva에서 가로형 현수막을 만들어 줘.\n- 가로로 긴 비율(가로 500 : 세로 90)\n- 행사명은 아주 크게, 일시와 장소는 그 아래\n- 배경은 단색, 주 색상은 '+f.color+'\n- 양쪽 끝에 여백, 오른쪽에 기관 로고 자리'},
-      ai:function(f){return f.event+' 가로형 현수막, 행사명 크게, 단색 배경, '+f.tone+' 분위기'},
-      check:['인쇄소에 규격과 파일 형식을 확인했는가','글자가 가장자리에 붙지 않았는가','행사명·일시·장소만 남겼는가']},
+      make:function(f){return '위 문구로 Canva에서 가로형 현수막을 만들어 줘.\n- 실제 크기 500cm × 90cm (가로로 긴 비율)\n- 행사명은 아주 크게, 일시와 장소는 그 아래\n- 배경은 단색, 주 색상은 '+f.color+'\n- 양쪽 끝에 여백, 오른쪽에 기관 로고 자리'},
+      ai:function(f){return f.event+' 가로형 현수막 500cm × 90cm, 행사명 크게, 단색 배경, '+f.tone+' 분위기'},
+      check:['500cm × 90cm 규격과 파일 형식을 인쇄소에 확인했는가','글자가 가장자리에 붙지 않았는가','행사명·일시·장소만 남겼는가']},
     invite:{name:'초대장',spec:['모바일 세로 또는 인쇄 카드','초대장','PNG · PDF'],
       plan:function(f){return info(f)+'\n\n위 행사 초대장 문구를 써 줘.\n- 정중한 인사말 두 문장\n- 일시와 장소\n- 회신 방법과 기한\n받는 분은 후원자와 지역 기관 관계자야.'},
       make:function(f){return '위 문구로 Canva에서 모바일 초대장(세로)을 만들어 줘.\n- '+f.tone+' 분위기, 주 색상은 '+f.color+'\n- 인사말, 일시·장소, 회신 방법 순서\n- 아래쪽에 기관 로고 자리'},
@@ -150,7 +160,7 @@ footer{color:var(--muted);font-size:14px;text-align:right}
   var ORDER=['poster','cardnews','ppt','banner','invite','brochure'];
   var current='poster';
   function el(tag,cls,text){var e=document.createElement(tag);if(cls)e.className=cls;if(text!=null)e.textContent=text;return e}
-  function card(title,where,text){
+  function card(title,where,text,file){
     var c=el('article','card'),h=el('div','cardhead'),g=el('div','titlegroup');
     g.appendChild(el('h3',null,title));g.appendChild(el('span','where',where));
     var b=el('button','copy','복사');b.type='button';
@@ -160,7 +170,9 @@ footer{color:var(--muted);font-size:14px;text-align:right}
       var fallback=function(){var r=document.createRange();r.selectNodeContents(p);var s=window.getSelection();s.removeAllRanges();s.addRange(r);b.textContent='선택됨 · Ctrl+C'};
       try{navigator.clipboard.writeText(text).then(done,fallback)}catch(e){fallback()}
     });
-    h.appendChild(g);h.appendChild(b);c.appendChild(h);c.appendChild(p);return c;
+    h.appendChild(g);h.appendChild(b);c.appendChild(h);c.appendChild(p);
+    if(file){var d=el('div','files'),a=el('a',null,file.label);a.href=file.href;a.setAttribute('download','');d.appendChild(a);c.appendChild(d)}
+    return c;
   }
   function render(){
     var f=vals(),t=T[current],cards=$('cards'),spec=$('spec');
@@ -172,7 +184,7 @@ footer{color:var(--muted);font-size:14px;text-align:right}
     cards.appendChild(card('③ 다듬기','같은 대화에서 이어서',REFINE));
     cards.appendChild(card('④ 다음에 다시 쓰기','같은 대화에서 이어서',REUSE));
     cards.appendChild(card('Canva 안에서 바로 만들 때','Canva AI',t.ai(f)));
-    if(t.extra)cards.appendChild(card(t.extra.title,t.extra.where,t.extra.text(f)));
+    if(t.extra)cards.appendChild(card(t.extra.title,t.extra.where,t.extra.text(f),t.extra.file));
     var c=el('article','card');c.appendChild(el('h3',null,'내보내기 전 확인'));
     c.querySelector('h3').style.margin='0';
     var ul=el('ul','check');t.check.forEach(function(x){ul.appendChild(el('li',null,x))});c.appendChild(ul);cards.appendChild(c);
