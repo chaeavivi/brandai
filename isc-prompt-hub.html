@@ -52,6 +52,11 @@ button{font:inherit;font-weight:700;font-size:.88rem;border:0;border-radius:6px;
 button.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
 .done{font-size:.82rem;color:var(--ok);font-weight:500}
 .tip{font-size:.82rem;color:var(--muted);margin-top:8px}
+.audio{display:flex;flex-direction:column;gap:10px;margin:8px 0 14px;padding:12px 14px;background:var(--bg);border:1px dashed var(--line);border-radius:8px}
+.audio .lbl{font-size:.9rem;font-weight:700}
+.audio .lbl small{display:block;font-weight:400;color:var(--muted);font-size:.82rem;margin-top:2px}
+.audio audio{width:100%;max-width:100%}
+.audio .dl{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:.88rem;padding:9px 14px;border-radius:6px;background:var(--accent);color:var(--accent-ink);text-decoration:none}
 .formula{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:12px 0 4px}
 .formula div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:.88rem;min-width:0}
 .formula b{display:block;color:var(--accent);font-size:.95rem}
@@ -70,7 +75,7 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:12px;font-si
   <p class="lead">회의록 · 공문 · 안내문 템플릿 10종. 복사해서 ChatGPT·Gemini·Claude 어디에나 붙여 넣으세요.</p>
   <p class="howto"><b>쓰는 법</b> ① 복사 버튼 → ② AI 채팅창에 붙여넣기 → ③ <b>[ ] 안</b>만 내 내용으로 바꾸기 → ④ 결과는 반드시 사람이 검토(⑨번 기준).<br>개인정보·계약 금액·미공개 자료는 넣지 않습니다. 이름은 직위로.</p>
   <nav>
-    <a href="#formula">공식</a><a href="#memo">예시 회의 메모</a><a href="#meeting">회의록 ①~③</a><a href="#official">공문 ④~⑤</a><a href="#notice">안내문 ⑥~⑧</a><a href="#review">검토·지시 ⑨~⑩</a><a href="#option">옵션 · 증명사진</a>
+    <a href="#formula">공식</a><a href="#memo">실습 재료 (음성·메모)</a><a href="#meeting">회의록 ①~③</a><a href="#official">공문 ④~⑤</a><a href="#notice">안내문 ⑥~⑧</a><a href="#review">검토·지시 ⑨~⑩</a><a href="#option">옵션 · 증명사진</a>
   </nav>
 </header>
 
@@ -87,8 +92,17 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:12px;font-si
 
 <section id="memo">
   <h2><span class="step">재료</span>예시 회의 메모 (연습용)</h2>
-  <p class="sub">녹음 파일이 없을 때 ①~③번에 붙여 넣는 연습 재료입니다. 가상의 회의이며 실명은 없습니다.</p>
+  <p class="sub">①~③번에 붙여 넣는 연습 재료입니다. 음성 파일을 내려받아 클로바노트에 올리면 녹음→텍스트 변환까지 실습할 수 있고, 아래 메모는 바로 붙여 넣는 용도입니다. 가상의 회의이며 실명은 없습니다.</p>
   <div class="cards">
+  <div class="card">
+    <h3><span class="num">음성</span>실습용 회의 음성 (대본 보이스)</h3>
+    <p class="when">클로바노트·갤럭시 음성 녹음 앱에 올려 텍스트로 변환하는 연습용. 약 4분 30초, MP3</p>
+    <div class="audio">
+      <audio controls preload="none" src="files/ISC_실무위원회_회의음성.mp3">브라우저가 오디오 재생을 지원하지 않습니다. 아래 버튼으로 내려받아 주세요.</audio>
+      <a class="dl" href="files/ISC_실무위원회_회의음성.mp3" download="ISC_실무위원회_회의음성.mp3">⬇ 음성 파일 다운로드 (MP3, 4MB)</a>
+    </div>
+    <p class="tip">휴대폰에서는 다운로드 후 클로바노트 앱 → "파일 업로드"로 넣으면 됩니다. 변환된 텍스트를 ①번 프롬프트의 [회의 메모] 자리에 붙여 넣으세요.</p>
+  </div>
   <div class="card">
     <h3><span class="num">메모</span>ISC 실무위원회 10월 정기회의 메모</h3>
 <pre id="p-memo">회의명: 전기·에너지·자원산업 ISC 실무위원회 10월 정기회의
