@@ -50,13 +50,10 @@ pre mark{background:transparent;color:var(--amber);font-weight:500}
 .bar{display:flex;gap:8px;align-items:center;margin-top:10px;flex-wrap:wrap}
 button{font:inherit;font-weight:700;font-size:.88rem;border:0;border-radius:6px;padding:9px 14px;cursor:pointer;background:var(--accent);color:var(--accent-ink)}
 button.ghost{background:transparent;color:var(--accent);border:1px solid var(--accent)}
+a.dl{display:inline-block;font-weight:700;font-size:.92rem;border-radius:6px;padding:10px 16px;background:var(--amber);color:#fff;text-decoration:none}
+a.dl:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
 .done{font-size:.82rem;color:var(--ok);font-weight:500}
 .tip{font-size:.82rem;color:var(--muted);margin-top:8px}
-.audio{display:flex;flex-direction:column;gap:10px;margin:8px 0 14px;padding:12px 14px;background:var(--bg);border:1px dashed var(--line);border-radius:8px}
-.audio .lbl{font-size:.9rem;font-weight:700}
-.audio .lbl small{display:block;font-weight:400;color:var(--muted);font-size:.82rem;margin-top:2px}
-.audio audio{width:100%;max-width:100%}
-.audio .dl{align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-weight:700;font-size:.88rem;padding:9px 14px;border-radius:6px;background:var(--accent);color:var(--accent-ink);text-decoration:none}
 .formula{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:8px;margin:12px 0 4px}
 .formula div{background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px;font-size:.88rem;min-width:0}
 .formula b{display:block;color:var(--accent);font-size:.95rem}
@@ -75,7 +72,7 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:12px;font-si
   <p class="lead">회의록 · 공문 · 안내문 템플릿 10종. 복사해서 ChatGPT·Gemini·Claude 어디에나 붙여 넣으세요.</p>
   <p class="howto"><b>쓰는 법</b> ① 복사 버튼 → ② AI 채팅창에 붙여넣기 → ③ <b>[ ] 안</b>만 내 내용으로 바꾸기 → ④ 결과는 반드시 사람이 검토(⑨번 기준).<br>개인정보·계약 금액·미공개 자료는 넣지 않습니다. 이름은 직위로.</p>
   <nav>
-    <a href="#formula">공식</a><a href="#memo">실습 재료 (음성·메모)</a><a href="#meeting">회의록 ①~③</a><a href="#official">공문 ④~⑤</a><a href="#notice">안내문 ⑥~⑧</a><a href="#review">검토·지시 ⑨~⑩</a><a href="#option">옵션 · 증명사진</a>
+    <a href="#formula">공식</a><a href="#audio">예시 회의 녹음</a><a href="#memo">예시 회의 메모</a><a href="#meeting">회의록 ①~③</a><a href="#official">공문 ④~⑤</a><a href="#notice">안내문 ⑥~⑧</a><a href="#review">검토·지시 ⑨~⑩</a><a href="#option">옵션 · 증명사진</a>
   </nav>
 </header>
 
@@ -90,32 +87,40 @@ footer{margin-top:28px;border-top:1px solid var(--line);padding-top:12px;font-si
   </div>
 </section>
 
-<section id="memo">
-  <h2><span class="step">재료</span>예시 회의 메모 (연습용)</h2>
-  <p class="sub">①~③번에 붙여 넣는 연습 재료입니다. 음성 파일을 내려받아 클로바노트에 올리면 녹음→텍스트 변환까지 실습할 수 있고, 아래 메모는 바로 붙여 넣는 용도입니다. 가상의 회의이며 실명은 없습니다.</p>
+<section id="audio">
+  <h2><span class="step">재료</span>예시 회의 녹음 (4분 26초)</h2>
+  <p class="sub">ISC 실무위원회 10월 정기회의를 가상으로 재현한 녹음입니다. 내려받아 클로바노트나 갤럭시 음성 녹음 앱에 넣고 텍스트로 변환해 보세요. 화자 4명, 실명 없음.</p>
   <div class="cards">
   <div class="card">
-    <h3><span class="num">음성</span>실습용 회의 음성 (대본 보이스)</h3>
-    <p class="when">클로바노트·갤럭시 음성 녹음 앱에 올려 텍스트로 변환하는 연습용. 약 4분 30초, MP3</p>
-    <div class="audio">
-      <audio controls preload="none" src="files/ISC_실무위원회_회의음성.mp3">브라우저가 오디오 재생을 지원하지 않습니다. 아래 버튼으로 내려받아 주세요.</audio>
-      <a class="dl" href="files/ISC_실무위원회_회의음성.mp3" download="ISC_실무위원회_회의음성.mp3">⬇ 음성 파일 다운로드 (MP3, 4MB)</a>
+    <h3><span class="num">MP3</span>ISC 실무위원회 예시 회의 · 4:26</h3>
+    <p class="when">재생해서 들어 보고, 다운로드 버튼으로 내 폰에 저장 → 클로바노트 '파일 업로드'</p>
+    <audio id="sample-audio" controls preload="none" style="width:100%;margin:4px 0 10px" src="isc-meeting-sample.mp3"></audio>
+    <div class="bar">
+      <a class="dl" href="isc-meeting-sample.mp3" download="ISC_예시회의_녹음.mp3">⬇ 녹음 파일 다운로드 (mp3 · 4MB)</a>
+      <span class="tip" style="margin:0">안드로이드: 길게 눌러 '링크 다운로드' · 아이폰: 길게 눌러 '연결된 파일 다운로드'</span>
     </div>
-    <p class="tip">휴대폰에서는 다운로드 후 클로바노트 앱 → "파일 업로드"로 넣으면 됩니다. 변환된 텍스트를 ①번 프롬프트의 [회의 메모] 자리에 붙여 넣으세요.</p>
+    <p class="tip">결정 5개 · 미결 1개 · 향후 일정 3개가 들어 있습니다. 변환 후 템플릿 01에 붙여 넣고 검사해 보세요.</p>
   </div>
+  </div>
+</section>
+
+<section id="memo">
+  <h2><span class="step">재료</span>예시 회의 메모 (연습용)</h2>
+  <p class="sub">위 녹음과 같은 회의의 메모입니다. 녹음 변환이 어려울 때 ①~③번에 그대로 붙여 넣으세요. 가상의 회의이며 실명은 없습니다.</p>
+  <div class="cards">
   <div class="card">
     <h3><span class="num">메모</span>ISC 실무위원회 10월 정기회의 메모</h3>
 <pre id="p-memo">회의명: 전기·에너지·자원산업 ISC 실무위원회 10월 정기회의
 일시: 10/27 11:00 / 장소: 삼경교육센터 4층
-참석: 위원장, 사무국 총괄 담당, 교육 담당, 회원사 위원 A, 회원사 위원 B
+참석: 위원장, 사무국 총괄 담당, 교육 담당, 회원사 위원
 
 - 2027 직무능력표준 개선 수요조사. 작년 회수율 18%. 올해 온라인설문+전화 병행, 11/3~11/21 3주, 대상 회원사 300곳
-- 위원A: 현장은 메일 안 봄, 문자로 링크 보내자 → 문자 건당 20원, 가능
+- 회원사 위원: 현장은 메일 안 봄, 문자로 링크 보내자 → 문자 건당 20원, 가능
 - 위원장: 수요조사 11/3~21 온라인설문+문자안내로 결정. 담당 총괄담당. 설문문항 초안 10/31까지 위원 공유
 - 신입 전기기술인 양성과정. 4주, 정원 30, 삼경교육센터 4층 실습실. 현장실무 강사 2명 더 필요
-- 위원B: 안전관리 과목 맡겠음. 3월 성수기라 2월 안에 끝나야
-- 교육기간 2/2~2/27 확정, 정원 30. 안전관리=위원B. 현장실무 강사 1명은 미정 → 교육담당이 후보 찾아 다음 회의
-- 위원A: 교재가 개정 전 기준. 교육담당: 전기설비기술기준 반영해 새로 제작, 12/15까지 초안, 1월 감수
+- 회원사 위원: 안전관리 과목 맡겠음. 3월 성수기라 2월 안에 끝나야
+- 교육기간 2/2~2/27 확정, 정원 30. 안전관리=회원사 위원. 현장실무 강사 1명은 미정 → 교육담당이 후보 찾아 다음 회의
+- 회원사 위원: 교재가 개정 전 기준. 교육담당: 전기설비기술기준 반영해 새로 제작, 12/15까지 초안, 1월 감수
 - 회원사 교육 설명회 12/10(수) 14:00 삼경교육센터 대회의실, 온라인 생중계 병행, 녹화본 공유. 안내 공문 11/24까지 발송, 담당 총괄담당
 - 다음 회의 11/25(화) 11:00 같은 장소</pre>
     <div class="bar"><button data-copy="p-memo">메모 복사</button><span class="done" hidden>복사됐습니다</span></div>
