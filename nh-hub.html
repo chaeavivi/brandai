@@ -1,0 +1,334 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex">
+<title>AI 실무 과정 허브</title>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+:root{
+  --bg:#F7F5EF; --card:#FFFFFF; --ink:#1E2621; --muted:#5E6A63; --line:#E2DED3;
+  --green:#1F5C43; --green-soft:#E6F0EA; --gold:#B7862B; --gold-soft:#FBF3E2; --red:#B3261E;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Pretendard,"Malgun Gothic",sans-serif;font-size:17px;line-height:1.65;-webkit-font-smoothing:antialiased;word-break:keep-all;overflow-wrap:break-word}
+a{color:var(--green)}
+.wrap{max-width:980px;margin:0 auto;padding:0 20px}
+header{background:var(--green);color:#fff;padding:36px 0 0}
+header .eyebrow{font-size:14px;letter-spacing:.04em;opacity:.8}
+header h1{margin:6px 0 4px;font-size:clamp(26px,4.4vw,38px);line-height:1.25;letter-spacing:-.02em}
+header p{margin:0 0 22px;opacity:.9;font-size:16px}
+nav{display:flex;gap:4px;overflow-x:auto;scrollbar-width:none}
+nav::-webkit-scrollbar{display:none}
+nav button{flex:none;border:0;background:transparent;color:#fff;opacity:.75;font:inherit;font-size:16px;font-weight:600;padding:12px 18px;border-radius:12px 12px 0 0;cursor:pointer}
+nav button[aria-selected="true"]{background:var(--bg);color:var(--green);opacity:1}
+main{padding:28px 0 80px}
+.panel{display:none}.panel.on{display:block}
+h2{font-size:24px;margin:8px 0 6px;letter-spacing:-.01em}
+.lead{color:var(--muted);margin:0 0 22px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:22px;margin:0 0 16px}
+.rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:12px;margin-bottom:28px}
+.rule{background:var(--gold-soft);border-radius:14px;padding:16px 18px;font-size:16px}
+.rule b{display:block;color:var(--gold);font-size:14px;margin-bottom:2px}
+.progress{display:flex;align-items:center;gap:14px;margin:0 0 14px}
+.bar{flex:1;height:10px;background:var(--line);border-radius:10px;overflow:hidden}
+.bar i{display:block;height:100%;width:0;background:var(--green);transition:width .3s}
+.svc{display:flex;align-items:center;gap:14px;padding:14px 0;border-top:1px solid var(--line)}
+.svc:first-of-type{border-top:0}
+.svc .n{width:30px;height:30px;border-radius:50%;background:var(--green-soft);color:var(--green);font-weight:700;display:grid;place-items:center;flex:none;font-size:15px}
+.svc .info{flex:1;min-width:0}
+.svc .name{font-weight:700}
+.svc .how{font-size:15px;color:var(--muted)}
+.svc label{display:flex;align-items:center;gap:6px;font-size:15px;color:var(--muted);cursor:pointer;white-space:nowrap}
+.svc input{width:22px;height:22px;accent-color:var(--green)}
+.btn{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--green);background:var(--green);color:#fff;font:inherit;font-size:15px;font-weight:600;padding:9px 16px;border-radius:10px;cursor:pointer;text-decoration:none;white-space:nowrap}
+.btn.ghost{background:#fff;color:var(--green)}
+.btn.done{background:var(--gold);border-color:var(--gold)}
+.period{scroll-margin-top:20px}
+.period-head{display:flex;align-items:baseline;gap:12px;margin:28px 0 4px}
+.period-head .tag{background:var(--green);color:#fff;font-size:14px;font-weight:700;padding:3px 10px;border-radius:8px;flex:none}
+.period-head h3{margin:0;font-size:21px;letter-spacing:-.01em}
+.period .goal{color:var(--muted);margin:0 0 12px;font-size:16px}
+.file{display:inline-flex;align-items:center;gap:8px;background:var(--green-soft);color:var(--green);border-radius:10px;padding:8px 14px;font-size:15px;font-weight:600;text-decoration:none;margin:0 8px 12px 0}
+.prompt{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 12px}
+.prompt .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
+.prompt .ttl{font-weight:700;font-size:16px}
+.prompt .where{font-size:13px;color:var(--green);background:var(--green-soft);border-radius:6px;padding:2px 8px;margin-left:8px;font-weight:600}
+.prompt textarea{width:100%;overflow:hidden;border:1px solid var(--line);border-radius:10px;background:#FCFBF8;font:inherit;font-size:16px;line-height:1.6;padding:12px 14px;resize:vertical;color:var(--ink)}
+.prompt textarea:focus{outline:2px solid var(--green);outline-offset:1px;background:#fff}
+.prompt .note{font-size:14px;color:var(--muted);margin:8px 0 0}
+.prompt .acts{display:flex;gap:8px}
+.tip{border-left:4px solid var(--gold);background:var(--gold-soft);padding:10px 14px;border-radius:0 10px 10px 0;font-size:15px;margin:0 0 12px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field label{display:block;font-weight:700;font-size:15px;margin:0 0 4px}
+.field input,.field textarea{width:100%;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:16px;padding:10px 12px;background:#FCFBF8}
+.bytes{display:flex;align-items:baseline;gap:10px;margin:10px 0 0}
+.bytes strong{font-size:34px;letter-spacing:-.02em}
+.bytes.over strong{color:var(--red)}
+.empty{background:var(--card);border:1px dashed var(--line);border-radius:16px;padding:40px 22px;text-align:center;color:var(--muted)}
+.toast{position:fixed;left:50%;bottom:28px;transform:translateX(-50%) translateY(20px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:12px;font-size:15px;opacity:0;transition:.25s;pointer-events:none;z-index:9}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+.jump{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 6px}
+.jump a{font-size:14px;text-decoration:none;background:#fff;border:1px solid var(--line);border-radius:20px;padding:5px 12px;color:var(--ink)}
+footer{color:var(--muted);font-size:14px;text-align:center;padding:30px 0}
+@media (max-width:640px){
+  body{font-size:16px}
+  .wrap{padding:0 16px}
+  .grid2{grid-template-columns:1fr}
+  .svc{flex-wrap:wrap}
+  .svc .info{flex-basis:calc(100% - 44px)}
+  .svc .btn,.svc label{margin-left:44px}
+  .svc label{margin-left:0}
+}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <div class="eyebrow">한국폴리텍대학 원주캠퍼스 · 농협 임직원 과정</div>
+    <h1>ChatGPT활용빅데이터실무 허브</h1>
+    <p>11/3(화) · 11/4(수) · 11/5(목) — 필요한 링크와 프롬프트가 모두 여기 있습니다.</p>
+    <nav role="tablist">
+      <button role="tab" data-tab="start" aria-selected="true">시작하기</button>
+      <button role="tab" data-tab="d1">1일차</button>
+      <button role="tab" data-tab="d2">2일차</button>
+      <button role="tab" data-tab="d3">3일차</button>
+      <button role="tab" data-tab="tools">도구</button>
+    </nav>
+  </div>
+</header>
+
+<main class="wrap">
+  <section class="panel on" id="tab-start">
+    <h2>시작하기 · 계정 연결</h2>
+    <p class="lead">아래 순서대로 눌러 로그인하세요. 모두 Google 계정 하나로 로그인할 수 있습니다.</p>
+    <div class="rules">
+      <div class="rule"><b>약속 1</b>실제 조합원 이름·주민번호·전화번호는 AI에 올리지 않습니다.</div>
+      <div class="rule"><b>약속 2</b>AI 답은 초안입니다. 숫자와 수식은 내 엑셀에서 확인합니다.</div>
+      <div class="rule"><b>약속 3</b>한 AI가 막히면 다른 AI로 넘어갑니다.</div>
+    </div>
+    <div class="card">
+      <div class="progress"><div class="bar"><i id="bar"></i></div><span id="count">0 / 5 연결</span></div>
+      <div id="svcs"></div>
+    </div>
+    <p class="tip">회사 PC에서 로그인이 막히거나 휴대폰 인증이 나오면 강사에게 바로 알려 주세요.</p>
+  </section>
+
+  <section class="panel" id="tab-d1"></section>
+  <section class="panel" id="tab-d2"></section>
+
+  <section class="panel" id="tab-d3">
+    <h2>3일차 · AI 실무 자동화</h2>
+    <p class="lead">11/5(목) 정경 대표 강의 — Word 확인서 분석, 최신 툴로 업무 문서화, 우리 업무 전용 AI 만들기</p>
+    <div class="empty">3일차 자료는 강의 당일 이곳에 올라옵니다.<br>2일차에 만든 <b>매크로 설명 메모</b>와 <b>점검 체크리스트</b>를 꼭 저장해 두세요.</div>
+  </section>
+
+  <section class="panel" id="tab-tools">
+    <h2>도구</h2>
+    <p class="lead">실습 중에 바로 쓰는 계산기와 조립기입니다.</p>
+    <div class="card" id="sms">
+      <h3 style="margin:0 0 4px;font-size:19px">문자 바이트 계산기</h3>
+      <p class="goal" style="color:var(--muted);margin:0 0 10px;font-size:15px">한글은 2바이트, 숫자·영문·공백·기호는 1바이트. 90바이트를 넘으면 장문 문자가 됩니다.</p>
+      <textarea id="smsText" rows="3" style="width:100%;border:1px solid var(--line);border-radius:10px;font:inherit;padding:12px;background:#FCFBF8">[원주농협] {성명}님, 비료대금 {금액}원이 미납입니다. 11/20까지 납부 부탁드립니다.</textarea>
+      <div class="bytes" id="smsOut"><strong id="smsNum">0</strong><span>/ 90 바이트</span><span id="smsMsg"></span></div>
+    </div>
+    <div class="card" id="builder">
+      <h3 style="margin:0 0 4px;font-size:19px">프롬프트 4요소 조립기</h3>
+      <p style="color:var(--muted);margin:0 0 12px;font-size:15px">네 칸을 채우면 한 문장으로 이어 줍니다. 그대로 복사해서 AI에 붙여 넣으세요.</p>
+      <div class="grid2">
+        <div class="field"><label>역할 — 누구처럼?</label><input id="b1" placeholder="농협 경제사업 담당 10년 차 선배"></div>
+        <div class="field"><label>맥락 — 상황과 받는 사람</label><input id="b2" placeholder="비료 대금 미납 조합원께 보내는 안내, 대부분 70대"></div>
+        <div class="field"><label>과제 — 해 줄 일 하나</label><input id="b3" placeholder="납부를 부탁하는 안내문 작성"></div>
+        <div class="field"><label>형식 — 길이·말투·모양</label><input id="b4" placeholder="5줄 이내, 존댓말, 날짜와 금액은 굵게"></div>
+      </div>
+      <div class="prompt" style="margin:14px 0 0">
+        <div class="top"><span class="ttl">완성된 프롬프트</span><span class="acts"><button class="btn" data-copy="#bOut">복사</button></span></div>
+        <textarea id="bOut" rows="3"></textarea>
+      </div>
+    </div>
+  </section>
+</main>
+<footer>강사 정민경(1·2일차) · 정경(3일차) · 실습 자료는 모두 가상 데이터입니다</footer>
+<div class="toast" id="toast">복사했습니다. AI 대화창에 붙여 넣으세요.</div>
+
+<script>
+const LINKS={
+  Gemini:'https://gemini.google.com', ChatGPT:'https://chatgpt.com', Claude:'https://claude.ai',
+  Canva:'https://www.canva.com', 'AI Studio':'https://aistudio.google.com'
+};
+const SVCS=[
+  ['Gemini','Google 계정으로 바로 로그인','1일차부터'],
+  ['ChatGPT','"Google로 계속하기" 선택','1일차부터'],
+  ['Claude','"Google로 계속하기" 선택','1일차부터'],
+  ['Canva','"Google로 계속하기" 선택','2일차 3교시'],
+  ['AI Studio','Google 계정으로 바로 로그인','2일차 5교시'],
+];
+/* 실습 파일: 이 페이지와 같은 폴더의 files/ 안에 올리면 링크가 동작합니다 */
+const DAYS={
+d1:{title:'1일차 · AI가 편하다는 걸 먼저 느끼기',date:'11/3(화) · 정민경',periods:[
+ {n:'1교시',t:'계정 연결하고, 내 사진으로 증명사진·프로필 사진 만들기',g:'시작하기 탭에서 계정 5개를 먼저 연결하고, AI에게 말로 시켜 첫 결과물을 받아 봅니다.',
+  tip:'얼굴 사진은 원하는 분만 올립니다. 원치 않으면 강사가 준비한 예시 인물 사진을 씁니다.',
+  ps:[
+  ['증명사진','Gemini','첨부한 사진 속 인물로 이력서용 증명사진을 만들어 줘. 얼굴 생김새는 바꾸지 말고 그대로 유지해 줘. 정면을 보고, 어깨선까지 나오게, 단정한 정장 차림, 밝은 회색 단색 배경, 자연스러운 조명, 세로 3:4 비율.'],
+  ['업무용 프로필 사진','Gemini','첨부한 사진 속 인물의 얼굴은 그대로 유지하고, 밝은 사무실 창가를 배경으로 한 업무용 프로필 사진으로 만들어 줘. 살짝 미소, 상반신, 부드러운 자연광, 정사각형 1:1 비율.'],
+  ['편한 프로필 사진','Gemini','첨부한 사진 속 인물의 얼굴은 그대로 유지하고, 가을 들판을 배경으로 한 편안한 분위기의 프로필 사진으로 만들어 줘. 니트 차림, 따뜻한 오후 햇살, 정사각형 1:1 비율.'],
+  ['고쳐 달라고 하기','Gemini','좋아. 배경을 [원하는 색이나 장소]로 바꾸고, [옷차림/표정/조명]은 [이렇게] 바꿔 줘. 얼굴은 그대로 유지해 줘.','마음에 안 드는 점을 말로 고치는 연습입니다. 한 번에 한두 가지씩만 바꿔 달라고 하면 잘 됩니다.']
+ ]},
+ {n:'2교시',t:'프롬프트 설계 기초',g:'좋은 지시문의 4요소(역할·맥락·과제·형식)와 역질문법을 익힙니다. 도구 탭의 "4요소 조립기"도 써 보세요.',
+  ps:[
+  ['나쁜 예 (비교용)','3종 모두','회의 안내 메일 써 줘.','같은 질문을 세 AI에 넣어 보고, 아래 좋은 예와 결과를 비교해 보세요.'],
+  ['좋은 예 · 이메일','3종 모두','너는 지점 총무 담당이야. 다음 주 화요일 오후 2시 지점장 회의를 알리는 메일을 써 줘. 받는 사람은 16개 지점장, 준비물은 월간 실적표. 5줄 이내, 정중하게.'],
+  ['좋은 예 · 엑셀','3종 모두','엑셀 C열에 고객번호가 있어. 같은 번호가 두 번 이상 나오는 행을 H열에 TRUE로 표시하는 수식과 넣는 순서를 알려 줘.'],
+  ['역질문법 기본 문장','3종 모두','[만들고 싶은 것]을 만들고 싶어. 좋은 결과를 내려면 너에게 어떤 정보가 필요한지 먼저 질문해 줘. 질문은 한 번에 5개 이내로.'],
+  ['역질문법 사례','3종 모두','조합원 대상 영농교육 참석 안내문을 만들고 싶어. 좋은 결과를 내려면 어떤 정보가 필요한지 먼저 질문해 줘. 질문은 5개 이내로.','AI가 날짜·장소·대상·준비물·문의처를 물어봅니다. 답을 채우면 처음부터 맞는 안내문이 나옵니다.']
+ ]},
+ {n:'3교시',t:'일상에서 쓰는 AI',g:'생활 속 작은 일을 AI에게 맡겨 봅니다.',
+  ps:[
+  ['물건 비교·최저가','Gemini','[물건]을 사려고 해. 예산은 [금액], 용도는 [용도]야. 후보 3개를 가격·장점·단점 표로 비교하고, 최저가를 확인할 수 있는 곳도 알려 줘. 가격은 확인한 날짜와 출처를 같이 적어 줘.','가격은 수시로 바뀝니다. 링크를 눌러 직접 확인하세요.'],
+  ['식당 찾기와 예약 문의','Gemini','[지역]에서 [인원]명이 [날짜] 저녁에 회식할 식당을 찾아 줘. 1인 [금액] 이내, 단체석·주차 가능한 곳 3곳. 그리고 전화로 예약할 때 할 말과 문자 예약 문구도 써 줘.','AI가 예약을 대신 해 주지는 않습니다. 후보 찾기와 문의 문구까지 맡기고, 예약은 직접 합니다.'],
+  ['이메일 초안 → Gmail 저장','Gemini','[받는 사람]에게 [용건]을 알리는 이메일 초안을 써 줘. 제목 포함, 5줄 이내, 정중하게.','답변 아래 공유·내보내기 메뉴에서 Gmail 초안이나 Google 문서로 보내 둡니다. (메뉴 위치는 화면에 따라 다를 수 있습니다.)']
+ ]},
+ {n:'4교시',t:'엑셀×AI 맛보기 — 조합원명단 정리',g:'AI에게 엑셀 방법을 묻고, 답을 내 엑셀에서 직접 확인합니다.',
+  files:[['Day1_P4_Member_List_Practice.xlsx','실습 파일 · 가상 조합원명단']],
+  ps:[
+  ['미션 1 · 문제 찾기','ChatGPT','너는 농협에서 엑셀 명단을 관리하는 선배야. 아래는 우리 조합원명단의 일부야. 이 명단을 정리할 때 확인해야 할 문제를 찾아 줘. 각 문제마다 엑셀에서 찾는 방법도 알려 줘.\n\n[여기에 머리글과 3~4줄 붙여 넣기]'],
+  ['미션 2 · 중복 찾기','ChatGPT','엑셀 C열에 고객번호가 있어. 같은 고객번호가 두 번 이상 나오는 행을 표시하는 수식을 H열에 넣고 싶어. 수식과 넣는 방법을 알려 줘.','TRUE가 8개 나오면 정답입니다.'],
+  ['미션 3 · 휴대폰 형식 통일','ChatGPT','엑셀 E열 휴대폰 번호가 01012345678, 010 1234 5678, 010.1234.5678처럼 섞여 있어. 모두 010-1234-5678 형식으로 바꾸는 수식을 알려 줘. 빈칸이면 "(누락)"으로 표시해 줘.'],
+  ['미션 3 · 지점명 통일','ChatGPT','엑셀 D열 지점명에 "치악산", "치악산지점", "치악산 지점"이 섞여 있어. "지점"이라는 글자와 공백을 빼서 통일하는 수식을 알려 줘.'],
+  ['미션 4 · 오류 물어보기','Claude','엑셀에 [사용한 수식]을 넣었더니 몇 칸은 [#VALUE! 같은 오류]가 나와. 왜 그런지, 어떻게 고치는지 쉽게 알려 줘.']
+ ]},
+ {n:'5교시',t:'사진이 움직인다 — 짧은 영상 만들기 + 오늘 정리',g:'1교시 사진으로 짧은 영상을 만들고, 오늘 배운 프롬프트를 정리합니다.',
+  tip:'영상 만들기는 무료 한도가 가장 빡빡합니다. 막히면 강사 시연을 보거나 Canva의 애니메이션 기능으로 대신합니다.',
+  ps:[
+  ['짧은 영상','Gemini','이 사진 속 인물이 정면을 보며 살짝 미소 짓고, 카메라가 천천히 다가가는 5초 영상을 만들어 줘. 배경은 그대로, 자연스러운 움직임.'],
+  ['오늘 정리','Claude','오늘 AI 수업에서 내가 써 본 프롬프트들이야. 다음에 다시 쓰기 좋게 [상황 / 프롬프트 / 바꿔 쓸 부분] 표로 정리해 줘.\n\n[오늘 쓴 프롬프트 붙여 넣기]']
+ ]}
+]},
+d2:{title:'2일차 · 내 업무에 붙여 보기',date:'11/4(수) · 정민경',periods:[
+ {n:'1교시',t:'시스템은 그대로, AI는 앞·뒤·옆에',g:'엑셀 시스템을 바꾸지 않고, 들어오는 자료(앞)·나가는 문서(뒤)·돌보기(옆)에 AI를 붙입니다.',
+  ps:[
+  ['내 업무 설명하기 (역질문법)','Claude','나는 농협 [지점]에서 [업무]를 해. 이 업무에서 AI가 도울 수 있는 부분을 찾고 싶어. 내 업무를 이해하는 데 필요한 질문을 먼저 5개 해 줘.'],
+  ['AI 자리 찾기','Claude','내 업무 목록이야. 각 업무를 [반복 / 판단 / 문서]로 나누고, AI를 붙인다면 들어오는 자료 정리(앞), 결과 문서 작성(뒤), 시스템 설명·점검(옆) 중 어디가 맞는지 표로 정리해 줘. 사람이 꼭 해야 하는 부분도 표시해 줘.\n\n[내 업무 3~5개 적기]']
+ ]},
+ {n:'2교시',t:'양식이 다른 명단 2종 통일하고 자부담 계산',g:'매칭분석기가 하는 일을 AI + 엑셀 수식으로 직접 해 보고, 결과를 검증합니다.',
+  files:[['Day2_P2_Subsidy_Practice.xlsx','실습 파일 · 보조사업 명단 2종']],
+  tip:'계산 규칙 — 조합원: 포당 자부담 = 농가부담금 / 비조합원: 농가부담금 + 농협보조금 / 자부담 금액 = 수량 × 포당 자부담',
+  ps:[
+  ['두 양식 비교 → 매핑표','ChatGPT','농협에서 보조사업 신청 명단 두 개를 하나로 합치려고 해. 아래 두 양식의 열을 비교해서 [통합 열 이름 / 양식A 열 / 양식B 열 / 변환 방법] 표로 정리해 줘. 이름과 생년월일이 한 칸에 붙어 있거나 형식이 다른 경우 엑셀 수식도 같이 알려 줘.\n\n[양식A 머리글과 2줄]\n[양식B 머리글과 2줄]'],
+  ['이름·생년 분리','ChatGPT','엑셀 C열에 "홍길동(770917)"처럼 이름과 생년월일이 붙어 있어. 이름만 꺼내는 수식과 생년월일 6자리만 꺼내는 수식을 알려 줘.'],
+  ['생년월일 형식 바꾸기','ChatGPT','"1977-09-17" 형식의 생년월일을 "770917" 6자리 글자로 바꾸는 엑셀 수식을 알려 줘.'],
+  ['조합원 여부','ChatGPT','[조합원명단] 시트 A열에 성명, B열에 생년월일이 있어. [통합신청] 시트의 B열 이름과 C열 생년월일이 둘 다 맞는 사람이 있으면 O, 없으면 X를 표시하는 수식을 알려 줘.'],
+  ['단가 찾아오기','ChatGPT','[상품코드] 시트 D열에 원주시상품명, I열에 농협보조금, J열에 농가부담금이 있어. [통합신청] F열의 상품명으로 농협보조금과 농가부담금을 찾아오는 수식을 INDEX/MATCH로 알려 줘.'],
+  ['검증 체크리스트','Claude','이 표에서 계산 결과를 믿기 전에 사람이 꼭 확인해야 할 행의 특징을 체크리스트로 만들어 줘. 농협 보조사업 명단이라는 점을 고려해 줘.']
+ ]},
+ {n:'3교시',t:'엑셀 데이터로 안내문·문자·보고서, 그리고 Canva 포스터',g:'계산은 엑셀이, 글은 AI가, 확인은 사람이 합니다.',
+  files:[['Day2_P3_Notice_SMS_Report_Practice.xlsx','실습 파일 · 매출·수납 내역']],
+  ps:[
+  ['미수납 안내문','ChatGPT','너는 원주농협 경제사업 담당자야. 영농자재(비료) 대금이 아직 납부되지 않은 조합원께 보낼 우편 안내문을 써 줘. 받는 분: {성명}님 / 품목: {상품명} {수량}포 / 미납 금액: {금액}원 / 납부 기한: 11월 20일. 어르신이 읽기 쉽게 짧은 문장, 존댓말, A4 반 장 분량, 납부 방법(지점 방문·계좌이체) 자리는 [ ]로 비워 줘.','{중괄호}는 나중에 메일머지로 채울 자리입니다.'],
+  ['90바이트 문자 3가지','Claude','위 안내문을 SMS 90바이트 안으로 줄여 줘. 한글은 2바이트, 숫자·영문·공백은 1바이트로 계산해서 바이트 수도 같이 알려 줘. 3가지 버전으로.','AI가 센 바이트를 믿지 말고 도구 탭의 바이트 계산기나 엑셀 LENB로 다시 세어 보세요.'],
+  ['보고 요약 3줄','Claude','아래는 영농자재 공급·수납 현황이야. 경제본부장님께 올릴 보고 요약을 3줄로 써 줘. 숫자는 표에 있는 것만 쓰고, 마지막 줄에는 다음 할 일을 써 줘.\n\n[사업별_집계 표 붙여 넣기]','표에 없는 숫자를 지어내지 않았는지 꼭 확인합니다.'],
+  ['Canva AI 포스터','Canva','원주농협 조합원 대상 "영농자재 대금 납부 안내" 포스터. 납부 기한 11월 20일, 지점 방문 또는 계좌이체, 문의는 각 지점. 큰 글씨, 어르신이 보기 쉽게, 초록색 계열.','포스터에는 개인 이름·금액을 넣지 않습니다.']
+ ]},
+ {n:'4교시',t:'매크로 읽기 — 설명받고, 진단하고, 점검표 만들기',g:'매크로를 고치지 않고도, 무엇을 하는지 알아듣고 문제를 설명할 수 있게 됩니다.',
+  files:[['Day2_P4_VBA_Excerpts.txt','코드 발췌본 (하나씩 복사)'],['Day2_P4_Macro_Reading_Practice.xlsx','오류로그·테스트표']],
+  tip:'원본 매크로 전체를 무료 AI에 넣으면 바로 한도에 걸립니다. 코드는 하나씩 잘라서 묻습니다.',
+  ps:[
+  ['코드를 사람 말로','Claude','나는 VBA를 모르는 농협 직원이야. 아래 코드가 무슨 일을 하는지 ① 한 문장 요약 ② 단계별 설명 ③ 이 코드가 없으면 생기는 문제 순서로 설명해 줘. 전문용어는 괄호로 풀어 줘.\n\n[코드 붙여 넣기]'],
+  ['결과 예측','Claude','위 코드에 아래 값을 넣으면 결과가 무엇인지 표로 알려 줘. 그렇게 되는 이유도 한 줄씩.\n\n[테스트표의 입력값 붙여 넣기]','내 예상을 먼저 적고 AI 답과 비교하세요.'],
+  ['오류 진단','Claude','이 매크로를 실행하면 오류로그에 아래 오류가 반복해서 남아. 가능한 원인을 가능성 높은 순서로 3가지, 각각 사람이 엑셀에서 확인하는 방법을 알려 줘. 코드를 고치기 전에 확인할 것부터.\n\n[코드 3 붙여 넣기]\n[오류로그 줄 붙여 넣기]'],
+  ['점검 체크리스트','Claude','위 내용을 바탕으로, 이 매크로에서 오류가 났을 때 담당자가 순서대로 확인할 점검 체크리스트를 10줄 이내로 만들어 줘. 각 줄은 "확인할 것 / 어떻게 / 정상이면"으로.','이 메모와 체크리스트가 3일차 "우리 업무 전용 AI"의 재료가 됩니다.']
+ ]},
+ {n:'5교시',t:'Google AI Studio 바이브 코딩 — 말로 만드는 앱',g:'코드 대신 말로 설명해서, 내 업무에 쓸 작은 앱을 직접 만듭니다.',
+  ps:[
+  ['SMS 문구 생성기','AI Studio','농협 직원이 쓰는 미수납 안내 문자 생성기 웹앱을 만들어 줘. 성명·미납 금액·납부 기한을 입력하면 정중한 문자 3가지 버전을 보여 주고, 각 문구의 바이트 수(한글 2, 숫자·영문·공백 1)를 표시해 줘. 90바이트를 넘으면 빨간색. 문구마다 복사 버튼. 글씨는 크게, 누구나 쓰기 쉽게.'],
+  ['고쳐 달라고 하기','AI Studio','좋아. [바꾸고 싶은 점]을 바꿔 줘. 나머지 기능은 그대로 유지해 줘.'],
+  ['빨리 끝났다면 · 자부담 계산기','AI Studio','농협 영농자재 자부담 계산기 웹앱을 만들어 줘. 상품을 고르고 수량(포)과 조합원 여부를 입력하면 자부담 금액을 보여 줘. 규칙: 조합원은 포당 농가부담금, 비조합원은 포당 농가부담금+농협보조금. 상품 목록: 푸른들(농협보조 500, 농가부담 1970), 황토골(2000, 3400), 맞춤30호(10850, 3050). 큰 글씨, 계산 근거도 한 줄로 보여 줘.']
+ ]}
+]}
+};
+
+const $=s=>document.querySelector(s);
+const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const store={get(k){try{return localStorage.getItem(k)}catch(e){return null}},set(k,v){try{localStorage.setItem(k,v)}catch(e){}}};
+
+// tabs
+function show(id){
+  document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-selected',b.dataset.tab===id));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.id==='tab-'+id));
+  store.set('hubTab',id); history.replaceState(null,'','#'+id);
+}
+document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>{show(b.dataset.tab);window.scrollTo({top:0})});
+
+// services
+function renderSvcs(){
+  $('#svcs').innerHTML=SVCS.map(([n,how,when],i)=>{
+    const on=store.get('svc_'+n)==='1';
+    return `<div class="svc"><div class="n">${i+1}</div><div class="info"><div class="name">${n}</div><div class="how">${how} · ${when}</div></div>
+    <a class="btn ghost" href="${LINKS[n]}" target="_blank" rel="noopener">열기 ↗</a>
+    <label><input type="checkbox" data-svc="${n}" ${on?'checked':''}>로그인 완료</label></div>`}).join('');
+  document.querySelectorAll('[data-svc]').forEach(c=>c.onchange=()=>{store.set('svc_'+c.dataset.svc,c.checked?'1':'0');updProg()});
+  updProg();
+}
+function updProg(){const n=SVCS.filter(([s])=>store.get('svc_'+s)==='1').length;$('#bar').style.width=(n/SVCS.length*100)+'%';$('#count').textContent=`${n} / ${SVCS.length} 연결`}
+
+// days
+function renderDay(id){
+  const d=DAYS[id];
+  let h=`<h2>${d.title}</h2><p class="lead">${d.date}</p><div class="jump">${d.periods.map((p,i)=>`<a href="#${id}-${i}">${p.n}</a>`).join('')}</div>`;
+  d.periods.forEach((p,i)=>{
+    h+=`<div class="period" id="${id}-${i}"><div class="period-head"><span class="tag">${p.n}</span><h3>${p.t}</h3></div><p class="goal">${p.g}</p>`;
+    if(p.files) h+=p.files.map(([f,l])=>`<a class="file" href="files/${f}" download>⬇ ${l}</a>`).join('');
+    if(p.tip) h+=`<p class="tip">${esc(p.tip)}</p>`;
+    p.ps.forEach(([ttl,where,text,note],j)=>{
+      const key=`${id}-${i}-${j}`; const rows=Math.min(9,Math.max(3,Math.ceil(text.length/52)+(text.split('\n').length-1)));
+      const w=LINKS[where]?`<a class="where" href="${LINKS[where]}" target="_blank" rel="noopener">${where} ↗</a>`:`<span class="where">${where}</span>`;
+      h+=`<div class="prompt"><div class="top"><span class="ttl">${ttl}${w}</span><span class="acts"><button class="btn ghost" data-reset="${key}">원래대로</button><button class="btn" data-copy="#t-${key}">복사</button></span></div>
+      <textarea id="t-${key}" rows="${rows}" data-orig="${esc(text)}">${esc(text)}</textarea>${note?`<p class="note">${esc(note)}</p>`:''}</div>`;
+    });
+    h+='</div>';
+  });
+  $('#tab-'+id).innerHTML=h;
+}
+renderDay('d1');renderDay('d2');renderSvcs();
+
+// copy / reset
+let tt;
+function toast(msg){const t=$('#toast');t.textContent=msg;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),1800)}
+document.addEventListener('click',async e=>{
+  const c=e.target.closest('[data-copy]'), r=e.target.closest('[data-reset]');
+  if(c){const ta=$(c.dataset.copy);const v=ta.value;
+    try{await navigator.clipboard.writeText(v)}catch(err){ta.select();document.execCommand('copy')}
+    c.textContent='복사됨 ✓';c.classList.add('done');setTimeout(()=>{c.textContent='복사';c.classList.remove('done')},1500);
+    toast(v.includes('[')?'복사했습니다. [ ] 부분은 내 상황으로 바꿔 주세요.':'복사했습니다. AI 대화창에 붙여 넣으세요.');}
+  if(r){const ta=$('#t-'+r.dataset.reset);ta.value=ta.dataset.orig;fit(ta);toast('원래 문장으로 되돌렸습니다.')}
+});
+
+// sms bytes
+const blen=s=>[...s].reduce((a,ch)=>a+(ch.codePointAt(0)>127?2:1),0);
+function updSms(){const n=blen($('#smsText').value);$('#smsNum').textContent=n;$('#smsOut').classList.toggle('over',n>90);$('#smsMsg').textContent=n>90?`· ${n-90}바이트 줄여야 합니다`:`· ${90-n}바이트 남음`}
+$('#smsText').oninput=updSms;updSms();
+
+// builder
+function updB(){const v=[1,2,3,4].map(i=>$('#b'+i).value.trim());
+  $('#bOut').value=(v[0]?`너는 ${v[0]}야. `:'')+(v[1]?`상황은 이래: ${v[1]}. `:'')+(v[2]?`${v[2]}을(를) 해 줘. `:'')+(v[3]?`형식은 ${v[3]}(으)로.`:'')}
+[1,2,3,4].forEach(i=>$('#b'+i).oninput=updB);
+
+// start tab from hash or memory
+const H=location.hash||'';const first=H.slice(1).split('-')[0];
+const saved=store.get('hubTab');
+if(['start','d1','d2','d3','tools'].includes(first)) show(first); else if(saved) show(saved);
+if(!H.includes('-')) window.scrollTo(0,0);
+
+// textarea auto height
+const fit=ta=>{ta.style.height='auto';ta.style.height=(ta.scrollHeight+2)+'px'};
+const fitAll=()=>document.querySelectorAll('.prompt textarea').forEach(fit);
+document.addEventListener('input',e=>{if(e.target.matches('.prompt textarea'))fit(e.target)});
+window.addEventListener('resize',fitAll);
+document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>requestAnimationFrame(fitAll)));
+// 입력칸 높이를 맞춘 뒤에 교시 위치로 이동 (먼저 이동하면 높이가 늘어나 위치가 어긋남)
+requestAnimationFrame(()=>{fitAll(); if(H.includes('-')){const el=document.getElementById(H.slice(1)); if(el) el.scrollIntoView({behavior:'instant'})}});
+</script>
+</body>
+</html>
