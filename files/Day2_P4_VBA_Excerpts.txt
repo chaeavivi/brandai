@@ -1,0 +1,119 @@
+==============================================================
+ 2일차 4교시 · 매크로 읽기 실습용 VBA 발췌본
+ - 현장 매크로(매칭분석기·영농자재매출관리시스템)의 구조를
+   교육용으로 줄여 다시 쓴 코드입니다. 원본을 수정하지 않습니다.
+ - 코드 하나씩 복사해서 AI에게 붙여 넣으세요. (한 번에 다 넣지 않기)
+==============================================================
+
+
+'--------------------------------------------------------------
+' [코드 1] 같은 사람 찾기 : 전화번호·생년월일 정리하고 "매칭키" 만들기
+'   (2교시에 엑셀 수식으로 했던 일을 매크로가 하는 방식)
+'--------------------------------------------------------------
+Public Function NormalizePhone(ByVal rawVal As Variant) As String
+    Dim s As String, digits As String, ch As String
+    Dim i As Long
+
+    If IsEmpty(rawVal) Then NormalizePhone = "": Exit Function
+    s = Trim(CStr(rawVal))
+
+    digits = ""
+    For i = 1 To Len(s)
+        ch = Mid(s, i, 1)
+        If ch >= "0" And ch <= "9" Then digits = digits & ch
+    Next i
+
+    NormalizePhone = digits
+End Function
+
+Public Function MakeMatchKey(ByVal sName As String, ByVal sBirth As String, _
+                             ByVal sPhone As String) As String
+    Dim n As String, b As String, p As String
+
+    n = Replace(Trim(sName), " ", "")
+    b = Right(NormalizePhone(sBirth), 6)
+    p = NormalizePhone(sPhone)
+
+    If n <> "" And b <> "" And p <> "" Then
+        MakeMatchKey = n & "|" & b & "|" & p
+    Else
+        MakeMatchKey = ""
+    End If
+End Function
+
+
+'--------------------------------------------------------------
+' [코드 2] 자부담 계산 : 조합원 여부에 따라 농가부담 금액이 달라짐
+'--------------------------------------------------------------
+Public Function CalcFarmerPay(ByVal qty As Long, _
+                              ByVal nhSubsidy As Currency, _
+                              ByVal farmerShare As Currency, _
+                              ByVal isMember As String) As Currency
+    Dim unitPay As Currency
+
+    If isMember = "O" Then
+        unitPay = farmerShare
+    Else
+        unitPay = farmerShare + nhSubsidy
+    End If
+
+    CalcFarmerPay = qty * unitPay
+End Function
+
+
+'--------------------------------------------------------------
+' [코드 3] 매핑 설정 저장 : 오류로그에 같은 오류가 99번 쌓인 부분
+'   (오류로그 시트의 1004 오류와 함께 AI에게 보여 주세요)
+'--------------------------------------------------------------
+Public Sub SaveMappingSettings(ByVal mapping As Object, ByVal bizName As String)
+    On Error GoTo ErrHandler
+    Dim ws As Worksheet
+
+    On Error Resume Next
+    Set ws = ThisWorkbook.Sheets("매핑설정")
+    On Error GoTo ErrHandler
+
+    If ws Is Nothing Then
+        Set ws = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+        ws.Name = "매핑설정"
+        ws.Visible = xlSheetVeryHidden
+    End If
+
+    Dim lastRow As Long, r As Long
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    For r = lastRow To 2 Step -1
+        If CStr(ws.Cells(r, 3).Value) = bizName Then ws.Rows(r).Delete
+    Next r
+
+    Dim keys As Variant, i As Long
+    keys = mapping.keys
+    lastRow = ws.Cells(ws.Rows.Count, 1).End(xlUp).Row
+    For i = 0 To UBound(keys)
+        lastRow = lastRow + 1
+        ws.Cells(lastRow, 1).Value = CStr(keys(i))
+        ws.Cells(lastRow, 2).Value = CStr(mapping(keys(i)))
+        ws.Cells(lastRow, 3).Value = bizName
+        ws.Cells(lastRow, 4).Value = Format(Now, "yyyy-mm-dd hh:nn:ss")
+    Next i
+    Exit Sub
+
+ErrHandler:
+    LogMsg "ERROR", "AM_Mapping.SaveMappingSettings", Err.Number, Err.Description
+End Sub
+
+
+'--------------------------------------------------------------
+' [코드 4] 문자 바이트 세기 : 90바이트 넘는지 확인 (3교시 SMS와 연결)
+'--------------------------------------------------------------
+Private Function CalcByteLength(msg As String) As Long
+    Dim i As Long, totalBytes As Long, charCode As Long
+    For i = 1 To Len(msg)
+        charCode = AscW(Mid(msg, i, 1))
+        If charCode > 127 Then
+            totalBytes = totalBytes + 2
+        Else
+            totalBytes = totalBytes + 1
+        End If
+    Next i
+    CalcByteLength = totalBytes
+End Function
