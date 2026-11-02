@@ -102,6 +102,16 @@ footer{color:var(--muted);font-size:14px;text-align:center;padding:30px 0}
 .ab-out .note{color:#A9B8AF;font-size:14px;margin:8px 0 0}
 .ab-tools{display:flex;gap:8px;flex-wrap:wrap}
 #printSheet{display:none}
+/* 탭 잠금 (2일차 비밀번호 · 3일차 자물쇠) */
+.lock{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:36px 22px;text-align:center;max-width:560px;margin:10px auto 0}
+.lock-ico{font-size:44px;line-height:1}
+.lock h2{margin:12px 0 2px}
+.lock .lead{margin:0 0 10px}
+.lock-form{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:18px 0 0}
+.lock-form input{width:190px;border:1px solid var(--line);border-radius:10px;font:inherit;font-size:20px;letter-spacing:.15em;text-align:center;padding:9px 12px;background:#FCFBF8;color:var(--ink)}
+.lock-form input:focus{outline:2px solid var(--green);outline-offset:1px;background:#fff}
+.lock-msg{color:var(--red);font-size:15px;min-height:1.6em;margin:8px 0 0}
+.lock-note{color:var(--muted);font-size:14px;margin:14px 0 0}
 @media (max-width:640px){
   .ab{padding:14px}
   .ab-blk{padding:12px 12px 12px 14px}
@@ -630,7 +640,7 @@ function renderDay(id){
   });
   $('#tab-'+id).innerHTML=h;
 }
-renderDay('d1');renderDay('d2');renderSvcs();
+renderDay('d1');renderSvcs(); // 2·3일차는 아래 '탭 잠금'에서 잠금 여부를 보고 그림
 
 // copy / reset
 let tt;
@@ -741,7 +751,9 @@ function abPrint(withEx){
   <div class="ps-check">점검 &nbsp;□ 버튼은 "무엇을" 하는지까지 썼나요? &nbsp;□ '만약' 블록을 채웠나요? &nbsp;□ 숫자·기준을 정확히 적었나요?</div>`;
   window.print();
 }
-if($('#appBuilder')){
+// 2일차가 그려진 뒤(잠금 해제 뒤)에 빌더 버튼·입력을 연결
+function abInit(){
+  if(!$('#appBuilder')) return;
   document.querySelectorAll('.ab-mode').forEach(b=>b.onclick=()=>{abMode=b.dataset.abMode;store.set('ab_mode',abMode);abLoad()});
   abIns().forEach(t=>t.addEventListener('input',()=>{store.set(`ab_${abMode}_${t.dataset.k}`,t.value);abUpdate()}));
   $('#abCopy').onclick=async e=>{
@@ -762,6 +774,58 @@ if($('#appBuilder')){
   $('#abPrintEx').onclick=()=>abPrint(true);
   abLoad();
 }
+
+// ===== 탭 잠금 =====
+// 수업 진도에 맞춰 여는 '교실용 잠금'입니다. 내용은 페이지 소스와 GitHub에서 볼 수 있으니 보안 장치는 아닙니다.
+// hash: SHA-256('nh-hub|비밀번호') — 값이 있으면 비밀번호로 열림, ''이면 비밀번호 없이 잠김(강의 당일 공개)
+// 잠금을 없애려면 LOCKS에서 그 탭 줄을 지우면 됩니다. 한 번 연 기기는 비밀번호가 바뀌기 전까지 계속 열려 있습니다.
+const LOCK_SALT='nh-hub|';
+const LOCKS={
+  d2:{hash:'1a12e6020c2fdb357baf203344c472ebc56e47493625f8239cc1a988d0dd6fcc',
+      title:DAYS.d2.title, date:DAYS.d2.date, msg:'수업 시간에 알려 드리는 비밀번호를 넣으면 열립니다.'},
+  d3:{hash:'', title:'3일차 · AI 실무 자동화', date:'11/5(목) · 정경 대표',
+      msg:'3일차 자료는 강의 당일 공개됩니다.', note:'2일차에 만든 매크로 설명서 초안과 점검 체크리스트를 꼭 저장해 두세요.'}
+};
+const lockedHTML={};
+const isOpen=id=>!LOCKS[id]||(!!LOCKS[id].hash&&store.get('unlock_'+id)===LOCKS[id].hash);
+function updNav(){
+  document.querySelectorAll('nav button').forEach(b=>{
+    b.dataset.label=b.dataset.label||b.textContent;
+    b.textContent=b.dataset.label+(LOCKS[b.dataset.tab]&&!isOpen(b.dataset.tab)?' 🔒':'');
+  });
+}
+function renderLock(id){
+  const L=LOCKS[id];
+  $('#tab-'+id).innerHTML=`<div class="lock"><div class="lock-ico" aria-hidden="true">🔒</div><h2>${L.title}</h2><p class="lead">${L.date}</p><p>${L.msg}</p>
+    ${L.hash?`<form class="lock-form" data-lock="${id}"><input type="text" inputmode="numeric" autocomplete="off" maxlength="12" placeholder="비밀번호" aria-label="${L.title} 비밀번호"><button class="btn">열기</button></form><p class="lock-msg" role="alert"></p>`:''}
+    ${L.note?`<p class="lock-note">${L.note}</p>`:''}</div>`;
+}
+function openTab(id){
+  if(DAYS[id]){renderDay(id);if(id==='d2')abInit()}
+  else if(lockedHTML[id]) $('#tab-'+id).innerHTML=lockedHTML[id];
+}
+async function sha256(s){
+  const b=await crypto.subtle.digest('SHA-256',new TextEncoder().encode(s));
+  return [...new Uint8Array(b)].map(x=>x.toString(16).padStart(2,'0')).join('');
+}
+document.addEventListener('submit',async e=>{
+  const f=e.target.closest('.lock-form');if(!f) return;
+  e.preventDefault();
+  const id=f.dataset.lock,inp=f.querySelector('input'),msg=f.parentNode.querySelector('.lock-msg');
+  if(!window.crypto||!crypto.subtle){msg.textContent='이 브라우저에서는 열 수 없습니다. 크롬이나 사파리로 열어 주세요.';return}
+  const h=await sha256(LOCK_SALT+inp.value.trim());
+  if(h!==LOCKS[id].hash){msg.textContent='비밀번호가 맞지 않습니다. 다시 확인해 주세요.';inp.select();return}
+  store.set('unlock_'+id,h);openTab(id);updNav();toast('열렸습니다.');
+  // 잠긴 채로 교시 바로가기 주소(#d2-4 등)로 들어왔다면 그 교시로 이동
+  const want=H.slice(1).startsWith(id+'-')?document.getElementById(H.slice(1)):null;
+  requestAnimationFrame(()=>{fitAll();if(want) want.scrollIntoView({behavior:'instant'});else window.scrollTo(0,0)});
+});
+['d2','d3'].forEach(id=>{
+  if(!LOCKS[id]){openTab(id);return}
+  if(!DAYS[id]) lockedHTML[id]=$('#tab-'+id).innerHTML;
+  isOpen(id)?openTab(id):renderLock(id);
+});
+updNav();
 
 // 입력칸 높이를 맞춘 뒤에 교시 위치로 이동 (먼저 이동하면 높이가 늘어나 위치가 어긋남)
 requestAnimationFrame(()=>{fitAll(); if(H.includes('-')){const el=document.getElementById(H.slice(1)); if(el) el.scrollIntoView({behavior:'instant'})}});
