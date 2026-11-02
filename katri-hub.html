@@ -435,7 +435,7 @@ html += `<section id="end"><div class="sec-h"><span class="badge">마무리</spa
 <div class="card">${promptBlock({text:`나는 [부서]에서 [업무]를 담당해. 내가 매주 반복하는 일은 [업무 설명]이야.
 이 일을 도와줄 프롬프트 템플릿을 만들어 줘. 바꿔 넣을 부분은 [ ]로 표시해 줘.`})}
 <p class="ok"><b>저장 팁</b> 만든 템플릿은 휴대폰 메모장에 저장해 두세요. ChatGPT '맞춤 설정'이나 Gemini '저장된 정보'에 "답변은 개조식·공문체로"처럼 기본 스타일을 넣어 두면 매번 쓰지 않아도 됩니다.</p></div>
-<div class="card bld" id="bld"><span class="lbl">프롬프트 조립기 · 워크시트 7~8쪽과 같은 순서</span>
+<div class="card bld" id="bld"><span class="lbl">프롬프트 조립기</span>
 <p class="desc">칸을 채우면 아래에 프롬프트가 조립돼요. 회색 글씨는 예시예요. 빈칸은 빼고 조립됩니다.</p>
 ${BLD.map(b=>`<label><span class="bt"><i class="${b.k==='if'?'r':''}">${b.t}</i>${b.q}</span><small>${b.h}</small>${b.k==='src'?`<textarea data-b="${b.k}" placeholder="${b.ex}"></textarea>`:`<input data-b="${b.k}" placeholder="${b.ex}">`}</label>`).join('')}
 <div class="pv"><span class="lbl">조립된 프롬프트</span><div class="box" id="bOut"></div></div>
