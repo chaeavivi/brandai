@@ -78,7 +78,9 @@ footer{color:var(--muted);font-size:14px;text-align:center;padding:30px 0}
 .ab-modes{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 10px}
 .ab-mode{border:1px solid var(--green);background:#fff;color:var(--green);font:inherit;font-size:15px;font-weight:700;padding:9px 14px;border-radius:10px;cursor:pointer}
 .ab-mode[aria-selected="true"]{background:var(--green);color:#fff}
-.ab-desc{color:var(--muted);font-size:15px;margin:0 0 12px}
+.ab-desc{color:var(--muted);font-size:15px;margin:0 0 8px}
+.ab-sample{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:var(--green-soft);border-radius:10px;padding:10px 14px;margin:0 0 12px;font-size:15px}
+.ab-sample .btn{padding:6px 12px;font-size:14px}
 .ab-blk{border:1px solid var(--line);border-left:6px solid var(--c);border-radius:12px;padding:14px 16px;margin:0 0 10px;background:#fff}
 .ab-top{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
 .ab-tag{font:700 13px/1.6 ui-monospace,Consolas,"D2Coding",monospace;color:#fff;background:var(--c);padding:1px 9px;border-radius:6px}
@@ -579,6 +581,8 @@ const APP_BLOCKS=[
   hint:'쓰는 사람(나이, PC인지 휴대폰인지)을 떠올려 보세요.',
   ex:'글씨는 크게, 초록색 계열'}
 ];
+// 강사가 이 블록으로 AI Studio에서 만든 문자 계산기 완성 샘플
+const SAMPLE_APP='https://letter-maker.ai.studio/';
 
 const $=s=>document.querySelector(s);
 const esc=s=>s.replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -672,6 +676,7 @@ function abHTML(){
     <button class="ab-mode" role="tab" data-ab-mode="my">② 내 업무 앱</button>
   </div>
   <p class="ab-desc" id="abDesc"></p>
+  <div class="ab-sample"><span>완성 샘플 · 강사가 이 블록으로 AI Studio에서 만든 문자 계산기</span><a class="btn ghost" href="${SAMPLE_APP}" target="_blank" rel="noopener">샘플 열기 ↗</a></div>
   <div class="progress"><div class="bar"><i id="abBar"></i></div><span id="abCount"></span></div>
   ${APP_BLOCKS.map((b,i)=>`<div class="ab-blk" style="--c:${b.c}" data-blk="${b.k}">
     <div class="ab-top"><span class="ab-tag">${b.tag} ▸</span><b class="ab-ttl">${i+1}. ${b.title}</b></div>
@@ -728,7 +733,7 @@ function abPrint(withEx){
     <div class="ps-kicker">ChatGPT활용빅데이터실무 · 2일차 5교시 · Google AI Studio 바이브 코딩</div>
     <h1>${withEx?'예시 답안 · 문자 바이트 계산기 (강사용)':'앱 기획 워크시트 — 블록으로 만드는 내 업무 앱'}</h1>
     ${withEx?'':'<div class="ps-meta">이름<span></span>만들 앱<span class="w"></span></div>'}
-    <p>${withEx?'수업에서는 빈칸 워크시트를 먼저 나눠 주고, 막히는 블록만 이 예시로 도와주세요.':'블록마다 질문에 내 말로 적어 보세요. 다 쓰면 허브 2일차 5교시 빌더에 옮겨 적고, 조립된 프롬프트를 복사해 AI Studio에 붙여 넣습니다.'}</p></div>
+    <p>${withEx?`수업에서는 빈칸 워크시트를 먼저 나눠 주고, 막히는 블록만 이 예시로 도와주세요. 완성 샘플: ${SAMPLE_APP.replace(/^https?:\/\/|\/$/g,'')}`:'블록마다 질문에 내 말로 적어 보세요. 다 쓰면 허브 2일차 5교시 빌더에 옮겨 적고, 조립된 프롬프트를 복사해 AI Studio에 붙여 넣습니다.'}</p></div>
   ${APP_BLOCKS.map((b,i)=>`<div class="ps-blk" style="--c:${b.c}"><div class="ps-top"><span class="ps-tag">${b.tag} ▸</span><b>${i+1}. ${b.title}</b></div>
     <div class="ps-q">${esc(b.q)}</div><div class="ps-hint">${esc(b.hint)}</div>
     ${withEx?`<div class="ps-ex">${esc(b.ex)}</div>`:line.repeat(b.lines)}</div>`).join('')}
