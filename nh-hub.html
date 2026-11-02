@@ -55,7 +55,7 @@ h2{font-size:24px;margin:8px 0 6px;letter-spacing:-.01em}
 .prompt{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:0 0 12px}
 .prompt .top{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:8px;flex-wrap:wrap}
 .prompt .ttl{font-weight:700;font-size:16px}
-.prompt .where{font-size:13px;color:var(--green);background:var(--green-soft);border-radius:6px;padding:2px 8px;margin-left:8px;font-weight:600}
+.prompt .where{display:inline-block;font-size:13px;color:var(--green);background:var(--green-soft);border-radius:6px;padding:2px 8px;margin:2px 0 2px 8px;font-weight:600}
 .prompt textarea{width:100%;overflow:hidden;border:1px solid var(--line);border-radius:10px;background:#FCFBF8;font:inherit;font-size:16px;line-height:1.6;padding:12px 14px;resize:vertical;color:var(--ink)}
 .prompt textarea:focus{outline:2px solid var(--green);outline-offset:1px;background:#fff}
 .prompt .note{font-size:14px;color:var(--muted);margin:8px 0 0}
@@ -156,7 +156,8 @@ footer{color:var(--muted);font-size:14px;text-align:center;padding:30px 0}
 <script>
 const LINKS={
   Gemini:'https://gemini.google.com', ChatGPT:'https://chatgpt.com', Claude:'https://claude.ai',
-  Canva:'https://www.canva.com', 'AI Studio':'https://aistudio.google.com'
+  Canva:'https://www.canva.com', 'AI Studio':'https://aistudio.google.com',
+  '네이버 AI':'https://www.naver.com' /* AI탭은 검색창 옆 AI 버튼으로 들어감 */
 };
 const SVCS=[
   ['Gemini','Google 계정으로 바로 로그인','1일차부터'],
@@ -424,9 +425,10 @@ professional studio portrait photography.
  ]},
  {n:'3교시',t:'일상에서 쓰는 AI',g:'생활 속 작은 일을 AI에게 맡겨 봅니다.',
   ps:[
-  ['물건 비교·최저가','Gemini','[물건]을 사려고 해. 예산은 [금액], 용도는 [용도]야. 후보 3개를 가격·장점·단점 표로 비교하고, 최저가를 확인할 수 있는 곳도 알려 줘. 가격은 확인한 날짜와 출처를 같이 적어 줘.','가격은 수시로 바뀝니다. 링크를 눌러 직접 확인하세요.'],
-  ['식당 찾기와 예약 문의','Gemini','[지역]에서 [인원]명이 [날짜] 저녁에 회식할 식당을 찾아 줘. 1인 [금액] 이내, 단체석·주차 가능한 곳 3곳. 그리고 전화로 예약할 때 할 말과 문자 예약 문구도 써 줘.','AI가 예약을 대신 해 주지는 않습니다. 후보 찾기와 문의 문구까지 맡기고, 예약은 직접 합니다.'],
-  ['이메일 초안 → Gmail 저장','Gemini','[받는 사람]에게 [용건]을 알리는 이메일 초안을 써 줘. 제목 포함, 5줄 이내, 정중하게.','답변 아래 공유·내보내기 메뉴에서 Gmail 초안이나 Google 문서로 보내 둡니다. (메뉴 위치는 화면에 따라 다를 수 있습니다.)']
+  ['물건 비교·최저가','ChatGPT','[물건]을 사려고 해. 예산은 [금액], 용도는 [용도]야. 후보 3개를 가격·장점·단점 표로 비교하고, 최저가를 확인할 수 있는 곳도 알려 줘. 가격은 확인한 날짜와 출처를 같이 적어 줘.','가격은 수시로 바뀝니다. 링크를 눌러 직접 확인하세요.'],
+  ['식당 찾기와 예약 문의','네이버 AI','[지역]에서 [인원]명이 [날짜] 저녁에 회식할 식당을 찾아 줘. 1인 [금액] 이내, 단체석·주차 가능한 곳 3곳. 그리고 전화로 예약할 때 할 말과 문자 예약 문구도 써 줘.','네이버 첫 화면 검색창 옆 AI 버튼을 누르고 붙여 넣으세요. 네이버 플레이스 식당 정보와 지도를 함께 보여 줍니다. 단체석·주차·가격은 전화로 꼭 다시 확인합니다.'],
+  ['이메일 초안 → Gmail 저장',['Gemini','ChatGPT','Claude'],'[받는 사람]에게 [용건]을 알리는 이메일 초안을 써 줘. 제목 포함, 5줄 이내, 정중하게.','세 AI에 같은 문장을 넣고 답을 비교해 보세요. Gemini는 답변 아래 공유·내보내기 메뉴에서 Gmail 초안으로 보내면, 로그인한 내 Gmail 임시보관함에 바로 저장됩니다. (메뉴 위치는 화면에 따라 다를 수 있습니다.)'],
+  ['AI 강의 피드백 보고 메일',['Gemini','ChatGPT','Claude'],'AI 실무 교육(ChatGPT활용빅데이터실무)을 들은 농협 직원으로서, 강의 담당자에게 보낼 피드백 보고 메일을 써 줘.\n\n받는 사람: 정민경 담당자 <chaeahealingcenter@gmail.com>\n참조: chedutain@gmail.com, annexhredu@gmail.com\n제목: [ChatGPT활용빅데이터실무] 1일차 AI 강의 피드백 보고\n\n본문에 넣을 내용\n1. 오늘 배운 것 중 가장 도움이 된 것 3가지\n2. 내 업무에 바로 써 볼 것 1가지\n3. 어려웠던 점과 다음 강의에 바라는 점\n[내 소감 한두 줄 적기]\n\n받는 사람·참조·제목·본문을 나눠서 보여 주고, 본문은 정중하게 10줄 이내로 써 줘.','Gemini에서 썼다면 공유·내보내기 메뉴에서 Gmail 초안으로 보내 임시저장해 보세요. Gmail 임시보관함에서 받는 사람·참조 칸에 위 주소가 들어 있는지 확인하고, 비어 있으면 채운 뒤 보내기를 누릅니다.']
  ]},
  {n:'4교시',t:'엑셀×AI 맛보기 — 조합원명단 정리',g:'AI에게 엑셀 방법을 묻고, 답을 내 엑셀에서 직접 확인합니다.',
   files:[['Day1_P4_Member_List_Practice.xlsx','실습 파일 · 가상 조합원명단']],
@@ -521,7 +523,9 @@ function renderDay(id){
     if(p.tip) h+=`<p class="tip">${esc(p.tip)}</p>`;
     p.ps.forEach(([ttl,where,text,note],j)=>{
       const key=`${id}-${i}-${j}`; const rows=Math.min(9,Math.max(3,Math.ceil(text.length/52)+(text.split('\n').length-1)));
-      const w=LINKS[where]?`<a class="where" href="${LINKS[where]}" target="_blank" rel="noopener">${where} ↗</a>`:`<span class="where">${where}</span>`;
+      // where는 AI 이름 하나 또는 여러 개(배열) — 여러 개면 바로가기를 나란히 표시
+      const chip=x=>LINKS[x]?`<a class="where" href="${LINKS[x]}" target="_blank" rel="noopener">${x} ↗</a>`:`<span class="where">${x}</span>`;
+      const w=[].concat(where).map(chip).join('');
       h+=`<div class="prompt"><div class="top"><span class="ttl">${ttl}${w}</span><span class="acts"><button class="btn ghost" data-reset="${key}">원래대로</button><button class="btn" data-copy="#t-${key}">복사</button></span></div>
       <textarea id="t-${key}" rows="${rows}" data-orig="${esc(text)}">${esc(text)}</textarea>${note?`<p class="note">${esc(note)}</p>`:''}</div>`;
     });
