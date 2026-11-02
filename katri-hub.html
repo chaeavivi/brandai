@@ -33,8 +33,11 @@ a{color:inherit}
 
 /* sticky nav */
 .nav{position:sticky;top:0;z-index:20;background:rgba(244,247,250,.96);backdrop-filter:blur(8px);border-bottom:1px solid var(--line)}
-.nav .wrap{display:flex;gap:6px;overflow-x:auto;padding:10px 16px;scrollbar-width:none}
+.nav .wrap{overflow-x:auto;padding:8px 16px;scrollbar-width:none}
 .nav .wrap::-webkit-scrollbar{display:none}
+.nav-in{display:flex;flex-wrap:wrap;gap:6px}
+.nav::after{content:"";position:absolute;top:0;right:0;bottom:0;width:36px;background:linear-gradient(to right,rgba(244,247,250,0),#f4f7fa 80%);pointer-events:none;opacity:0;transition:opacity .15s}
+.nav.more::after{opacity:1}
 .nav a{flex:none;text-decoration:none;font-size:14px;font-weight:700;padding:8px 13px;border-radius:999px;background:#fff;border:1px solid var(--line);color:var(--navy);white-space:nowrap}
 .nav a.done{background:var(--tl);border-color:var(--teal);color:var(--teal)}
 
@@ -451,7 +454,22 @@ document.getElementById('main').innerHTML = html;
 /* nav */
 const navItems=[['start','시작'],...SECTIONS.map(s=>[s.id,s.nav]),['sc','시나리오'],['kw','키워드'],['bonus','보너스'],['files','자료실'],['end','마무리'],['bld','조립기']];
 const nav=document.getElementById('nav');
-nav.innerHTML=navItems.map(([id,t])=>`<a href="#${id}" data-n="${id}" class="${store[id]?'done':''}">${t}</a>`).join('');
+nav.innerHTML='<div class="nav-in">'+navItems.map(([id,t])=>`<a href="#${id}" data-n="${id}" class="${store[id]?'done':''}">${t}</a>`).join('')+'</div>';
+/* 메뉴는 2줄: 넓은 화면은 2줄에 다 보이고, 좁은 휴대폰은 2줄로 옆으로 밀기(오른쪽 흐림 = 더 있음) */
+const navIn=nav.firstChild, navBar=nav.parentElement;
+function navRows(){return new Set([...navIn.children].map(a=>a.offsetTop)).size}
+function navMore(){navBar.classList.toggle('more',nav.scrollLeft+nav.clientWidth<nav.scrollWidth-4)}
+function navFit(){
+  navIn.style.width='';
+  let w=navIn.clientWidth;
+  while(navRows()>2 && w<2000){w+=16;navIn.style.width=w+'px'}
+  document.documentElement.style.scrollPaddingTop=(navBar.offsetHeight+8)+'px';
+  navMore();
+}
+navFit();
+nav.addEventListener('scroll',navMore,{passive:true});
+addEventListener('resize',navFit);
+if(document.fonts) document.fonts.ready.then(navFit);
 
 /* copy */
 const toast=document.getElementById('toast'); let tt;
