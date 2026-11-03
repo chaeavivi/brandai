@@ -1,0 +1,41 @@
+﻿==============================================================
+ 2일차 4교시 · VBA 만들기 · 적용 연습용 정답 코드
+ - AI가 만든 코드가 잘 안 될 때 이 코드를 써도 됩니다.
+ - 붙이는 법: 샘플 파일에서 Alt + F11 → [삽입] → [모듈]
+             → 아래 Sub ~ End Sub 전체 붙여넣기 → F5 (실행)
+ - 실행 전에 [신청명단]에서 ① 매칭키 만들기를 먼저 눌러 H열을 채워 두세요.
+ - 정답: [비조합원] 시트에 4명 (최동수 · 강성철 · 장기순 · 한상민)
+==============================================================
+
+Public Sub Run4_NonMember()
+    ' 조합원여부(H열)가 "X"인 줄만 [비조합원] 시트에 모으기
+    Dim wsA As Worksheet, wsN As Worksheet
+    Dim r As Long, lastRow As Long, outRow As Long
+
+    Set wsA = ThisWorkbook.Sheets("신청명단")      ' 원래 명단
+
+    ' [비조합원] 시트가 있는지 확인 → 없으면 새로 만들고, 있으면 비우기
+    On Error Resume Next
+    Set wsN = ThisWorkbook.Sheets("비조합원")
+    On Error GoTo 0
+    If wsN Is Nothing Then
+        Set wsN = ThisWorkbook.Sheets.Add(After:=ThisWorkbook.Sheets(ThisWorkbook.Sheets.Count))
+        wsN.Name = "비조합원"
+    Else
+        wsN.Cells.Clear
+    End If
+
+    wsA.Range("A1:I1").Copy wsN.Range("A1")          ' 머리글 복사
+    outRow = 2                                       ' 2번째 줄부터 채우기
+
+    lastRow = wsA.Cells(wsA.Rows.Count, 2).End(xlUp).Row
+    For r = 2 To lastRow                             ' 한 줄씩 보면서
+        If wsA.Cells(r, 8).Value = "X" Then          ' H열이 X면
+            wsA.Range(wsA.Cells(r, 1), wsA.Cells(r, 9)).Copy wsN.Cells(outRow, 1)
+            outRow = outRow + 1
+        End If
+    Next r
+
+    wsN.Columns("A:I").AutoFit                       ' 열 너비 맞추기
+    MsgBox "비조합원 " & (outRow - 2) & "건을 [비조합원] 시트에 모았습니다.", vbInformation, "매크로 샘플"
+End Sub
