@@ -835,8 +835,7 @@ function abInit(){
 // 잠금을 없애려면 LOCKS에서 그 탭 줄을 지우면 됩니다. 한 번 연 기기는 비밀번호가 바뀌기 전까지 계속 열려 있습니다.
 const LOCK_SALT='nh-hub|';
 const LOCKS={
-  d2:{hash:'1a12e6020c2fdb357baf203344c472ebc56e47493625f8239cc1a988d0dd6fcc',
-      title:DAYS.d2.title, date:DAYS.d2.date, msg:'수업 시간에 알려 드리는 비밀번호를 넣으면 열립니다.'},
+  // 2일차는 11/4 수업 당일 비밀번호 잠금 해제 (다시 잠그려면 d2:{hash:'...', title, date, msg} 줄을 되살리면 됨)
   d3:{hash:'', title:'3일차 · AI 실무 자동화', date:'11/5(목) · 정경 대표',
       msg:'3일차 자료는 강의 당일 공개됩니다.', note:'2일차에 만든 매크로 설명서 초안과 점검 체크리스트를 꼭 저장해 두세요.'}
 };
