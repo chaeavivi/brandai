@@ -232,7 +232,7 @@ footer{color:var(--muted);font-size:14px;text-align:center;padding:30px 0}
 <script>
 const LINKS={
   Gemini:'https://gemini.google.com', ChatGPT:'https://chatgpt.com', Claude:'https://claude.ai',
-  Canva:'https://www.canva.com', 'AI Studio':'https://aistudio.google.com', NotebookLM:'https://notebooklm.google.com',
+  Canva:'https://www.canva.com', 'AI Studio':'https://aistudio.google.com', NotebookLM:'https://notebooklm.google.com', GitHub:'https://github.com',
   '네이버 AI':'https://www.naver.com' /* AI탭은 검색창 옆 AI 버튼으로 들어감 */
 };
 const SVCS=[
@@ -647,6 +647,11 @@ d3:{title:'3일차 · AI 실무 자동화',date:'11/5(목) 13:00 · 정경 대�
   ps:[
   ['교육 후기 메일','ChatGPT','너는 [원주농협 ○○센터] 직원이야. 폴리텍 3일 AI 실무 과정을 마쳤고, 팀장님께 교육 후기 메일을 보내려고 해.\n배운 것 3가지 + 내 업무에 바로 쓸 것 1가지 + 건의 1가지를 넣어서, 정중하게 제목 포함 10줄 이내로 써 줘.','허브 [도구] 탭 4요소 조립기로 만들어도 됩니다. 완성한 메일은 본인 메일로 보내고, 카톡방에 한 줄 후기'],
   {h:'복습 · 날짜별로 내가 만든 것 하나씩 말하기',short:'복습',tip:['1일차: 안내문·문자, 가격 비교표, 엑셀 명단 정리, 지점장 회의 PPT, 영상','2일차: 명단 통일·자부담 계산, 미납 문자·Canva 포스터, 매크로 쓰고 고치기, AI Studio 앱','3일차: NotebookLM, 한글 문서, Gem']}
+ ]},
+ {n:'+',t:'보너스 · 시간이 남으면 — 내 앱 인터넷에 올리기 (GitHub)',g:'2일차에 만든 앱을 GitHub에 올리면 휴대폰·카톡으로 누구나 여는 주소가 생깁니다. 선택 과정이에요. 17:20이 되면 바로 ⑥으로 갑니다.',
+  ps:[
+  {h:'1단계 · GitHub에 내 앱 올리기',short:'올리기',time:'10분',g:'준비물: 2일차 앱 파일(html 1개). 앱이 여러 파일이면 2일차 "미납안내문자작성기.html"로 연습해도 됩니다.',check:['github.com → [Sign up]으로 가입 또는 로그인 (이메일·비밀번호만 있으면 무료)','오른쪽 위 [+] → [New repository]','이름 예) my-nh-app · [Public] 선택 → [Create repository]','빈 저장소 화면 가운데 파란 글씨 [uploading an existing file] 클릭','앱 파일 이름을 index.html로 바꾼 뒤 끌어다 놓기 → [Commit changes]']},
+  {h:'2단계 · 인터넷 주소 만들기 (GitHub Pages)',short:'주소',time:'10분',check:['저장소 위쪽 [Settings] (톱니바퀴)','왼쪽 메뉴 [Pages]','Branch: [main] · [/ (root)] 고르고 → [Save]','1~2분 기다린 뒤 새로고침 → 위쪽에 주소가 떠요 (내아이디.github.io/my-nh-app)','주소를 휴대폰으로 열어 보고 카톡방에 공유'],tip:'공개 주소예요. 실명·전화번호·조합원 정보는 절대 넣지 않습니다. 끝나면 ⑥에서 GitHub도 로그아웃하세요.'}
  ]},
  {n:'⑥',t:'계정 로그아웃 · 삭제 (마지막 30분)',g:'공용 PC입니다. 시간이 밀려도 이 순서는 꼭 합니다. 하나씩 끝낼 때마다 체크하세요.',
   ps:[
