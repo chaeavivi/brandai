@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>강사를 위한 AI 실무 클래스 1기 | 실습 워크시트 (인쇄용)</title>
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  @page{size:A4;margin:0}
+  :root{--navy:#0f1a2e;--lime:#dfff9c;--ink:#1a2333;--muted:#6b7385;--line:#c9ccd3;--soft:#f3f1ec}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:"Paperlogy","Pretendard",system-ui,sans-serif;color:var(--ink);font-size:10.5pt;line-height:1.5;word-break:keep-all;overflow-wrap:anywhere;background:#e9e7e2;-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  h1,h2,h3{font-weight:600;letter-spacing:-0.02em;line-height:1.3}
+
+  .page{width:210mm;height:297mm;margin:12mm auto;background:#fff;padding:14mm 15mm 12mm;position:relative;overflow:hidden;box-shadow:0 2px 12px rgba(0,0,0,.08);display:flex;flex-direction:column}
+  @media print{body{background:#fff}.page{margin:0;height:296mm;box-shadow:none;page-break-after:always;break-after:page}.page:last-child{page-break-after:auto;break-after:auto}.screen-only{display:none!important}}
+
+  /* 머리띠 */
+  .head{display:flex;justify-content:space-between;align-items:flex-end;border-bottom:2pt solid var(--navy);padding-bottom:3mm;margin-bottom:5mm}
+  .head .part{display:inline-block;background:var(--navy);color:var(--lime);font-size:9pt;font-weight:600;padding:1mm 3mm;border-radius:1.5mm;margin-bottom:1.5mm}
+  .head h2{font-size:17pt}
+  .head .meta{font-size:8.5pt;color:var(--muted);text-align:right;line-height:1.5}
+  .foot{margin-top:auto;padding-top:3mm;border-top:.5pt solid var(--line);display:flex;justify-content:space-between;font-size:7.5pt;color:var(--muted)}
+
+  h3{font-size:11.5pt;margin:4.5mm 0 2mm;display:flex;align-items:center;gap:2mm}
+  h3 .n{display:inline-flex;align-items:center;justify-content:center;width:5.5mm;height:5.5mm;border-radius:50%;background:var(--navy);color:var(--lime);font-size:8pt;flex:none}
+  .desc{font-size:9pt;color:var(--muted);margin-bottom:2mm}
+
+  /* 기입 칸 */
+  .row{display:grid;grid-template-columns:28mm 1fr;align-items:end;gap:3mm;min-height:8.5mm;border-bottom:.6pt solid var(--line)}
+  .row b{font-size:9pt;font-weight:600;padding-bottom:1.2mm}
+  .row small{display:block;font-size:7.5pt;color:var(--muted);font-weight:400}
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:0 6mm}
+  .lines{background-image:linear-gradient(to bottom,transparent calc(8mm - .6pt),var(--line) calc(8mm - .6pt));background-size:100% 8mm}
+  .l2{height:16mm}.l3{height:24mm}.l4{height:32mm}.l5{height:40mm}
+
+  /* 프롬프트 박스 */
+  .prompt{background:var(--soft);border-left:2pt solid var(--navy);border-radius:0 2mm 2mm 0;padding:2.5mm 3.5mm;font-size:8.8pt;line-height:1.55;margin:1mm 0 1mm}
+  .prompt .lbl{font-size:7pt;font-weight:600;color:var(--navy);letter-spacing:.05em;display:block;margin-bottom:.8mm}
+  .prompt u{text-decoration:none;border-bottom:.6pt solid var(--ink);display:inline-block;min-width:22mm}
+
+  /* 표 */
+  table{width:100%;border-collapse:collapse;font-size:8.8pt}
+  th{background:var(--navy);color:#fff;font-weight:600;padding:1.6mm 2mm;text-align:left}
+  td{border:.6pt solid var(--line);height:9.5mm;padding:1mm 2mm;vertical-align:top}
+  td.c{text-align:center;color:var(--muted);vertical-align:middle}
+  tr.sum td{background:var(--soft);height:8mm;vertical-align:middle;font-weight:600}
+
+  /* 체크 */
+  .checks{list-style:none;columns:2;column-gap:6mm}
+  .checks li{break-inside:avoid;display:flex;gap:2.5mm;align-items:flex-start;padding:1.4mm 0;font-size:9.5pt}
+  .checks li::before{content:"";flex:none;width:3.6mm;height:3.6mm;border:.9pt solid var(--navy);border-radius:.8mm;margin-top:.8mm}
+  .checks.one{columns:1}
+
+  /* 스토리보드 */
+  .board{display:grid;gap:3mm}
+  .board.s12{grid-template-columns:repeat(4,1fr)}
+  .board.s8{grid-template-columns:repeat(4,1fr)}
+  .cell{border:.6pt solid var(--line);border-radius:1.5mm;position:relative;padding:5.5mm 2mm 2mm}
+  .board.s12 .cell{height:21mm}
+  .board.s8 .cell{height:33mm}
+  .cell i{position:absolute;top:1.2mm;left:2mm;font-style:normal;font-size:7.5pt;font-weight:600;color:var(--muted)}
+  .cell em{font-style:normal;font-size:7.5pt;color:var(--muted)}
+
+  /* 표지 */
+  .cover-top{background:var(--navy);color:#fff;margin:-14mm -15mm 0;padding:16mm 15mm 12mm}
+  .cover-top .tag{display:inline-block;background:var(--lime);color:var(--navy);font-size:9pt;font-weight:600;padding:1mm 3.5mm;border-radius:10mm}
+  .cover-top h1{font-size:25pt;margin:5mm 0 3mm}
+  .cover-top h1 span{color:var(--lime)}
+  .cover-top p{color:#c7cedb;font-size:10pt}
+  .cover-info{display:grid;grid-template-columns:repeat(3,1fr);gap:3mm;margin-top:7mm}
+  .cover-info div{border:.6pt solid #2c3d5a;border-radius:2mm;padding:2.5mm 3mm;font-size:9pt}
+  .cover-info b{display:block;color:var(--lime);font-size:7.5pt;font-weight:600}
+  .name{display:flex;gap:6mm;margin:7mm 0 1mm}
+  .name .row{flex:1}
+  .flow{width:100%;border-collapse:collapse;margin-top:1mm}
+  .flow td{border:none;border-bottom:.6pt solid var(--line);height:auto;padding:2.2mm 2mm;vertical-align:middle;font-size:9.3pt}
+  .flow td:first-child{width:27mm;font-variant-numeric:tabular-nums;font-weight:600}
+  .flow td:nth-child(2){width:18mm}
+  .flow .pill{display:inline-block;background:var(--navy);color:var(--lime);font-size:7.5pt;font-weight:600;padding:.5mm 2mm;border-radius:1mm}
+  .flow td:last-child{color:var(--muted);width:42mm;font-size:8.5pt}
+  .note{font-size:8.5pt;color:var(--muted);margin-top:3mm}
+
+  .screen-only{max-width:210mm;margin:12mm auto 0;display:flex;justify-content:space-between;align-items:center;font-size:14px;color:#444}
+  .screen-only button{font:inherit;background:var(--navy);color:var(--lime);border:0;padding:8px 16px;border-radius:8px;cursor:pointer}
+</style>
+</head>
+<body>
+
+<div class="screen-only">
+  <span>A4 인쇄용 · 6쪽. 인쇄 설정에서 <b>배경 그래픽</b> 켜기, 여백 <b>없음</b>.</span>
+  <button type="button" onclick="window.print()">인쇄·PDF 저장</button>
+</div>
+
+<!-- ================= 1쪽: 표지 ================= -->
+<div class="page">
+  <div class="cover-top">
+    <span class="tag">실습 워크시트</span>
+    <h1>강사를 위한<br><span>AI 실무 클래스</span> 1기</h1>
+    <p>내 강의 1건으로 강의안 → Canva 교안 → 강의계획서 스킬까지</p>
+    <div class="cover-info">
+      <div><b>일시</b>2026.11.22(일) 14:00~18:00</div>
+      <div><b>장소</b>상상크리에이티브 402호</div>
+      <div><b>강사</b>정민경 · 원주채아힐링센터</div>
+    </div>
+  </div>
+
+  <div class="name">
+    <div class="row"><b>이름</b><span></span></div>
+    <div class="row"><b>주력 강의</b><span></span></div>
+  </div>
+  <div class="row"><b>오늘 재료로 쓸 강의</b><span></span></div>
+
+  <h3>오늘의 흐름</h3>
+  <table class="flow">
+    <tr><td>14:00~14:10</td><td><span class="pill">오프닝</span></td><td>소개, 강사 시범, 재료 강의 정하기</td><td>1쪽</td></tr>
+    <tr><td>14:10~15:00</td><td><span class="pill">1부</span></td><td>블로그 문체 학습 + Claude로 강의안 설계</td><td>2쪽 · 강의안</td></tr>
+    <tr><td>15:00~15:50</td><td><span class="pill">2부</span></td><td>Claude × Canva 교안, 워크북, 홍보 카드뉴스</td><td>3쪽 · 교안·카드뉴스</td></tr>
+    <tr><td>15:50~17:10</td><td><span class="pill">3부</span></td><td>나만의 강의계획서 스킬 만들기와 테스트</td><td>4~5쪽 · 스킬</td></tr>
+    <tr><td>17:10~17:40</td><td><span class="pill">마무리</span></td><td>결과물 공유, 1:1 피드백</td><td>6쪽</td></tr>
+    <tr><td>17:40~18:00</td><td><span class="pill">확장</span></td><td>메일 연결: 문의 메일 → 강의계획서·답장 초안</td><td>6쪽</td></tr>
+  </table>
+
+  <h3>시작 전 확인</h3>
+  <ul class="checks">
+    <li>노트북 + 충전기</li>
+    <li>Claude 유료 계정(Pro 이상) 로그인</li>
+    <li>Canva 계정 로그인</li>
+    <li>크롬 + 리뷰언즈 엔서포터 설치</li>
+    <li>내 강의 자료 1종 (강의계획서·PPT)</li>
+    <li>내 블로그 주소</li>
+    <li>Claude 설정 › 커넥터에서 Canva 연결</li>
+    <li>(선택) 출강 문의 받는 Gmail</li>
+  </ul>
+
+  <p class="note">이 종이에는 생각과 결정을 적고, 프롬프트는 수업 허브의 <b>프롬프트</b> 칸에서 복사해 쓰기. 칸을 채워 두면 프롬프트 빈칸에 그대로 옮겨 적으면 됨.</p>
+
+  <div class="foot"><span>강사를 위한 AI 실무 클래스 1기 · 원주채아힐링센터</span><span>1 / 6</span></div>
+</div>
+
+<!-- ================= 2쪽: 1부 ================= -->
+<div class="page">
+  <div class="head">
+    <div><span class="part">1부 · 14:10~15:00</span><h2>Claude로 강의안 설계</h2></div>
+    <div class="meta">결과물<br>분 단위 강의안 1건</div>
+  </div>
+
+  <h3><span class="n">1</span>블로그 문체 학습</h3>
+  <p class="desc">엔서포터로 블로그 글 3~5편 Word 내보내기 → 강의 프로젝트에 업로드 → 문체 가이드 요청 → 프로젝트 지침에 붙이기</p>
+  <div class="two">
+    <div class="row"><b>고른 글 1</b><span></span></div>
+    <div class="row"><b>고른 글 2</b><span></span></div>
+    <div class="row"><b>고른 글 3</b><span></span></div>
+    <div class="row"><b>고른 글 4·5</b><span></span></div>
+  </div>
+  <div class="row" style="margin-top:1mm"><b>Claude가 찾은<br>내 문체 특징</b><span></span></div>
+  <div class="lines l2"></div>
+
+  <h3><span class="n">2</span>강의 조건</h3>
+  <p class="desc">다섯 가지가 구체적일수록 내 현장에 맞는 강의안이 나옴</p>
+  <div class="two">
+    <div class="row"><b>대상</b><span></span></div>
+    <div class="row"><b>인원</b><span></span></div>
+    <div class="row"><b>총 시간</b><span></span></div>
+    <div class="row"><b>진행 형태</b><span></span></div>
+  </div>
+  <div class="row"><b>학습 목표<small>끝나고 할 수 있게 되는 것</small></b><span></span></div>
+  <div class="lines l2"></div>
+  <div class="row"><b>현장 조건<small>장소·장비·재료</small></b><span></span></div>
+
+  <div class="prompt" style="margin-top:3mm"><span class="lbl">PROMPT · 강의안 설계</span>아래 조건으로 강의안을 설계해줘. 대상 <u></u> / 인원 <u></u> / 총 시간 <u></u> / 학습 목표 <u></u> / 현장 조건 <u></u>. 목표 → 확인 방법 → 활동 순서로, 결과는 표(시간 | 단계 | 활동 | 진행 방법 | 준비물)로.</div>
+
+  <h3><span class="n">3</span>나온 강의안 옮겨 적기 · 시간 검증</h3>
+  <table>
+    <tr><th style="width:18mm">시간(분)</th><th style="width:16mm">단계</th><th>활동</th><th style="width:40mm">진행 방법</th><th style="width:26mm">준비물</th></tr>
+    <tr><td></td><td class="c">도입</td><td></td><td></td><td></td></tr>
+    <tr><td></td><td class="c">전개</td><td></td><td></td><td></td></tr>
+    <tr><td></td><td class="c">전개</td><td></td><td></td><td></td></tr>
+    <tr><td></td><td class="c">전개</td><td></td><td></td><td></td></tr>
+    <tr><td></td><td class="c">정리</td><td></td><td></td><td></td></tr>
+    <tr class="sum"><td></td><td colspan="4">합계 = 총 시간과 같은가?  □ 같음  □ 다름 → Claude에게 시간 합계 검증 요청</td></tr>
+  </table>
+
+  <div class="foot"><span>강사를 위한 AI 실무 클래스 1기 · 1부</span><span>2 / 6</span></div>
+</div>
+
+<!-- ================= 3쪽: 2부 ================= -->
+<div class="page">
+  <div class="head">
+    <div><span class="part">2부 · 15:00~15:50</span><h2>Claude × Canva 교안과 카드뉴스</h2></div>
+    <div class="meta">결과물<br>슬라이드 교안 · 워크북 1장 · 카드뉴스</div>
+  </div>
+
+  <h3><span class="n">1</span>디자인 기준 정하기</h3>
+  <div class="row"><b>참고 템플릿<small>Canva 링크</small></b><span></span></div>
+  <div class="two">
+    <div class="row"><b>분위기·색</b><span></span></div>
+    <div class="row"><b>슬라이드 장수</b><span></span></div>
+  </div>
+  <div class="prompt" style="margin-top:2mm"><span class="lbl">순서</span>① 장별 문구 구성안 먼저 받기 → ② 고친 뒤 Canva로 생성 (참고 템플릿 스타일 따르게) → ③ 같은 톤으로 워크북 1장. 내가 손댄 디자인은 다시 AI에게 맡기지 않기.</div>
+
+  <h3><span class="n">2</span>슬라이드 구성 스케치</h3>
+  <p class="desc">장마다 제목과 핵심 문구 한 줄. Claude 구성안을 보고 고칠 점을 적기</p>
+  <div class="board s12">
+    <div class="cell"><i>01 표지</i></div><div class="cell"><i>02</i></div><div class="cell"><i>03</i></div><div class="cell"><i>04</i></div>
+    <div class="cell"><i>05</i></div><div class="cell"><i>06</i></div><div class="cell"><i>07</i></div><div class="cell"><i>08</i></div>
+    <div class="cell"><i>09</i></div><div class="cell"><i>10</i></div><div class="cell"><i>11</i></div><div class="cell"><i>12 정리</i></div>
+  </div>
+
+  <h3><span class="n">3</span>홍보 카드뉴스 8장</h3>
+  <div class="two" style="margin-bottom:2mm">
+    <div class="row"><b>신청·문의 방법</b><span></span></div>
+    <div class="row"><b>표지 사진<small>사람이 나온 사진</small></b><span></span></div>
+  </div>
+  <div class="board s8">
+    <div class="cell"><i>1 표지</i></div><div class="cell"><i>2 이런 분께</i></div><div class="cell"><i>3 배우는 내용</i></div><div class="cell"><i>4 얻어 가는 것</i></div>
+    <div class="cell"><i>5 강사 소개</i></div><div class="cell"><i>6 일정·장소</i></div><div class="cell"><i>7 준비물</i></div><div class="cell"><i>8 신청 방법</i></div>
+  </div>
+
+  <div class="foot"><span>강사를 위한 AI 실무 클래스 1기 · 2부</span><span>3 / 6</span></div>
+</div>
+
+<!-- ================= 4쪽: 3부 규칙 ================= -->
+<div class="page">
+  <div class="head">
+    <div><span class="part">3부 · 15:50~17:10</span><h2>나만의 강의계획서 스킬 ①</h2></div>
+    <div class="meta">결과물<br>강의 조건만 주면 내 양식대로 나오는 스킬</div>
+  </div>
+
+  <p class="desc" style="font-size:9.5pt;color:var(--ink)"><b>스킬</b> = 매번 Claude에게 설명하던 양식·말투·규칙을 한 번 저장해 두는 것. 1부 강의안을 보면서 채우기.</p>
+
+  <h3><span class="n">1</span>필수 항목</h3>
+  <p class="desc">강의계획서에 꼭 들어가야 하는 칸 (예: 강의명, 일시, 대상·인원, 학습 목표, 시간표, 준비물, 강사 소개)</p>
+  <div class="lines l3"></div>
+
+  <h3><span class="n">2</span>양식</h3>
+  <p class="desc">분량, 표 구성, 순서 (예: A4 1장, 기본 정보 표 → 시간표 표 → 기대 효과 3줄)</p>
+  <div class="lines l3"></div>
+
+  <h3><span class="n">3</span>표기와 규칙</h3>
+  <div class="row"><b>브랜드·기관명</b><span></span></div>
+  <div class="row"><b>강사 표기</b><span></span></div>
+  <div class="row"><b>시간 배분<small>예: 도입·정리 각 10%</small></b><span></span></div>
+
+  <h3><span class="n">4</span>피할 표현</h3>
+  <div class="lines l2"></div>
+
+  <h3><span class="n">5</span>내 문체 <span style="font-weight:400;font-size:9pt;color:var(--muted)">(1부 문체 가이드에서 핵심 3가지)</span></h3>
+  <div class="lines l3"></div>
+
+  <div class="prompt" style="margin-top:2mm"><span class="lbl">PROMPT · 스킬 만들기</span>지금까지 정리한 규칙으로 "내 강의계획서" 스킬을 만들어줘. 필수 항목 / 양식 / 표기 / 시간 배분 / 피할 표현 / 문체(프로젝트 지침)를 넣고, 작업 순서는 ① 빠진 조건 한 번에 묻기 ② 목표 → 확인 방법 → 활동 설계 ③ 시간 합계 검증 후 출력. 저장 전에 내용을 먼저 보여줘.</div>
+
+  <div class="foot"><span>강사를 위한 AI 실무 클래스 1기 · 3부</span><span>4 / 6</span></div>
+</div>
+
+<!-- ================= 5쪽: 3부 테스트 ================= -->
+<div class="page">
+  <div class="head">
+    <div><span class="part">3부 · 15:50~17:10</span><h2>나만의 강의계획서 스킬 ②</h2></div>
+    <div class="meta">새 대화에서 테스트하고<br>한 번 다듬기</div>
+  </div>
+
+  <h3><span class="n">6</span>스킬 저장</h3>
+  <div class="two">
+    <div class="row"><b>스킬 이름<small>영문 소문자</small></b><span></span></div>
+    <div class="row"><b>저장 확인</b><span>□ 저장됨</span></div>
+  </div>
+
+  <h3><span class="n">7</span>테스트 ① 오늘과 다른 강의</h3>
+  <p class="desc">프로젝트 밖 새 대화에서 "내 강의계획서 스킬로 강의계획서 만들어줘" + 아래 조건</p>
+  <div class="row"><b>테스트 강의 조건</b><span></span></div>
+  <div class="lines l2"></div>
+
+  <table style="margin-top:3mm">
+    <tr><th style="width:42mm">확인할 것</th><th style="width:22mm">결과</th><th>어긋난 점</th></tr>
+    <tr><td>필수 항목이 다 있다</td><td class="c">○ / ×</td><td></td></tr>
+    <tr><td>내 양식·순서 그대로</td><td class="c">○ / ×</td><td></td></tr>
+    <tr><td>브랜드·강사 표기 정확</td><td class="c">○ / ×</td><td></td></tr>
+    <tr><td>시간 합계가 맞다</td><td class="c">○ / ×</td><td></td></tr>
+    <tr><td>내 문체로 읽힌다</td><td class="c">○ / ×</td><td></td></tr>
+    <tr><td>피할 표현이 없다</td><td class="c">○ / ×</td><td></td></tr>
+  </table>
+
+  <h3><span class="n">8</span>스킬 다듬기</h3>
+  <div class="prompt"><span class="lbl">PROMPT · 수정</span>방금 강의계획서에서 스킬 규칙과 어긋난 부분: <u style="min-width:70mm"></u>. 다음부터 안 생기게 스킬을 수정해줘. 수정한 부분만 먼저 보여줘.</div>
+  <div class="row" style="margin-top:2mm"><b>고친 내용</b><span></span></div>
+  <div class="lines l2"></div>
+
+  <h3><span class="n">9</span>테스트 ② (진도가 빠르면)</h3>
+  <div class="row"><b>두 번째 강의</b><span></span></div>
+  <div class="row"><b>결과</b><span>□ 한 번에 통과   □ 한 번 더 수정</span></div>
+
+  <div class="foot"><span>강사를 위한 AI 실무 클래스 1기 · 3부</span><span>5 / 6</span></div>
+</div>
+
+<!-- ================= 6쪽: 마무리 + 확장 ================= -->
+<div class="page">
+  <div class="head">
+    <div><span class="part">마무리 · 17:10~18:00</span><h2>결과물 점검과 다음 강의 적용</h2></div>
+    <div class="meta">결과물은 공유 폴더의<br>내 이름 폴더에</div>
+  </div>
+
+  <h3><span class="n">1</span>결과물 체크</h3>
+  <ul class="checks one">
+    <li>강의안: 블록 시간 합계가 총 시간과 일치</li>
+    <li>문체 가이드가 프로젝트 지침에 들어감</li>
+    <li>Canva 교안 초안 + 워크북 1장, 참고 템플릿 스타일 적용</li>
+    <li>홍보 카드뉴스 완성</li>
+    <li>강의계획서 스킬 저장, 다른 강의로 테스트 통과</li>
+    <li>결과물 공유 폴더에 올림 (Canva는 공유 링크로)</li>
+  </ul>
+
+  <h3><span class="n">2</span>1:1 피드백 메모</h3>
+  <div class="lines l3"></div>
+
+  <h3><span class="n">3</span>다음 강의에 바로 쓸 것</h3>
+  <div class="row"><b>다음 강의</b><span></span></div>
+  <div class="row"><b>날짜</b><span></span></div>
+  <div class="row"><b>오늘 것 중<br>쓸 것</b><span></span></div>
+  <div class="lines l2"></div>
+
+  <h3><span class="n">4</span>확장 · 메일 연결 <span style="font-weight:400;font-size:9pt;color:var(--muted)">(선택)</span></h3>
+  <p class="desc">Claude 설정 › 커넥터에서 Gmail 연결 → 문의 메일 정리 → 스킬로 강의계획서 → 답장 초안. 발송은 직접 확인 후.</p>
+  <table>
+    <tr><th>기관명</th><th>담당자</th><th>희망 일시</th><th>대상·인원</th><th>예산</th></tr>
+    <tr><td></td><td></td><td></td><td></td><td></td></tr>
+  </table>
+  <p class="desc" style="margin-top:1.5mm">답장 보내기 전 확인: □ 기관명 □ 담당자명 □ 날짜·시간 □ 첨부</p>
+
+  <h3><span class="n">5</span>한 줄 후기</h3>
+  <div class="lines l2"></div>
+
+  <div class="foot"><span>문의 0507-1431-7305 · chaeahealingcenter@gmail.com</span><span>6 / 6</span></div>
+</div>
+
+</body>
+</html>

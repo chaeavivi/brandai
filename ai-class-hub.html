@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>강사를 위한 AI 실무 클래스 1기 | 수업 허브</title>
+<meta name="description" content="2026.11.22(일) 강사를 위한 AI 실무 클래스 1기 수업 허브. 시간표, 사전 준비, 설치·연결 가이드, 실습 자료 모음.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  /* ==== 클래스 팔레트 (운영 정리 기준) ==== */
+  :root{
+    --navy:#0f1a2e;
+    --navy-2:#18263f;
+    --navy-3:#24344f;
+    --lime:#dfff9c;
+    --lime-dim:#c9ec7f;
+    --cream:#fbf7ef;
+    --white:#ffffff;
+    --ink:#0f1a2e;
+    --muted:#5b6578;
+    --line:#e7e1d4;
+    --radius:16px;
+    --ease:cubic-bezier(.22,1,.36,1);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth;scroll-padding-top:72px}
+  body{
+    font-family:"Paperlogy","Pretendard",-apple-system,BlinkMacSystemFont,system-ui,sans-serif;
+    background:var(--cream);color:var(--ink);font-size:16px;line-height:1.65;
+    word-break:keep-all;overflow-wrap:anywhere;-webkit-font-smoothing:antialiased;
+  }
+  h1,h2,h3{text-wrap:balance;letter-spacing:-0.02em;font-weight:600;line-height:1.3}
+  p,li{text-wrap:pretty}
+  a{color:inherit}
+  .wrap{max-width:960px;margin:0 auto;padding:0 20px}
+
+  /* ==== 상단 내비 ==== */
+  .nav{position:sticky;top:0;z-index:20;background:rgba(15,26,46,.94);backdrop-filter:blur(8px);border-bottom:1px solid var(--navy-3)}
+  .nav .wrap{display:flex;align-items:center;gap:20px;height:56px;overflow-x:auto;scrollbar-width:none}
+  .nav .wrap::-webkit-scrollbar{display:none}
+  .nav .brand{color:var(--lime);font-weight:600;font-size:15px;white-space:nowrap;text-decoration:none}
+  .nav a.link{color:#c7cedb;font-size:14px;text-decoration:none;white-space:nowrap;transition:color .2s var(--ease)}
+  .nav a.link:hover{color:var(--white)}
+
+  /* ==== 히어로 ==== */
+  .hero{background:var(--navy);color:var(--white);padding:64px 0 56px}
+  .tag{display:inline-block;background:var(--lime);color:var(--navy);font-size:13px;font-weight:600;padding:4px 12px;border-radius:999px}
+  .hero h1{font-size:clamp(30px,5.4vw,46px);margin:18px 0 14px}
+  .hero h1 em{font-style:normal;color:var(--lime)}
+  .hero .sub{color:#c7cedb;font-size:17px;max-width:620px}
+  .meta{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:32px}
+  .meta div{background:var(--navy-2);border:1px solid var(--navy-3);border-radius:12px;padding:14px 16px}
+  .meta dt{font-size:13px;color:var(--lime);margin-bottom:2px}
+  .meta dd{font-size:15px}
+
+  /* ==== 섹션 공통 ==== */
+  section{padding:56px 0;border-bottom:1px solid var(--line)}
+  .eyebrow{font-size:13px;font-weight:600;color:var(--muted);letter-spacing:.04em}
+  section h2{font-size:clamp(24px,3.6vw,30px);margin:6px 0 10px}
+  .lead{color:var(--muted);margin-bottom:28px;max-width:640px}
+
+  /* ==== 결과물 카드 ==== */
+  .grid3{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:14px}
+  .card{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px}
+  .card .num{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;background:var(--navy);color:var(--lime);font-size:14px;font-weight:600;margin-bottom:12px}
+  .card h3{font-size:18px;margin-bottom:6px}
+  .card p{color:var(--muted);font-size:15px}
+  .card.ext{background:transparent;border-style:dashed}
+  .card.ext .num{background:var(--lime);color:var(--navy)}
+  .subhead{font-size:15px;font-weight:600;margin:28px 0 12px}
+
+  /* ==== 시간표 ==== */
+  .timeline{display:flex;flex-direction:column;gap:12px}
+  .block{display:grid;grid-template-columns:132px 1fr;gap:18px;background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:20px 22px}
+  .block .time{font-family:"Pretendard",monospace;font-variant-numeric:tabular-nums;font-weight:600;font-size:15px}
+  .block .time small{display:block;color:var(--muted);font-weight:400;font-size:13px}
+  .block h3{font-size:18px;margin-bottom:4px}
+  .block h3 span{display:inline-block;font-size:12px;font-weight:600;background:var(--navy);color:var(--lime);padding:2px 8px;border-radius:6px;margin-right:8px;vertical-align:2px}
+  .block ul{list-style:none;color:var(--muted);font-size:15px;margin:6px 0 12px}
+  .block li{padding-left:14px;position:relative}
+  .block li::before{content:"";position:absolute;left:0;top:.72em;width:5px;height:5px;border-radius:50%;background:var(--lime-dim)}
+  .res{display:flex;flex-wrap:wrap;gap:8px}
+  .res a,.res span{font-size:14px;text-decoration:none;padding:6px 12px;border-radius:999px;border:1px solid var(--navy);transition:background .2s var(--ease),color .2s var(--ease)}
+  .res a{background:var(--navy);color:var(--white)}
+  .res a:hover{background:var(--navy-3)}
+  .res span.pending{border-color:var(--line);color:var(--muted);background:var(--cream)}
+  .block.opt{background:transparent;border-style:dashed}
+
+  /* ==== 체크리스트 ==== */
+  .check{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);overflow:hidden}
+  .check label{display:flex;gap:14px;align-items:flex-start;padding:16px 20px;border-bottom:1px solid var(--line);cursor:pointer;transition:background .2s var(--ease)}
+  .check label:last-child{border-bottom:0}
+  .check label:hover{background:#fdfbf6}
+  .check input{appearance:none;flex:none;width:22px;height:22px;border:2px solid var(--navy);border-radius:6px;margin-top:2px;display:grid;place-content:center;cursor:pointer;transition:background .2s var(--ease)}
+  .check input:checked{background:var(--navy)}
+  .check input:checked::after{content:"";width:10px;height:6px;border-left:2px solid var(--lime);border-bottom:2px solid var(--lime);transform:rotate(-45deg) translate(1px,-1px)}
+  .check b{font-weight:600}
+  .check small{display:block;color:var(--muted);font-size:14px}
+  .check input:checked + div b{text-decoration:line-through;color:var(--muted)}
+  .progress{display:flex;align-items:center;gap:12px;margin-bottom:14px;font-size:14px;color:var(--muted)}
+  .bar{flex:1;height:8px;background:var(--line);border-radius:999px;overflow:hidden}
+  .bar i{display:block;height:100%;width:0;background:var(--navy);transition:width .4s var(--ease)}
+
+  /* ==== 가이드 아코디언 ==== */
+  details{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);margin-bottom:12px}
+  summary{list-style:none;cursor:pointer;padding:18px 22px;display:flex;align-items:center;justify-content:space-between;gap:12px;font-weight:600;font-size:17px}
+  summary::-webkit-details-marker{display:none}
+  summary .when{font-size:13px;font-weight:400;color:var(--muted);margin-left:8px}
+  summary::after{content:"+";font-size:22px;font-weight:400;transition:transform .25s var(--ease)}
+  details[open] summary::after{transform:rotate(45deg)}
+  .guide{padding:0 22px 22px}
+  .guide ol{padding-left:22px}
+  .guide li{margin-bottom:8px}
+  .guide code{font-family:"Pretendard",monospace;background:var(--cream);border:1px solid var(--line);padding:1px 6px;border-radius:6px;font-size:14px}
+  .note{margin-top:14px;background:var(--cream);border-left:3px solid var(--navy);padding:12px 14px;border-radius:0 10px 10px 0;font-size:15px;color:var(--muted)}
+  .btn{display:inline-block;margin-top:14px;background:var(--lime);color:var(--navy);font-weight:600;text-decoration:none;padding:10px 18px;border-radius:10px;transition:background .2s var(--ease)}
+  .btn:hover{background:var(--lime-dim)}
+
+  /* ==== 프롬프트 ==== */
+  .step{background:var(--white);border:1px solid var(--line);border-radius:var(--radius);padding:22px;margin-bottom:16px}
+  .step h3{font-size:18px;margin-bottom:4px;display:flex;align-items:center;gap:10px}
+  .step h3 .n{flex:none;display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:50%;background:var(--navy);color:var(--lime);font-size:13px}
+  .step > p{color:var(--muted);font-size:15px;margin-bottom:14px}
+  .step.opt{background:transparent;border-style:dashed}
+
+  .fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:16px}
+  .fields .full{grid-column:1/-1}
+  label.f{display:flex;flex-direction:column;gap:5px;font-size:14px;font-weight:600}
+  label.f small{font-weight:400;color:var(--muted)}
+  input[type=text],textarea{font:inherit;font-size:16px;color:var(--ink);background:var(--cream);border:1px solid var(--line);border-radius:10px;padding:10px 12px;width:100%;transition:border-color .2s var(--ease),background .2s var(--ease)}
+  input[type=text]:focus,textarea:focus{outline:none;border-color:var(--navy);background:var(--white)}
+  textarea{min-height:76px;resize:vertical}
+
+  .prompt{position:relative;background:var(--navy);color:#e6ebf3;border-radius:12px;padding:18px 18px 18px;font-size:15px;line-height:1.7;white-space:pre-wrap}
+  .prompt .lbl{display:block;color:var(--lime);font-size:12px;font-weight:600;letter-spacing:.04em;margin-bottom:8px}
+  .prompt mark{background:transparent;color:var(--lime);border-bottom:1px dashed var(--lime)}
+  .copy{margin-top:10px;display:inline-flex;align-items:center;gap:6px;background:var(--lime);color:var(--navy);border:0;font:inherit;font-size:14px;font-weight:600;padding:8px 16px;border-radius:10px;cursor:pointer;transition:background .2s var(--ease)}
+  .copy:hover{background:var(--lime-dim)}
+  .copy.done{background:var(--white)}
+
+  .tip{margin-top:14px;background:var(--cream);border-left:3px solid var(--navy);padding:10px 14px;border-radius:0 10px 10px 0;font-size:15px;color:var(--muted)}
+  
+  .pr-head{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin:36px 0 14px}
+  .pr-head:first-of-type{margin-top:0}
+  .pr-head h3{font-size:20px}
+  .pr-head span{font-size:13px;color:var(--muted)}
+  .reset{background:transparent;color:var(--muted);border:1px solid var(--line);font:inherit;font-size:14px;padding:8px 14px;border-radius:10px;cursor:pointer}
+  .reset:hover{color:var(--ink);border-color:var(--navy)}
+  @media (max-width:640px){.fields{grid-template-columns:1fr}}
+
+  /* ==== 링크 모음 ==== */
+  .links{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px}
+  .links a,.links span{display:block;background:var(--white);border:1px solid var(--line);border-radius:12px;padding:16px 18px;text-decoration:none;transition:border-color .2s var(--ease),transform .2s var(--ease)}
+  .links a:hover{border-color:var(--navy);transform:translateY(-2px)}
+  .links b{display:block;font-weight:600}
+  .links small{color:var(--muted);font-size:14px}
+  .links span{opacity:.6}
+
+  /* ==== 푸터 ==== */
+  footer{background:var(--navy);color:#c7cedb;padding:40px 0;font-size:14px}
+  footer b{color:var(--white);font-weight:600}
+  footer a{color:var(--lime);text-decoration:none}
+
+  @media (max-width:640px){
+    .block{grid-template-columns:1fr;gap:8px}
+    .hero{padding:48px 0 40px}
+    section{padding:44px 0}
+  }
+  @media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="섹션 이동">
+  <div class="wrap">
+    <a class="brand" href="#top">AI 실무 클래스 1기</a>
+    <a class="link" href="#outcome">결과물</a>
+    <a class="link" href="#schedule">시간표</a>
+    <a class="link" href="#prompts">프롬프트</a>
+    <a class="link" href="#prep">사전 준비</a>
+    <a class="link" href="#guide">설치·연결</a>
+    <a class="link" href="#links">링크 모음</a>
+  </div>
+</nav>
+
+<header class="hero" id="top">
+  <div class="wrap">
+    <span class="tag">1기 수업 허브</span>
+    <h1>강의안부터 교안까지,<br><em>강사를 위한 AI 실무 클래스</em></h1>
+    <p class="sub">내 강의 1건을 재료로 Claude 강의안 설계, Canva 교안 제작, 나만의 강의계획서 스킬까지. 수업에 필요한 자료와 설치 안내 모음.</p>
+    <dl class="meta">
+      <div><dt>일시</dt><dd>2026.11.22(일) 14:00~18:00</dd></div>
+      <div><dt>장소</dt><dd>상상크리에이티브 402호<br>마포구 독막로 56</dd></div>
+      <div><dt>오시는 길</dt><dd>상수역 도보 4분 · 합정역 도보 7분</dd></div>
+    </dl>
+  </div>
+</header>
+
+<main>
+
+<!-- ==== 결과물 ==== -->
+<section id="outcome">
+  <div class="wrap">
+    <p class="eyebrow">OUTCOME</p>
+    <h2>오늘 들고 가는 것</h2>
+    <p class="lead">모두 다음 강의에 바로 다시 쓰는 것이 기준.</p>
+    <div class="grid3">
+      <div class="card"><div class="num">1</div><h3>내 강의 강의안 1건</h3><p>대상·목표·시간 배분이 분 단위로 맞아떨어지는 강의안</p></div>
+      <div class="card"><div class="num">2</div><h3>Canva 교안</h3><p>강의안을 옮긴 슬라이드 초안 + 워크북 1장</p></div>
+      <div class="card"><div class="num">3</div><h3>강의계획서 스킬</h3><p>내 양식·문체 그대로 매번 같은 품질로 나오는 나만의 스킬</p></div>
+    </div>
+    <p class="subhead">실무 확장 실습</p>
+    <div class="grid3">
+      <div class="card ext"><div class="num">+</div><h3>블로그 문체 학습</h3><p>내 블로그 글로 Claude에게 내 말투 익히게 하기</p></div>
+      <div class="card ext"><div class="num">+</div><h3>홍보 카드뉴스</h3><p>같은 강의안으로 모집용 카드뉴스 만들기</p></div>
+      <div class="card ext"><div class="num">+</div><h3>메일 연결</h3><p>출강 문의 메일에서 강의계획서·답장 초안까지</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==== 시간표 ==== -->
+<section id="schedule">
+  <div class="wrap">
+    <p class="eyebrow">SCHEDULE</p>
+    <h2>시간표와 블록별 자료</h2>
+    <p class="lead">앞 블록의 결과물이 다음 블록의 재료. 진도가 앞서면 두 번째 강의로 한 번 더.</p>
+
+    <!--
+      [자료 링크 넣는 법]
+      준비 중인 자료는 <span class="pending">이름 · 준비 중</span> 으로 두었다가,
+      링크가 생기면 <a href="주소" target="_blank" rel="noopener">이름</a> 으로 바꾸면 됨.
+    -->
+    <div class="timeline">
+      <article class="block">
+        <div class="time">14:00~14:10<small>10분</small></div>
+        <div>
+          <h3><span>오프닝</span>오늘 만들 것 미리 보기</h3>
+          <ul>
+            <li>소개와 각자 주력 강의 나누기</li>
+            <li>강사 시범: 출강 문의 한 건이 강의계획서·견적서까지 나오는 과정</li>
+            <li>오늘 재료로 쓸 내 강의 1건 정하기</li>
+          </ul>
+        </div>
+      </article>
+
+      <article class="block">
+        <div class="time">14:10~15:00<small>50분</small></div>
+        <div>
+          <h3><span>1부</span>Claude로 강의안 설계</h3>
+          <ul>
+            <li>강의별 프로젝트 만들기, 기존 자료 업로드</li>
+            <li>블로그 문체 학습: 리뷰언즈 엔서포터로 내 글 내보내기 → 문체 가이드 받기</li>
+            <li>대상·인원·시간·목표·현장 조건을 넣은 설계 프롬프트</li>
+            <li>시간 배분 검증 후 분 단위 강의안 완성</li>
+          </ul>
+          <div class="res">
+            <a href="#part1">1부 프롬프트</a>
+            <a href="#g-ensupporter">엔서포터 설치 가이드</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="block">
+        <div class="time">15:00~15:50<small>50분</small></div>
+        <div>
+          <h3><span>2부</span>Claude × Canva 교안</h3>
+          <ul>
+            <li>Canva 커넥터 연결, 참고 템플릿으로 스타일 지정</li>
+            <li>슬라이드 문구 구성안 확인 후 Canva 디자인 생성</li>
+            <li>워크북 1장 추가</li>
+            <li>같은 강의안으로 홍보 카드뉴스 만들기</li>
+          </ul>
+          <div class="res">
+            <a href="#part2">2부 프롬프트</a>
+            <span class="pending">Canva 교안 예시 · 준비 중</span>
+            <a href="#g-canva">Canva 연결 가이드</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="block">
+        <div class="time">15:50~17:10<small>80분</small></div>
+        <div>
+          <h3><span>3부</span>나만의 강의계획서 스킬</h3>
+          <ul>
+            <li>스킬이란: 매번 설명하던 양식·말투·규칙을 한 번에 저장해 두는 것</li>
+            <li>내 강의계획서 규칙 정리 (필수 항목, 양식, 브랜드명, 피할 표현, 내 문체)</li>
+            <li>스킬 만들기 → 새 대화에서 다른 강의로 테스트 → 한 번 다듬기</li>
+          </ul>
+          <div class="res">
+            <a href="#part3">3부 프롬프트</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="block">
+        <div class="time">17:10~17:40<small>30분</small></div>
+        <div>
+          <h3><span>마무리</span>결과물 공유와 1:1 피드백</h3>
+          <ul>
+            <li>세 가지 결과물 화면 공유</li>
+            <li>다음 강의에 바로 쓸 부분 중심으로 피드백</li>
+            <li>결과물 올리기: 아래 공유 폴더의 내 이름 폴더에</li>
+          </ul>
+          <div class="res">
+            <a href="ai-class-worksheet-print.html" target="_blank" rel="noopener">워크시트 6쪽 결과물 체크</a>
+            <a href="https://drive.google.com/drive/folders/1FzkLU_HmXtDX-yveoOFqRgREgSps38jj" target="_blank" rel="noopener">결과물 공유 폴더</a>
+            <a href="https://forms.gle/vZmVvWSVEgsDHQ9H9" target="_blank" rel="noopener">후기 남기기</a>
+          </div>
+        </div>
+      </article>
+
+      <article class="block opt">
+        <div class="time">17:40~18:00<small>20분</small></div>
+        <div>
+          <h3><span>확장</span>메일 연결 실습</h3>
+          <ul>
+            <li>Gmail 연결 후 출강 문의 메일에서 기관·일시·인원·예산 뽑기</li>
+            <li>3부 스킬로 강의계획서 초안, 이어서 답장 초안까지</li>
+            <li>남는 시간은 보충 실습과 Q&amp;A</li>
+          </ul>
+          <div class="res">
+            <a href="#extra">메일 프롬프트</a>
+            <a href="#g-gmail">Gmail 연결 가이드</a>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<!-- ==== 프롬프트 ==== -->
+<section id="prompts">
+  <div class="wrap">
+    <p class="eyebrow">PROMPTS</p>
+    <h2>실습 프롬프트</h2>
+    <p class="lead">칸을 채우면 아래 프롬프트가 내 내용으로 완성. <b>프롬프트 복사</b> 후 Claude에 그대로 붙여 넣기. 입력 내용은 이 브라우저에 자동 저장. 비어 있는 칸은 연두색 [괄호]로 표시.</p>
+    <button class="reset" type="button" id="reset">입력 내용 지우기</button>
+    <div style="height:28px"></div>
+    <div class="pr-head" id="part1"><h3>Claude로 강의안 설계</h3><span>1부 · 14:10~15:00</span></div>
+
+    <div class="step">
+      <h3><span class="n">1</span>강의 프로젝트 만들기</h3>
+      <p>Claude 왼쪽 메뉴 <b>프로젝트</b> → 새 프로젝트 → 이름은 강의명. 기존 강의계획서·PPT를 프로젝트 파일에 업로드.</p>
+      <div class="fields">
+        <label class="f full">강의명 <small>프로젝트 이름으로도 사용</small><input type="text" data-k="title" placeholder="예: 신규 입사자 소통 워크숍"></label>
+      </div>
+      <div class="tip">파일 이름은 영문으로. 한글 파일명은 업로드·다운로드 오류가 자주 남.</div>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">2</span>블로그 문체 학습</h3>
+      <p>리뷰언즈 엔서포터로 내 블로그 글 3~5편을 <b>MS워드 내보내기</b> → 프로젝트에 업로드 → 아래 프롬프트.</p>
+      <div class="prompt" data-tpl="style"></div>
+      <button class="copy" type="button">프롬프트 복사</button>
+      <div class="tip">받은 문체 가이드는 프로젝트 <b>지침</b>에 붙여 두기. 3부 스킬에 그대로 들어감.</div>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">3</span>강의 조건 채우기</h3>
+      <p>다섯 가지가 구체적일수록 강의안이 내 현장에 맞게 나옴.</p>
+      <div class="fields">
+        <label class="f">대상 <small>누가, 어떤 상황의</small><input type="text" data-k="target" placeholder="예: 입사 1년 차 이내 사무직"></label>
+        <label class="f">인원 <input type="text" data-k="people" placeholder="예: 25명"></label>
+        <label class="f">시간 <small>총 진행 시간</small><input type="text" data-k="time" placeholder="예: 120분"></label>
+        <label class="f">형태 <input type="text" data-k="format" placeholder="예: 기업 출강, 오프라인"></label>
+        <label class="f full">학습 목표 <small>끝나고 참여자가 할 수 있게 되는 것</small><textarea data-k="goal" placeholder="예: 서로의 소통 유형을 알고, 팀 안에서 쓸 대화 규칙 3가지를 정한다"></textarea></label>
+        <label class="f full">현장 조건 <small>장소·장비·재료·제약</small><textarea data-k="site" placeholder="예: 강당, 빔프로젝터 있음, 책상 이동 어려움, 재료비 1인 1만 원 이내"></textarea></label>
+      </div>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">4</span>강의안 설계 프롬프트</h3>
+      <p>목표 → 확인 방법 → 활동 순서로 설계하도록 요청 (백워드 설계).</p>
+      <div class="prompt" data-tpl="design"></div>
+      <button class="copy" type="button">프롬프트 복사</button>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">5</span>시간 배분 검증</h3>
+      <p>강의안이 나오면 바로 이어서 점검.</p>
+      <div class="prompt" data-tpl="verify"></div>
+      <button class="copy" type="button">프롬프트 복사</button>
+    </div>
+  
+    <div class="pr-head" id="part2"><h3>Claude × Canva 교안과 카드뉴스</h3><span>2부 · 15:00~15:50</span></div>
+
+    <div class="step">
+      <h3><span class="n">1</span>Canva 연결과 참고 템플릿</h3>
+      <p>Claude 설정의 커넥터에서 Canva 연결. 마음에 드는 Canva 템플릿을 하나 골라 링크 복사.</p>
+      <div class="fields">
+        <label class="f full">참고 템플릿 링크 <small>AI 임의 디자인 대신 이 스타일을 따르게 함</small><input type="text" data-k="tplurl" placeholder="https://www.canva.com/design/..."></label>
+        <label class="f">슬라이드 장수 <input type="text" data-k="slides" placeholder="예: 12장"></label>
+        <label class="f">분위기·색 <input type="text" data-k="mood" placeholder="예: 차분한 네이비, 깔끔한 기업 톤"></label>
+      </div>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">2</span>슬라이드 문구 구성안 먼저</h3>
+      <p>디자인 전에 장별 문구부터 확인. 여기서 고치는 게 가장 빠름.</p>
+      <div class="prompt" data-tpl="outline"></div>
+      <button class="copy" type="button">프롬프트 복사</button>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">3</span>Canva 교안 생성</h3>
+      <p>구성안이 마음에 들면 이어서 요청.</p>
+      <div class="prompt" data-tpl="canva"></div>
+      <button class="copy" type="button">프롬프트 복사</button>
+      <div class="tip">내가 직접 손댄 디자인은 다시 AI에게 수정 맡기지 않기. 고칠 게 있으면 새 디자인으로 요청.</div>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">4</span>워크북 1장</h3>
+      <div class="prompt" data-tpl="workbook"></div>
+      <button class="copy" type="button">프롬프트 복사</button>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">5</span>홍보 카드뉴스</h3>
+      <p>같은 강의안으로 모집·홍보용 카드뉴스. 표지에는 사람이 나온 사진이 반응이 좋음.</p>
+      <div class="fields">
+        <label class="f">카드뉴스 장수 <input type="text" data-k="cards" placeholder="예: 8장"></label>
+        <label class="f">신청·문의 방법 <input type="text" data-k="cta" placeholder="예: 프로필 링크, DM 문의"></label>
+      </div>
+      <div class="prompt" data-tpl="cardnews"></div>
+      <button class="copy" type="button">프롬프트 복사</button>
+    </div>
+  
+    <div class="pr-head" id="part3"><h3>나만의 강의계획서 스킬</h3><span>3부 · 15:50~17:10</span></div>
+
+    <div class="step">
+      <h3><span class="n">1</span>내 강의계획서 규칙 정리</h3>
+      <p>매번 Claude에게 설명하던 것을 여기 모으기. 1부 강의안을 보면서 채우면 쉬움.</p>
+      <div class="fields">
+        <label class="f full">필수 항목 <small>강의계획서에 꼭 들어가야 하는 칸</small><textarea data-k="must" placeholder="예: 강의명, 일시, 대상·인원, 학습 목표, 회차별 구성(시간·내용·방법), 준비물, 강사 소개"></textarea></label>
+        <label class="f full">양식 <small>표 구성, 순서, 분량</small><textarea data-k="form" placeholder="예: A4 1장, 상단에 기본 정보 표, 그 아래 시간표 표, 마지막에 기대 효과 3줄"></textarea></label>
+        <label class="f">브랜드·기관명 표기 <input type="text" data-k="brand" placeholder="예: OO교육연구소 / 강사 홍길동"></label>
+        <label class="f">시간 배분 규칙 <input type="text" data-k="timerule" placeholder="예: 도입 10%, 정리 10%, 활동 비중 50% 이상"></label>
+        <label class="f full">피할 표현 <textarea data-k="avoid" placeholder="예: 혁신적인, 특별한 경험, 힐링 타임, 느낌표"></textarea></label>
+      </div>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">2</span>스킬 만들기 요청</h3>
+      <p>강의 프로젝트 안에서, 1부 문체 가이드가 지침에 들어간 상태로 요청.</p>
+      <div class="prompt" data-tpl="skill"></div>
+      <button class="copy" type="button">프롬프트 복사</button>
+      <div class="tip">Claude가 보여주는 스킬 내용을 읽고 저장. 이름은 영문 소문자로 짧게 (예: my-syllabus).</div>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">3</span>새 대화에서 테스트</h3>
+      <p>프로젝트 밖 새 대화에서, 오늘 강의와 <b>다른</b> 강의 조건으로 시험.</p>
+      <div class="fields">
+        <label class="f full">테스트용 다른 강의 <textarea data-k="testcase" placeholder="예: 복지관 시니어 대상 스마트폰 사진 정리, 15명, 90분"></textarea></label>
+      </div>
+      <div class="prompt" data-tpl="test"></div>
+      <button class="copy" type="button">프롬프트 복사</button>
+    </div>
+
+    <div class="step">
+      <h3><span class="n">4</span>어긋난 부분 다듬기</h3>
+      <div class="prompt" data-tpl="fix"></div>
+      <button class="copy" type="button">프롬프트 복사</button>
+    </div>
+  
+    <div class="pr-head" id="extra"><h3>메일 연결: 문의 메일에서 답장까지</h3><span>확장 · 17:40~18:00</span></div>
+
+    <div class="step opt">
+      <h3><span class="n">1</span>문의 메일 정리</h3>
+      <div class="prompt" data-tpl="mail1"></div>
+      <button class="copy" type="button">프롬프트 복사</button>
+    </div>
+    <div class="step opt">
+      <h3><span class="n">2</span>강의계획서와 답장 초안</h3>
+      <div class="prompt" data-tpl="mail2"></div>
+      <button class="copy" type="button">프롬프트 복사</button>
+      <div class="tip">발송은 직접. 기관명·담당자명·날짜는 틀리면 바로 티 나는 항목이라 꼭 원문과 대조.</div>
+    </div>
+  
+  </div>
+</section>
+
+<!-- ==== 사전 준비 ==== -->
+<section id="prep">
+  <div class="wrap">
+    <p class="eyebrow">BEFORE CLASS</p>
+    <h2>수업 전 준비</h2>
+    <p class="lead">실습 위주라 계정과 설치가 미리 되어 있어야 4시간을 온전히 실습에 씀. 체크 표시는 이 브라우저에 저장.</p>
+    <div class="progress"><div class="bar"><i id="bar"></i></div><span id="count">0 / 8</span></div>
+    <div class="check" id="checklist">
+      <label><input type="checkbox" data-k="laptop"><div><b>노트북 + 충전기</b><small>4시간 실습, 콘센트 자리 한정</small></div></label>
+      <label><input type="checkbox" data-k="claude"><div><b>Claude 유료 계정 (Pro 이상)</b><small>무료 계정으로는 프로젝트·스킬·커넥터 실습 불가</small></div></label>
+      <label><input type="checkbox" data-k="canva"><div><b>Canva 계정 가입</b><small>가입 후 로그인 상태 유지</small></div></label>
+      <label><input type="checkbox" data-k="chrome"><div><b>크롬 브라우저</b><small>리뷰언즈 엔서포터 설치용</small></div></label>
+      <label><input type="checkbox" data-k="ens"><div><b>리뷰언즈 엔서포터 v0.7.3 설치</b><small>아래 설치·연결 가이드 참고</small></div></label>
+      <label><input type="checkbox" data-k="material"><div><b>내 강의 자료 1종</b><small>기존 강의계획서·PPT 등. 오늘 실습의 재료</small></div></label>
+      <label><input type="checkbox" data-k="blog"><div><b>내 블로그 주소</b><small>문체 학습에 쓸 글 3~5편이 있는 블로그</small></div></label>
+      <label><input type="checkbox" data-k="gmail"><div><b>출강 문의를 받는 Gmail 계정</b><small>메일 연결 실습용, 선택</small></div></label>
+    </div>
+  </div>
+</section>
+
+<!-- ==== 설치·연결 가이드 ==== -->
+<section id="guide">
+  <div class="wrap">
+    <p class="eyebrow">SETUP</p>
+    <h2>설치·연결 가이드</h2>
+    <p class="lead">수업 중에 막히면 이 순서대로 다시 확인.</p>
+
+    <details id="g-ensupporter">
+      <summary><span>리뷰언즈 엔서포터 설치와 블로그 문체 학습<span class="when">1부</span></span></summary>
+      <div class="guide">
+        <p><b>설치</b></p>
+        <ol>
+          <li>크롬에서 아래 버튼으로 Chrome 웹 스토어의 <b>리뷰언즈 엔서포터</b> 페이지 열기</li>
+          <li><b>Chrome에 추가</b> 클릭 → 팝업에서 <b>확장 프로그램 추가</b></li>
+          <li>주소창 옆 퍼즐 아이콘에서 엔서포터 <b>고정</b></li>
+          <li>버전 확인: 주소창에 <code>chrome://extensions</code> 입력 → 엔서포터 카드에서 <b>0.7.3</b>인지 확인</li>
+        </ol>
+        <a class="btn" href="https://chrome.google.com/webstore/detail/ogdclnimljhnfgcmgpccipgbjfhlmbap" target="_blank" rel="noopener">Chrome 웹 스토어에서 설치</a>
+        <p class="subhead">블로그 글로 내 문체 학습시키기</p>
+        <ol>
+          <li>내 블로그에서 평소 말투가 잘 드러난 글 3~5편 고르기</li>
+          <li>글을 열고 엔서포터의 <b>MS워드 내보내기</b>로 Word 파일 저장</li>
+          <li>Claude 프로젝트에 Word 파일 업로드</li>
+          <li>Claude에게 요청: <code>업로드한 블로그 글을 읽고 내 말투·문장 길이·자주 쓰는 표현·피하는 표현을 문체 가이드로 정리해줘</code></li>
+          <li>받은 문체 가이드를 프로젝트 지침에 붙여 두기 (3부 스킬에도 그대로 사용)</li>
+        </ol>
+        <p class="note">파일 이름은 영문으로 저장하기. 한글 파일명은 업로드·다운로드 오류가 자주 남.</p>
+      </div>
+    </details>
+
+    <details id="g-canva">
+      <summary><span>Claude × Canva 연결<span class="when">2부</span></span></summary>
+      <div class="guide">
+        <ol>
+          <li>Claude 설정의 커넥터 메뉴에서 <b>Canva</b> 찾기</li>
+          <li><b>연결</b> 클릭 → Canva 계정으로 로그인 → 권한 허용</li>
+          <li>새 대화에서 <code>Canva 연결됐는지 확인해줘</code>로 점검</li>
+          <li>교안 만들 땐 참고할 Canva 템플릿 링크를 함께 주기</li>
+        </ol>
+        <p class="note">AI가 임의로 뽑은 디자인보다 내가 고른 템플릿 스타일을 따르게 하는 쪽이 결과가 훨씬 나음. 내가 손으로 고친 디자인은 다시 AI에게 맡기지 않기.</p>
+      </div>
+    </details>
+
+    <details id="g-gmail">
+      <summary><span>Claude × Gmail 연결<span class="when">확장 실습</span></span></summary>
+      <div class="guide">
+        <ol>
+          <li>Claude 설정의 커넥터 메뉴에서 <b>Gmail</b> 찾기</li>
+          <li><b>연결</b> 클릭 → 출강 문의를 받는 Google 계정 선택 → 권한 허용</li>
+          <li>요청 예시: <code>최근 출강 문의 메일을 찾아서 기관·일시·인원·예산을 정리해줘</code></li>
+          <li>이어서: <code>이 내용으로 강의계획서 초안과 답장 초안을 만들어줘</code></li>
+        </ol>
+        <p class="note">답장은 초안까지만. 기관명·담당자명·날짜를 직접 확인한 뒤 발송.</p>
+      </div>
+    </details>
+  </div>
+</section>
+
+<!-- ==== 링크 모음 ==== -->
+<section id="links">
+  <div class="wrap">
+    <p class="eyebrow">LINKS</p>
+    <h2>링크 모음</h2>
+    <p class="lead">수업 중 자주 여는 곳.</p>
+    <div class="links">
+      <a href="https://claude.ai" target="_blank" rel="noopener"><b>Claude</b><small>claude.ai</small></a>
+      <a href="https://www.canva.com" target="_blank" rel="noopener"><b>Canva</b><small>canva.com</small></a>
+      <a href="https://chrome.google.com/webstore/detail/ogdclnimljhnfgcmgpccipgbjfhlmbap" target="_blank" rel="noopener"><b>리뷰언즈 엔서포터</b><small>Chrome 웹 스토어</small></a>
+      <a href="ai-class-worksheet-print.html" target="_blank" rel="noopener"><b>실습 워크시트</b><small>인쇄용 A4 6쪽</small></a>
+      <a href="#prompts"><b>실습 프롬프트</b><small>칸 채우고 복사</small></a>
+      <a href="https://drive.google.com/drive/folders/1FzkLU_HmXtDX-yveoOFqRgREgSps38jj" target="_blank" rel="noopener"><b>결과물 공유 폴더</b><small>구글 드라이브 · 내 이름 폴더에</small></a>
+      <a href="https://forms.gle/vZmVvWSVEgsDHQ9H9" target="_blank" rel="noopener"><b>후기 남기기</b><small>구글 폼 · 약 3분</small></a>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>원주채아힐링센터</b> · 강사 정민경</p>
+    <p>문의 0507-1431-7305 · <a href="mailto:chaeahealingcenter@gmail.com">chaeahealingcenter@gmail.com</a></p>
+  </div>
+</footer>
+
+<script>
+  // 사전 준비 체크 저장 (이 브라우저 한정)
+  (function(){
+    var KEY = "ai-class-1-prep";
+    var boxes = document.querySelectorAll("#checklist input");
+    var saved = {};
+    try { saved = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e) {}
+    function update(){
+      var done = 0;
+      boxes.forEach(function(b){ if (b.checked) done++; });
+      document.getElementById("count").textContent = done + " / " + boxes.length;
+      document.getElementById("bar").style.width = (done / boxes.length * 100) + "%";
+    }
+    boxes.forEach(function(b){
+      b.checked = !!saved[b.dataset.k];
+      b.addEventListener("change", function(){
+        saved[b.dataset.k] = b.checked;
+        try { localStorage.setItem(KEY, JSON.stringify(saved)); } catch(e) {}
+        update();
+      });
+    });
+    update();
+
+    // 시간표의 가이드 링크 클릭 시 해당 아코디언 열기
+    document.querySelectorAll('a[href^="#g-"]').forEach(function(a){
+      a.addEventListener("click", function(){
+        var d = document.querySelector(a.getAttribute("href"));
+        if (d) d.open = true;
+      });
+    });
+
+  })();
+</script>
+<script>
+(function(){
+  var KEY = "ai-class-1-prompts";
+  var data = {};
+  try { data = JSON.parse(localStorage.getItem(KEY) || "{}"); } catch(e) {}
+  function save(){ try { localStorage.setItem(KEY, JSON.stringify(data)); } catch(e) {} }
+
+  // 빈칸이면 [안내 문구]로 표시
+  var PH = {
+    title:"강의명", target:"대상", people:"인원", time:"총 시간", format:"진행 형태",
+    goal:"학습 목표", site:"현장 조건", tplurl:"참고 템플릿 링크", slides:"슬라이드 장수",
+    mood:"분위기·색", cards:"카드뉴스 장수", cta:"신청·문의 방법", must:"필수 항목",
+    form:"양식", brand:"브랜드·기관명 표기", timerule:"시간 배분 규칙", avoid:"피할 표현",
+    testcase:"테스트용 다른 강의 조건"
+  };
+  function v(k){
+    var s = (data[k] || "").trim();
+    return s ? esc(s) : "<mark>[" + PH[k] + "]</mark>";
+  }
+  function esc(s){ return s.replace(/[&<>]/g, function(c){ return {"&":"&amp;","<":"&lt;",">":"&gt;"}[c]; }); }
+
+  var T = {
+    style: function(){ return "업로드한 블로그 글을 모두 읽고 내 글쓰기 문체 가이드를 정리해줘.\n\n1. 문장 끝맺음(어미) 습관\n2. 문장 길이와 문단 길이\n3. 자주 쓰는 단어·표현 10개\n4. 거의 안 쓰는 표현, 내 글과 어울리지 않는 표현\n5. 글 도입과 마무리 방식\n6. 이 문체로 쓴 강의 소개 문단 예시 1개\n\n앞으로 이 프로젝트에서 나 대신 쓰는 글은 이 가이드를 따라줘."; },
+    design: function(){ return "아래 조건으로 \"" + v("title") + "\" 강의안을 설계해줘.\n\n- 대상: " + v("target") + "\n- 인원: " + v("people") + "\n- 총 시간: " + v("time") + "\n- 진행 형태: " + v("format") + "\n- 학습 목표: " + v("goal") + "\n- 현장 조건: " + v("site") + "\n\n설계 순서:\n1. 학습 목표를 참여자 행동으로 다시 쓰기\n2. 목표를 달성했는지 수업 중에 확인할 방법 정하기\n3. 그 확인으로 이어지는 활동을 도입·전개·정리로 배치\n\n결과는 표로: 시간(분) | 단계 | 활동 | 진행 방법 | 준비물.\n프로젝트에 올린 기존 자료가 있으면 내용을 살려서 구성해줘."; },
+    verify: function(){ return "방금 강의안을 점검해줘.\n\n1. 표의 시간 합계가 " + v("time") + "과 정확히 같은지 계산해서 보여줘\n2. " + v("people") + " 규모에서 시간이 부족할 활동이 있는지\n3. 현장 조건(" + v("site") + ")에서 진행이 어려운 활동이 있는지\n\n문제가 있으면 고친 강의안 표를 다시 보여줘."; },
+    outline: function(){ return "이 강의안으로 Canva 슬라이드 교안을 만들 거야. 디자인 전에 장별 문구 구성안부터 보여줘.\n\n- 장수: " + v("slides") + "\n- 장마다: 제목 / 핵심 문구 2~3줄 / 들어갈 이미지·도식 설명\n- 첫 장은 표지, 마지막 장은 정리\n- 문구는 프로젝트 지침의 내 문체로\n\n아직 Canva에서 만들지 말고 구성안만."; },
+    canva: function(){ return "구성안 그대로 Canva 커넥터로 슬라이드 교안을 만들어줘.\n\n- 참고 디자인: " + v("tplurl") + "\n- 위 디자인의 레이아웃·폰트·색 구성을 따라줘. 임의로 다른 스타일을 만들지 말 것\n- 분위기·색: " + v("mood") + "\n- 장수: " + v("slides") + "\n\n다 만들면 Canva 편집 링크를 줘."; },
+    workbook: function(){ return "같은 강의의 참여자용 워크북(실습지) 1장을 Canva로 만들어줘.\n\n- A4 세로 1장\n- 강의안의 핵심 활동 1개를 참여자가 직접 적어 보는 칸 위주로\n- 상단에 강의명 \"" + v("title") + "\"과 이름 칸\n- 슬라이드 교안과 같은 디자인 톤 (" + v("tplurl") + ")"; },
+    cardnews: function(){ return "같은 강의 \"" + v("title") + "\"를 홍보하는 인스타그램 카드뉴스를 Canva로 만들어줘.\n\n- 장수: " + v("cards") + " (1080×1350)\n- 구성: 표지 / 이런 분께 / 배우는 내용 / 얻어 가는 것 / 강사 소개 / 일정·장소 / 준비물 / 신청 방법\n- 대상: " + v("target") + "\n- 신청·문의: " + v("cta") + "\n- 디자인: " + v("tplurl") + " 스타일, 표지는 사람이 나온 사진\n- 문구는 짧게, 내 문체로\n\n카드뉴스와 함께 쓸 캡션도 써줘. 해시태그는 5개까지."; },
+    skill: function(){ return "지금까지 정리한 규칙으로 \"내 강의계획서\" 스킬을 만들어줘. 앞으로 강의 조건만 주면 매번 같은 양식·문체로 강의계획서가 나오게.\n\n[필수 항목]\n" + v("must") + "\n\n[양식]\n" + v("form") + "\n\n[브랜드·기관명 표기]\n" + v("brand") + "\n\n[시간 배분 규칙]\n" + v("timerule") + "\n\n[피할 표현]\n" + v("avoid") + "\n\n[문체]\n프로젝트 지침의 문체 가이드를 그대로 포함\n\n[작업 순서]\n1. 강의 조건(대상·인원·시간·목표·현장)에서 빠진 것만 한 번에 묻기\n2. 학습 목표 → 확인 방법 → 활동 순서로 설계\n3. 시간 합계 검증 후 강의계획서 출력\n\n저장하기 전에 스킬 내용을 먼저 보여줘."; },
+    test: function(){ return "내 강의계획서 스킬로 강의계획서를 만들어줘.\n\n" + v("testcase"); },
+    fix: function(){ return "방금 강의계획서에서 스킬 규칙과 어긋난 부분:\n- (여기에 어긋난 점 적기)\n\n이 부분이 다음부터 안 생기게 스킬을 수정해줘. 수정한 부분만 먼저 보여줘."; },
+    mail1: function(){ return "Gmail에서 최근 30일 안에 받은 강의·출강 문의 메일을 찾아서 표로 정리해줘.\n\n기관명 | 담당자 | 받은 날짜 | 희망 일시 | 대상·인원 | 예산 | 요청 사항\n\n메일에 없는 정보는 비워 두고, 내가 확인해야 할 질문을 따로 적어줘."; },
+    mail2: function(){ return "위 표에서 첫 번째 문의로:\n\n1. 내 강의계획서 스킬로 강의계획서 초안\n2. 담당자에게 보낼 답장 초안 (강의계획서 첨부 안내, 확인이 필요한 질문 포함)\n\n답장은 초안으로만 저장하고 보내지 마."; }
+  };
+
+  function render(){
+    document.querySelectorAll(".prompt[data-tpl]").forEach(function(el){
+      el.innerHTML = '<span class="lbl">PROMPT</span>' + T[el.dataset.tpl]();
+    });
+  }
+
+  // 입력칸 연결
+  document.querySelectorAll("[data-k]").forEach(function(el){
+    if (data[el.dataset.k]) el.value = data[el.dataset.k];
+    el.addEventListener("input", function(){ data[el.dataset.k] = el.value; save(); render(); });
+  });
+
+  // 복사
+  document.querySelectorAll(".copy").forEach(function(btn){
+    btn.addEventListener("click", function(){
+      var box = btn.previousElementSibling;
+      var text = box.innerText.replace(/^PROMPT\s*/, "");
+      var ok = function(){ btn.textContent = "복사됨"; btn.classList.add("done"); setTimeout(function(){ btn.textContent = "프롬프트 복사"; btn.classList.remove("done"); }, 1600); };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(ok, function(){ fallback(text); ok(); });
+      } else { fallback(text); ok(); }
+    });
+  });
+  function fallback(text){
+    var ta = document.createElement("textarea");
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    try { document.execCommand("copy"); } catch(e) {}
+    document.body.removeChild(ta);
+  }
+
+  document.getElementById("reset").addEventListener("click", function(){
+    if (!confirm("입력한 내용을 모두 지울까요?")) return;
+    data = {}; save();
+    document.querySelectorAll("[data-k]").forEach(function(el){ el.value = ""; });
+    
+    render();
+  });
+
+  render();
+})();
+</script>
+</body>
+</html>
