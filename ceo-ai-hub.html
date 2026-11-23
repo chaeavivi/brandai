@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CEO AI 실전 활용 과정 5회 | 수업 허브</title>
+<meta name="description" content="CEO AI 실전 활용 과정 5회 수업 허브. 바이브코딩으로 우리 회사 홈페이지 만들기 진행표와 프롬프트 모음.">
+<meta name="robots" content="noindex, nofollow">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+/* VOICE: 친절한 수업 안내판 — 50대 대표님이 옆에 띄워 두고 따라 하는 화면
+   IDEA: 강의장 칠판에 붙는 '오늘의 진행표' — 큰 시간, 큰 단계, 바로 누르는 링크
+   PICTURE: 첫 화면 = 4단계 진행 트랙(시간·단계·도구), 각 단계는 체크 가능
+   COLOUR and TYPE: 과정 안내문의 네이비·블루·레드 / Noto Sans KR 900·700·400, 본문 18px
+   LAYOUT: 상단 제목 → 진행 트랙 → 단계별 카드(복사 버튼) → 막힐 때 FAQ → 7회 예고 */
+:root{color-scheme:light dark;
+--bg:light-dark(#ffffff,#0f1724);--panel:light-dark(#f1f5fc,#172235);--ink:light-dark(#12233f,#e9eef7);
+--sub:light-dark(#4a5a74,#a9b6cc);--navy:light-dark(#13294b,#dfe8f7);--blue:light-dark(#2563c9,#7fb0ff);
+--red:light-dark(#d7372b,#ff7b70);--line:light-dark(#d6e0f0,#2a3a55);--chip:light-dark(#e3ecfb,#1f3152)}
+:root[data-theme=light]{color-scheme:light}:root[data-theme=dark]{color-scheme:dark}
+*{box-sizing:border-box;min-width:0}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.65 "Noto Sans KR",system-ui,sans-serif;overflow-x:clip;word-break:keep-all}
+.band{padding:clamp(28px,4vw,60px) max(5vw,16px)}
+.wrap{max-width:1100px;margin:0 auto}
+a{color:var(--blue)}
+.top{background:#13294b;color:#fff}
+.top .kicker{font-weight:500;opacity:.85;margin:0 0 6px}
+.top h1{font-weight:900;font-size:clamp(32px,5vw,50px);line-height:1.12;margin:0 0 14px;text-wrap:balance}
+.top p.meta{margin:0;font-size:17px;opacity:.9}
+.goal{display:inline-block;margin-top:20px;background:#fff;color:#13294b;font-weight:700;padding:10px 18px;border-radius:10px}
+.goal b{color:#d7372b}
+.head{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:32px;align-items:center}
+.teacher{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.22);border-radius:16px;padding:18px 20px}
+.teacher .who{display:flex;gap:14px;align-items:center;margin-bottom:12px}
+.teacher .av{width:52px;height:52px;border-radius:50%;background:#fff;color:#13294b;font-weight:900;font-size:22px;display:grid;place-items:center;flex:none}
+.teacher strong{display:block;font-size:20px}
+.teacher .who span{font-size:15px;opacity:.85;line-height:1.45}
+.teacher ul{margin:0;padding-left:18px;font-size:15px;line-height:1.55;display:grid;gap:4px;opacity:.95}
+@media(max-width:860px){.head{grid-template-columns:minmax(0,1fr);gap:22px}}
+/* 진행 트랙 */
+.track{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:-34px}
+.stop{background:var(--bg);border:2px solid var(--line);border-radius:16px;padding:18px 18px 16px;box-shadow:0 10px 24px rgba(19,41,75,.12);display:flex;flex-direction:column;gap:6px;text-decoration:none;color:inherit}
+.stop:hover{border-color:var(--blue)}
+.stop .t{font-weight:900;font-size:26px;color:var(--blue);white-space:nowrap}
+.stop .n{font-weight:700;font-size:15px;color:var(--red)}
+.stop .h{font-weight:700;font-size:20px;line-height:1.35}
+.stop .tool{font-size:15px;color:var(--sub)}
+.stop.done{opacity:.55}.stop.done .h{text-decoration:line-through}
+.breaks{margin:14px 0 0;color:var(--sub);font-size:16px}
+/* 단계 */
+.step{border-top:1px solid var(--line)}
+.step h2{font-weight:900;font-size:clamp(26px,3.4vw,34px);line-height:1.2;margin:0 0 6px}
+.step .when{font-weight:700;color:var(--blue);margin:0 0 18px}
+.grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:22px}
+.card{background:var(--panel);border-radius:14px;padding:20px}
+.card h3{margin:0 0 10px;font-size:20px}
+ol.do,ul.chk{margin:0;padding-left:0;list-style:none;display:grid;gap:10px}
+ol.do{counter-reset:s}
+ol.do li{counter-increment:s;position:relative;padding-left:44px}
+ol.do li::before{content:counter(s);position:absolute;left:0;top:1px;width:32px;height:32px;border-radius:50%;background:var(--navy);color:var(--bg);font-weight:700;display:grid;place-items:center;font-size:16px}
+ul.chk label{display:flex;gap:12px;align-items:flex-start;cursor:pointer;min-height:44px}
+ul.chk input{width:24px;height:24px;margin-top:4px;flex:none;accent-color:#2563c9}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:48px;padding:0 20px;border-radius:12px;font:700 18px "Noto Sans KR",sans-serif;text-decoration:none;border:0;cursor:pointer}
+.go{background:#2563c9;color:#fff}.go:hover{background:#1c4fa3}
+.ghost{background:var(--chip);color:var(--ink)}
+.links{display:flex;flex-wrap:wrap;gap:10px;margin-top:14px}
+.prompt{margin-top:14px}
+.prompt .ph{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+.prompt .ph strong{font-size:18px}
+textarea{width:100%;min-height:260px;font:16px/1.6 "Noto Sans KR",sans-serif;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:12px;padding:14px;resize:vertical}
+textarea:focus,.btn:focus-visible,input:focus-visible,summary:focus-visible{outline:3px solid #f2b705;outline-offset:2px}
+.fields{display:grid;grid-template-columns:minmax(0,1fr);gap:12px;margin-top:6px}
+.fields label{display:grid;gap:4px;font-weight:700;font-size:16px}
+.fields input,.fields select,.fields textarea{width:100%;min-height:48px;font:400 17px "Noto Sans KR",sans-serif;color:var(--ink);background:var(--bg);border:2px solid var(--line);border-radius:10px;padding:8px 12px}
+.fields input:focus,.fields select:focus{border-color:var(--blue);outline:3px solid #f2b705;outline-offset:1px}
+.fields input.filled,.fields textarea.filled{border-color:var(--blue)}
+.padlet{border:2px solid var(--line);border-radius:16px;overflow:hidden;background:var(--panel);min-height:200px;display:grid;place-items:center}
+.padlet iframe{width:100%;height:680px;border:0;display:block}
+.pad-empty{margin:0;color:var(--sub);padding:24px;text-align:center}
+.note{margin:-4px 0 8px;color:var(--sub);font-size:15px}
+textarea[readonly]{background:var(--panel);border-style:dashed}
+.copy.ok{background:#1d8a4e;color:#fff}
+.tip{border-left:5px solid var(--red);background:var(--panel);padding:14px 18px;border-radius:0 12px 12px 0;margin-top:18px}
+.tip b{color:var(--red)}
+details{border:2px solid var(--line);border-radius:12px;padding:4px 18px;margin-bottom:10px;background:var(--bg)}
+summary{font-weight:700;cursor:pointer;min-height:48px;display:flex;align-items:center}
+details p{margin:4px 0 14px;color:var(--sub)}
+.next{background:#13294b;color:#fff}
+.next h2{margin:0 0 8px;font-weight:900;font-size:clamp(24px,3vw,32px)}
+.next p{margin:0;opacity:.9}
+@media(max-width:860px){.track{grid-template-columns:repeat(2,minmax(0,1fr))}.grid{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:520px){.track{grid-template-columns:minmax(0,1fr);margin-top:-24px}.stop .t{font-size:22px}body{font-size:17px}}
+@media(prefers-reduced-motion:no-preference){.stop{transition:transform .2s,border-color .2s}.stop:hover{transform:translateY(-3px)}}
+</style>
+</head>
+<body>
+
+<header class="top band" style="padding-bottom:64px">
+  <div class="wrap head">
+    <div>
+      <p class="kicker">CEO AI 실전 활용 과정 · 5회</p>
+      <h1>바이브코딩으로 우리 회사 홈페이지 만들기</h1>
+      <p class="meta">13:00 – 17:00 · 강사 정민경</p>
+      <div class="goal">오늘의 목표: <b>내 회사 홈페이지 주소 1개</b> 받아 가기</div>
+    </div>
+    <aside class="teacher">
+      <div class="who"><span class="av">정</span><div><strong>정민경 강사</strong><span>한국AI평생교육협회 부회장<br>원주채아힐링센터 대표</span></div></div>
+      <ul>
+        <li>생성형 AI 출강: 한국전기공사협회 ISC · 농협 · 한국교통안전공단 · 원주시정신건강복지센터 · 사회복지법인 다하</li>
+        <li>바이브코딩으로 웹사이트·업무 자동화 직접 제작 (Claude Code · Gemini · Google AI Studio)</li>
+        <li>삼성SDI · 네이버파이낸셜 · 넥슨 · 무신사 · 제주항공 기업 출강</li>
+        <li>서울시교육청 교육연수원 3년째 출강</li>
+        <li>강의 경력 18년 · 평생교육사 · 컴퓨터그래픽스 전공</li>
+      </ul>
+    </aside>
+  </div>
+</header>
+
+<section class="band" style="padding-top:0">
+  <div class="wrap">
+    <div class="track" id="track">
+      <a class="stop" href="#step1" data-k="s1"><span class="t">13:00</span><span class="n">1단계</span><span class="h">지난 수업 결과물 꺼내기</span><span class="tool">ChatGPT · 내 컴퓨터</span></a>
+      <a class="stop" href="#step2" data-k="s2"><span class="t">13:30</span><span class="n">2단계</span><span class="h">홈페이지 기획서 만들기</span><span class="tool">ChatGPT 또는 Gemini</span></a>
+      <a class="stop" href="#step3" data-k="s3"><span class="t">14:30</span><span class="n">3단계</span><span class="h">러버블로 홈페이지 만들기</span><span class="tool">Lovable</span></a>
+      <a class="stop" href="#step4" data-k="s4"><span class="t">15:40</span><span class="n">4단계</span><span class="h">사진 넣고 주소 받기</span><span class="tool">Lovable · Canva</span></a>
+    </div>
+    <p class="breaks">쉬는 시간 14:20 · 15:30 (각 10분) · 16:30부터 서로 구경하기</p>
+  </div>
+</section>
+
+<section class="step band" id="step1">
+  <div class="wrap">
+    <h2>1단계. 지난 수업 결과물 꺼내기</h2>
+    <p class="when">13:00 – 13:30 · 오늘 홈페이지의 재료</p>
+    <div class="grid">
+      <div class="card">
+        <h3>찾아서 체크하기</h3>
+        <ul class="chk" id="mats">
+          <li><label><input type="checkbox" data-k="m1"><span><b>2회</b> 회사 소개문 (ChatGPT 대화 목록에서 찾기)</span></label></li>
+          <li><label><input type="checkbox" data-k="m2"><span><b>3회</b> 상품 이미지 · 포스터 · 카드뉴스</span></label></li>
+          <li><label><input type="checkbox" data-k="m3"><span><b>4회</b> 홍보 영상 (유튜브 링크 또는 파일)</span></label></li>
+          <li><label><input type="checkbox" data-k="m4"><span>회사 로고 파일 (없어도 진행 가능)</span></label></li>
+        </ul>
+      </div>
+      <div class="card">
+        <h3>못 찾았을 때</h3>
+        <p style="margin:0 0 10px">소개문만 있으면 오늘 수업 진행 가능. 칸을 채우면 아래에 프롬프트 자동 완성 → 복사해서 ChatGPT에 붙여 넣기.</p>
+        <div class="fields">
+          <label>회사 이름<input data-f="name" placeholder="예: 한빛식품"></label>
+          <label>하는 일 (한 줄)<input data-f="what" placeholder="예: 국내산 재료로 전통 장류 제조"></label>
+          <label>주요 고객<input data-f="cust" placeholder="예: 40~60대 주부, 반찬가게"></label>
+          <label>우리만의 강점<input data-f="str" placeholder="예: 3대째 내려온 제조법"></label>
+        </div>
+        <div class="prompt">
+          <div class="ph"><strong>완성된 프롬프트</strong><button class="btn go copy" data-for="p0">복사하기</button></div>
+          <textarea id="p0" readonly style="min-height:170px"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="step band" id="step2">
+  <div class="wrap">
+    <h2>2단계. 홈페이지 기획서 만들기</h2>
+    <p class="when">13:30 – 14:20 · 생각은 무료 AI에서 끝내기</p>
+    <div class="links">
+      <a class="btn go" href="https://chatgpt.com" target="_blank" rel="noopener">ChatGPT 열기</a>
+      <a class="btn ghost" href="https://gemini.google.com" target="_blank" rel="noopener">Gemini 열기</a>
+    </div>
+    <div class="grid" style="margin-top:20px">
+      <div>
+        <div class="card">
+          <h3>① 기획서 요청 · 칸 채우기</h3>
+          <p class="note">1단계에서 쓴 칸은 자동으로 같이 채워짐</p>
+          <div class="fields">
+            <label>회사 이름<input data-f="name" placeholder="예: 한빛식품"></label>
+            <label>하는 일 (한 줄)<input data-f="what" placeholder="예: 국내산 재료로 전통 장류 제조"></label>
+            <label>주요 상품·서비스 3가지<input data-f="prod" placeholder="예: 된장, 고추장, 명절 선물세트"></label>
+            <label>주요 고객<input data-f="cust" placeholder="예: 40~60대 주부, 반찬가게"></label>
+            <label>우리만의 강점<input data-f="str" placeholder="예: 3대째 내려온 제조법"></label>
+            <label>전화번호<input data-f="tel" placeholder="예: 033-123-4567"></label>
+            <label>이메일<input data-f="mail" placeholder="예: hello@hanbit.co.kr"></label>
+            <label>주소<input data-f="addr" placeholder="예: 강원도 원주시 ○○로 12"></label>
+            <label>원하는 분위기<input data-f="mood" placeholder="예: 신뢰감, 따뜻함, 고급스러움"></label>
+            <label class="wide">회사 소개문 (2회 결과물 붙여 넣기)<textarea data-f="intro" placeholder="ChatGPT에서 복사해 붙여 넣기. 없으면 비워 두기" style="min-height:120px"></textarea></label>
+          </div>
+        </div>
+        <div class="prompt">
+          <div class="ph"><strong>완성된 기획서 프롬프트</strong><button class="btn go copy" data-for="p1">복사하기</button></div>
+          <textarea id="p1" readonly></textarea>
+        </div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>② 러버블용 프롬프트로 바꾸기</h3>
+          <p class="note">ChatGPT가 준 기획서를 읽고 고르기</p>
+          <div class="fields">
+            <label>첫 화면 큰 문구<select data-f="pick"><option value="1">1번 안</option><option value="2">2번 안</option><option value="3">3번 안</option></select></label>
+            <label>더 바라는 점 (선택)<input data-f="wish" placeholder="예: 버튼은 크게, 글씨는 진하게"></label>
+          </div>
+        </div>
+        <div class="prompt">
+          <div class="ph"><strong>완성된 변환 프롬프트</strong><button class="btn go copy" data-for="p2">복사하기</button></div>
+          <textarea id="p2" readonly style="min-height:220px"></textarea>
+        </div>
+        <div class="tip"><b>여기서 충분히 고치기.</b> 러버블은 무료로 하루 몇 번만 만들 수 있어서, 문구·색·순서는 ChatGPT에서 마음에 들 때까지 바꾼 뒤 넘어가기.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="step band" id="step3">
+  <div class="wrap">
+    <h2>3단계. 러버블로 홈페이지 만들기</h2>
+    <p class="when">14:30 – 15:30 · 말로 시키면 홈페이지가 되는 경험</p>
+    <div class="links"><a class="btn go" href="https://lovable.dev" target="_blank" rel="noopener">러버블 열기 (lovable.dev)</a></div>
+    <div class="grid" style="margin-top:20px">
+      <div class="card">
+        <h3>따라 하기</h3>
+        <ol class="do">
+          <li>오른쪽 위 로그인 → <b>Google로 계속하기</b></li>
+          <li>가운데 입력창에 ②에서 받은 프롬프트 붙여 넣기</li>
+          <li>보내기 버튼 누르고 1~3분 기다리기</li>
+          <li>오른쪽 미리보기 화면에서 내 홈페이지 확인</li>
+          <li>휴대폰 모양 아이콘으로 모바일 화면도 확인</li>
+        </ol>
+        <div class="tip"><b>무료 사용량 아끼기.</b> 한 번에 하나씩 고치지 말고, 고칠 점을 모아서 한 번에 요청하기. 수정은 2~3번이면 충분.</div>
+      </div>
+      <div>
+        <div class="card">
+          <h3>③ 수정 요청 모으기 · 칸 채우기</h3>
+          <p class="note">완성 프롬프트는 ChatGPT에 먼저 → 정리된 요청문을 러버블에</p>
+          <div class="fields">
+            <label>고칠 점 1<input data-f="fix1" placeholder="예: 첫 화면 색을 더 밝게"></label>
+            <label>고칠 점 2<input data-f="fix2" placeholder="예: 상품 소개 순서를 고추장 먼저"></label>
+            <label>고칠 점 3<input data-f="fix3" placeholder="예: 전화 버튼을 화면 아래에 고정"></label>
+          </div>
+        </div>
+        <div class="prompt">
+          <div class="ph"><strong>완성된 수정 프롬프트</strong><button class="btn go copy" data-for="p3">복사하기</button></div>
+          <textarea id="p3" readonly style="min-height:200px"></textarea>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="step band" id="step4">
+  <div class="wrap">
+    <h2>4단계. 사진 넣고 주소 받기</h2>
+    <p class="when">15:40 – 16:30 · 오늘의 결과물 완성</p>
+    <div class="grid">
+      <div class="card">
+        <h3>러버블에서 마무리</h3>
+        <ol class="do">
+          <li>3회에 만든 이미지를 입력창에 끌어다 놓고 "이 사진을 첫 화면에 넣어 줘"</li>
+          <li>오른쪽 위 <b>Publish</b> 버튼 누르기</li>
+          <li>나온 주소 복사 → 내 카톡으로 보내 두기</li>
+        </ol>
+      </div>
+      <div class="card">
+        <h3>사용량이 다 떨어졌다면 Canva로</h3>
+        <ol class="do">
+          <li>캔바 홈 → <b>웹사이트</b> 디자인 만들기</li>
+          <li>기획서 문구와 3회 이미지를 넣어 다듬기</li>
+          <li>오른쪽 위 <b>웹사이트 게시</b> → 무료 주소 받기</li>
+        </ol>
+        <div class="links"><a class="btn ghost" href="https://www.canva.com" target="_blank" rel="noopener">Canva 열기</a></div>
+      </div>
+    </div>
+    <div class="card" style="margin-top:22px">
+      <h3>완성 체크</h3>
+      <ul class="chk">
+        <li><label><input type="checkbox" data-k="d1"><span>첫 화면에 회사 이름과 큰 문구</span></label></li>
+        <li><label><input type="checkbox" data-k="d2"><span>전화·이메일 문의 버튼 작동</span></label></li>
+        <li><label><input type="checkbox" data-k="d3"><span>휴대폰에서 열어 보기</span></label></li>
+        <li><label><input type="checkbox" data-k="d4"><span>홈페이지 주소를 카톡으로 저장</span></label></li>
+        <li><label><input type="checkbox" data-k="d5"><span>아래 <a href="#gallery">우리 반 갤러리</a>에 주소 올리기</span></label></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section class="step band" id="gallery">
+  <div class="wrap">
+    <h2>서로 구경하기 · 우리 반 홈페이지 갤러리</h2>
+    <p class="when">16:30 – 17:00 · + 버튼 → 이름과 홈페이지 주소 붙여 넣기</p>
+    <!-- 패들렛 주소: 패들렛 공유 → '블로그 또는 웹사이트에 임베드'의 iframe src 주소를 아래 PADLET_EMBED 에 넣기 -->
+    <div class="padlet" id="padlet" data-src="https://padlet.com/embed/s025q631wzxo9j248c0x">
+      <p class="pad-empty">갤러리 준비 중 · 강사님이 링크를 곧 안내합니다</p>
+    </div>
+    <div class="links"><a class="btn go" id="padlet-open" href="#" target="_blank" rel="noopener" hidden>갤러리 새 창으로 열기</a></div>
+  </div>
+</section>
+
+<section class="step band" id="faq">
+  <div class="wrap">
+    <h2>막힐 때</h2>
+    <p class="when">손을 들어 주셔도 됩니다</p>
+    <details><summary>러버블에서 더 이상 만들 수 없다고 나옵니다</summary><p>오늘 무료 사용량을 모두 쓰신 것입니다. 매일 오전 9시에 다시 채워집니다. 오늘은 4단계의 캔바 방법으로 마무리합니다.</p></details>
+    <details><summary>구글 비밀번호가 기억나지 않습니다</summary><p>로그인 화면의 '비밀번호를 잊으셨나요?'를 누르고 휴대폰 문자로 다시 설정합니다. 어려우시면 손을 들어 주십시오.</p></details>
+    <details><summary>러버블 화면이 영어라 어렵습니다</summary><p>화면 빈 곳에서 마우스 오른쪽 버튼 → '한국어로 번역'을 누르시면 됩니다. 프롬프트는 한국어로 넣으셔도 됩니다.</p></details>
+    <details><summary>지난 수업 결과물을 찾을 수 없습니다</summary><p>ChatGPT 왼쪽 대화 목록의 검색에서 '소개문'을 찾아봅니다. 없으면 1단계의 '소개문 다시 만들기'로 새로 만듭니다.</p></details>
+    <details><summary>오늘 만든 홈페이지는 계속 남습니까?</summary><p>네, 같은 구글 계정으로 로그인하시면 언제든 다시 열어 고칠 수 있습니다. 8회에서 보완합니다.</p></details>
+  </div>
+</section>
+
+<section class="next band">
+  <div class="wrap">
+    <h2>7회 예고 · SNS 채널 운영 핵심전략</h2>
+    <p>오늘 만든 홈페이지에 인스타그램을 연결하고, 문의가 오면 자동으로 답하는 DM까지.</p>
+  </div>
+</section>
+
+<script>
+{
+  const store = {
+    get(k){ try { return localStorage.getItem('h5-' + k); } catch(e){ return null; } },
+    set(k, v){ try { localStorage.setItem('h5-' + k, v); } catch(e){} }
+  };
+
+  document.querySelectorAll('ul.chk input').forEach(function(box){
+    if (store.get(box.dataset.k) === '1') box.checked = true;
+    box.addEventListener('change', function(){ store.set(box.dataset.k, box.checked ? '1' : '0'); });
+  });
+
+  const F = {};
+  const v = function(k){ return (F[k] || '').trim() || '○○○'; };
+  const render = function(){
+    const intro = (F.intro || '').trim();
+    document.getElementById('p0').value =
+'우리 회사 소개문을 써 줘.\n' +
+'- 회사 이름: ' + v('name') + '\n' +
+'- 하는 일: ' + v('what') + '\n' +
+'- 주요 고객: ' + v('cust') + '\n' +
+'- 우리 강점: ' + v('str') + '\n\n' +
+'홈페이지 첫 화면에 넣을 수 있게 5문장 이내로, 읽기 쉽게 써 줘.';
+
+    document.getElementById('p1').value =
+'너는 중소기업 홈페이지 기획 전문가야. 아래 우리 회사 정보를 보고 한 페이지짜리 회사 홈페이지 기획서를 만들어 줘.\n\n' +
+'[우리 회사 정보]\n' +
+'- 회사 이름: ' + v('name') + '\n' +
+'- 하는 일: ' + v('what') + '\n' +
+'- 주요 상품·서비스: ' + v('prod') + '\n' +
+'- 주요 고객: ' + v('cust') + '\n' +
+'- 우리 회사만의 강점: ' + v('str') + '\n' +
+'- 전화: ' + v('tel') + '\n' +
+'- 이메일: ' + v('mail') + '\n' +
+'- 주소: ' + v('addr') + '\n' +
+'- 원하는 분위기: ' + v('mood') + '\n' +
+'- 회사 소개문: ' + (intro ? '\n' + intro : '없음. 위 정보로 새로 써 줘.') + '\n\n' +
+'[기획서에 담을 것]\n' +
+'1. 섹션 구성 5~7개 (예: 첫 화면, 회사 소개, 상품·서비스, 강점, 고객 후기 자리, 문의)\n' +
+'2. 섹션별 제목과 본문 문구\n' +
+'3. 메인 색 2가지와 분위기\n' +
+'4. 첫 화면 큰 문구 3가지 안 (1번, 2번, 3번으로 번호 붙이기)\n\n' +
+'문구는 짧고 분명하게, 50~60대 고객도 읽기 쉽게 써 줘.';
+
+    const wish = (F.wish || '').trim();
+    document.getElementById('p2').value =
+'좋아. 첫 화면 큰 문구는 ' + (F.pick || '1') + '번 안으로 할게.\n' +
+'방금 기획서를 러버블(Lovable)에 한 번에 넣을 홈페이지 제작 프롬프트로 정리해 줘.\n\n' +
+'조건:\n' +
+'- 한 페이지 스크롤형 회사 홈페이지\n' +
+'- 휴대폰에서도 잘 보이게\n' +
+'- 섹션 순서와 문구는 기획서 그대로\n' +
+'- 문의 버튼은 전화 걸기(' + v('tel') + ')와 이메일(' + v('mail') + ')로 연결\n' +
+'- 사진 자리는 비워 두기 (나중에 직접 넣음)\n' +
+'- 모든 글자는 한국어\n' +
+(wish ? '- ' + wish + '\n' : '') +
+'\n설명은 빼고 프롬프트만 출력해 줘.';
+
+    const fixes = ['fix1','fix2','fix3'].map(function(k){ return (F[k] || '').trim(); }).filter(Boolean);
+    document.getElementById('p3').value =
+'러버블로 만든 우리 회사 홈페이지에서 고치고 싶은 점이 있어. 러버블에 한 번에 넣을 수정 요청문으로 정리해 줘. 말한 부분만 고치고 나머지는 그대로 두라는 말도 꼭 넣어 줘.\n\n' +
+'고칠 점:\n' +
+(fixes.length ? fixes.map(function(t, i){ return (i + 1) + '. ' + t; }).join('\n') : '1. ○○○\n2. ○○○\n3. ○○○');
+  };
+
+  const inputs = document.querySelectorAll('[data-f]');
+  inputs.forEach(function(el){
+    const k = el.dataset.f;
+    const saved = store.get('f-' + k);
+    if (saved !== null) { el.value = saved; F[k] = saved; }
+    else if (el.tagName === 'SELECT') { F[k] = el.value; }
+    el.classList.toggle('filled', !!(el.value && el.tagName !== 'SELECT'));
+    el.addEventListener('input', function(){
+      F[k] = el.value;
+      store.set('f-' + k, el.value);
+      inputs.forEach(function(o){
+        if (o !== el && o.dataset.f === k) o.value = el.value;
+        if (o.dataset.f === k && o.tagName !== 'SELECT') o.classList.toggle('filled', !!el.value);
+      });
+      render();
+    });
+  });
+  render();
+
+  const pad = document.getElementById('padlet');
+  const padSrc = pad.dataset.src;
+  if (/^https:\/\/padlet\.com\//.test(padSrc)) {
+    const fr = document.createElement('iframe');
+    fr.src = padSrc;
+    fr.title = '우리 반 홈페이지 갤러리';
+    fr.allow = 'camera;microphone;geolocation;display-capture;clipboard-write';
+    pad.innerHTML = '';
+    pad.appendChild(fr);
+    const open = document.getElementById('padlet-open');
+    open.href = "https://padlet.com/chaeahealingcenter/padlet-s025q631wzxo9j248c0x";
+    open.hidden = false;
+  }
+
+  document.querySelectorAll('.copy').forEach(function(btn){
+    const label = btn.textContent;
+    btn.addEventListener('click', function(){
+      const ta = document.getElementById(btn.dataset.for);
+      const done = function(){
+        btn.textContent = '복사됨';
+        btn.classList.add('ok');
+        setTimeout(function(){ btn.textContent = label; btn.classList.remove('ok'); }, 1800);
+      };
+      const fallback = function(){
+        ta.focus(); ta.select();
+        try { if (document.execCommand('copy')) { done(); return; } } catch(e){}
+        btn.textContent = '선택됨 · Ctrl+C';
+        setTimeout(function(){ btn.textContent = label; }, 2500);
+      };
+      try {
+        navigator.clipboard.writeText(ta.value).then(done, fallback);
+      } catch(e){ fallback(); }
+    });
+  });
+}
+</script>
+</body>
+</html>
